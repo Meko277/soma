@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Coptic Companion Admin</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="app">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <h1>⛪ Coptic Companion</h1>
+        <p class="subtitle">Content Admin Panel</p>
+      </div>
+      <nav class="sidebar-nav">
+        <button class="nav-item active" data-section="dashboard">
+          <span class="nav-icon">📊</span><span>Dashboard</span>
+        </button>
+        <button class="nav-item" data-section="traneem">
+          <span class="nav-icon">🎵</span><span>Traneem (ترانيم)</span>
+        </button>
+        <button class="nav-item" data-section="bible">
+          <span class="nav-icon">📖</span><span>Bible</span>
+        </button>
+        <button class="nav-item" data-section="agpeya">
+          <span class="nav-icon">🙏</span><span>Agpeya (أجبية)</span>
+        </button>
+        <button class="nav-item" data-section="liturgy">
+          <span class="nav-icon">⛪</span><span>Liturgy (قداس)</span>
+        </button>
+        <button class="nav-item" data-section="coptic-readings">
+          <span class="nav-icon">📜</span><span>Coptic Readings</span>
+        </button>
+        <button class="nav-item" data-section="translator">
+          <span class="nav-icon">🔤</span><span>Translator Lexicon</span>
+        </button>
+        <button class="nav-item" data-section="design">
+          <span class="nav-icon">🎨</span><span>App Design</span>
+        </button>
+        <button class="nav-item" data-section="settings">
+          <span class="nav-icon">⚙️</span><span>Settings</span>
+        </button>
+      </nav>
+      <div class="sidebar-footer">
+        <button class="btn btn-primary btn-block" id="exportBtn">📥 Export All Data</button>
+        <button class="btn btn-secondary btn-block" id="importBtn">📤 Import Data</button>
+        <input type="file" id="importFile" accept=".json" style="display:none">
+      </div>
+    </aside>
+      <!-- Dashboard Section -->
+      <section id="dashboard" class="content-section active">
+        <h2>Dashboard</h2>
+        <div class="stats-grid">
+          <div class="stat-card"><div class="stat-number" id="stat-traneem">0</div><div class="stat-label">Traneem Hymns</div></div>
+          <div class="stat-card"><div class="stat-number" id="stat-bible">0</div><div class="stat-label">Bible Books</div></div>
+          <div class="stat-card"><div class="stat-number" id="stat-agpeya">0</div><div class="stat-label">Agpeya Prayers</div></div>
+          <div class="stat-card"><div class="stat-number" id="stat-liturgy">0</div><div class="stat-label">Liturgy Parts</div></div>
+          <div class="stat-card"><div class="stat-number" id="stat-lexicon">0</div><div class="stat-label">Lexicon Entries</div></div>
+          <div class="stat-card"><div class="stat-number" id="stat-readings">0</div><div class="stat-label">Coptic Readings</div></div>
+        </div>
+        <div class="card">
+          <h3>Quick Actions</h3>
+          <div class="quick-actions">
+            <button class="btn btn-primary" onclick="showSection('traneem')">➕ Add New Hymn</button>
+            <button class="btn btn-primary" onclick="showSection('bible')">➕ Add Bible Book</button>
+            <button class="btn btn-primary" onclick="showSection('agpeya')">➕ Add Prayer</button>
+            <button class="btn btn-primary" onclick="showSection('translator')">➕ Add Lexicon Entry</button>
+          </div>
+        </div>
+        <div class="card">
+          <h3>Recent Activity</h3>
+          <div id="activity-log" class="activity-log"><p class="empty-state">No recent activity</p></div>
+        </div>
+      <!-- Traneem Section -->
+      <section id="traneem" class="content-section">
+        <h2>Traneem (الترانيم)</h2>
+        <div class="section-header">
+          <p>Manage hymn lyrics in Arabic and English with optional Coptic text.</p>
+          <button class="btn btn-primary" id="addHymnBtn">➕ Add New Hymn</button>
+        </div>
+        <div class="card">
+          <div class="search-bar"><input type="text" id="traneemSearch" placeholder="Search hymns..." class="search-input"></div>
+          <div id="traneem-list" class="items-list"></div>
+        </div>
+        <div id="hymn-editor" class="modal" style="display:none">
+          <div class="modal-content">
+            <div class="modal-header"><h3 id="hymn-editor-title">Edit Hymn</h3><button class="btn-close" onclick="closeModal('hymn-editor')">✕</button></div>
+            <div class="modal-body">
+              <div class="form-group"><label>Hymn ID (unique, no spaces)</label><input type="text" id="hymn-id" placeholder="e.g., trisagion"></div>
+              <div class="form-group"><label>Category</label>
+                <select id="hymn-category">
+                  <option value="doxology">Doxology (تمجيد)</option>
+                  <option value="hymn">Hymn (ترنيمة)</option>
+                  <option value="response">Response (مرد)</option>
+                  <option value="psalm">Psalm (مزمور)</option>
+                  <option value="gospel">Gospel (إنجيل)</option>
+                  <option value="other">Other</option>
+                </select>
+              </div>
+              <div class="form-row">
+                <div class="form-group"><label>English Title</label><input type="text" id="hymn-title-en" placeholder="English title"></div>
+                <div class="form-group"><label>Arabic Title</label><input type="text" id="hymn-title-ar" placeholder="العنوان بالعربية" dir="rtl"></div>
+              </div>
+              <div class="form-group"><label>English Lyrics (blank line = new stanza)</label><textarea id="hymn-lyrics-en" rows="8" placeholder="Stanza 1 line 1&#10;Stanza 1 line 2&#10;&#10;Stanza 2 line 1"></textarea></div>
+              <div class="form-group"><label>Arabic Lyrics</label><textarea id="hymn-lyrics-ar" rows="8" dir="rtl" placeholder="المقطع 1 سطر 1&#10;المقطع 1 سطر 2&#10;&#10;المقطع 2 سطر 1"></textarea></div>
+              <div class="form-group"><label>Coptic Text (optional)</label><textarea id="hymn-coptic" rows="4" placeholder="Coptic text"></textarea></div>
+              <div class="form-group"><label>Notes</label><input type="text" id="hymn-notes" placeholder="Optional notes"></div>
+            </div>
+            <div class="modal-footer">
+              <button class="btn btn-secondary" onclick="closeModal('hymn-editor')">Cancel</button>
+              <button class="btn btn-danger" id="deleteHymnBtn" style="display:none">🗑️ Delete</button>
+              <button class="btn btn-primary" id="saveHymnBtn">💾 Save Hymn</button>
+            </div>
+          </div>
+      <!-- Bible Section -->
+      <section id="bible" class="content-section">
+        <h2>Bible</h2>
+        <div class="section-header">
+          <p>Manage Bible books and chapters stored as JSON for offline use.</p>
+          <button class="btn btn-primary" id="addBibleBookBtn">➕ Add Bible Book</button>
+        </div>
+        <div class="card">
+          <div class="search-bar"><input type="text" id="bibleSearch" placeholder="Search books..." class="search-input"></div>
+          <div id="bible-list" class="items-list"></div>
+        </div>
+        <div id="bible-editor" class="modal" style="display:none">
+          <div class="modal-content modal-large">
+            <div class="modal-header"><h3 id="bible-editor-title">Edit Bible Book</h3><button class="btn-close" onclick="closeModal('bible-editor')">✕</button></div>
+            <div class="modal-body">
+              <div class="form-row">
+                <div class="form-group"><label>Book ID</label><input type="text" id="bible-book-id" placeholder="e.g., genesis"></div>
+                <div class="form-group"><label>Order Number</label><input type="number" id="bible-book-order" placeholder="1"></div>
+              </div>
+              <div class="form-row">
+                <div class="form-group"><label>English Name</label><input type="text" id="bible-name-en" placeholder="Genesis"></div>
+                <div class="form-group"><label>Arabic Name</label><input type="text" id="bible-name-ar" placeholder="التكوين" dir="rtl"></div>
+              </div>
+              <div class="form-group"><label>Number of Chapters</label><input type="number" id="bible-chapters" placeholder="50" min="1"></div>
+              <div class="form-group"><label>Testament</label><select id="bible-testament"><option value="old">Old Testament</option><option value="new">New Testament</option></select></div>
+              <div class="form-group"><label>Chapters Content (JSON)</label><p class="hint">Format: {"1": [{"verse": 1, "text": "..."}, ...]}</p><textarea id="bible-content" rows="12" class="code-editor" placeholder='{"1": [{"verse": 1, "text": "In the beginning..."}]}'></textarea></div>
+            </div>
+            <div class="modal-footer">
+              <button class="btn btn-secondary" onclick="closeModal('bible-editor')">Cancel</button>
+              <button class="btn btn-danger" id="deleteBibleBtn" style="display:none">🗑️ Delete</button>
+              <button class="btn btn-primary" id="saveBibleBtn">💾 Save Book</button>
+            </div>
+      <!-- Agpeya Section -->
+      <section id="agpeya" class="content-section">
+        <h2>Agpeya (الأجبية)</h2>
+        <div class="section-header">
+          <p>Manage the seven daily prayers of the Agpeya.</p>
+          <button class="btn btn-primary" id="addAgpeyaBtn">➕ Add Prayer</button>
+        </div>
+        <div class="card">
+          <div class="search-bar"><input type="text" id="agpeyaSearch" placeholder="Search prayers..." class="search-input"></div>
+          <div id="agpeya-list" class="items-list"></div>
+        </div>
+        <div id="agpeya-editor" class="modal" style="display:none">
+          <div class="modal-content modal-large">
+            <div class="modal-header"><h3 id="agpeya-editor-title">Edit Prayer</h3><button class="btn-close" onclick="closeModal('agpeya-editor')">✕</button></div>
+            <div class="modal-body">
+              <div class="form-row">
+                <div class="form-group"><label>Prayer ID</label><input type="text" id="agpeya-id" placeholder="e.g., morning"></div>
+                <div class="form-group"><label>Hour Number (1-7)</label><input type="number" id="agpeya-hour" min="1" max="7" placeholder="1"></div>
+              </div>
+              <div class="form-row">
+                <div class="form-group"><label>English Name</label><input type="text" id="agpeya-name-en" placeholder="Morning Prayer"></div>
+                <div class="form-group"><label>Arabic Name</label><input type="text" id="agpeya-name-ar" placeholder="صلاة باكر" dir="rtl"></div>
+              </div>
+              <div class="form-group"><label>Prayer Sections (JSON)</label><p class="hint">Format: [{"title": "...", "lines": ["..."]}]</p><textarea id="agpeya-content" rows="12" class="code-editor" placeholder='[{"title": "Introduction", "lines": ["..."]}]'></textarea></div>
+            </div>
+            <div class="modal-footer">
+              <button class="btn btn-secondary" onclick="closeModal('agpeya-editor')">Cancel</button>
+              <button class="btn btn-danger" id="deleteAgpeyaBtn" style="display:none">🗑️ Delete</button>
+              <button class="btn btn-primary" id="saveAgpeyaBtn">💾 Save Prayer</button>
+            </div>
+      <!-- Liturgy Section -->
+      <section id="liturgy" class="content-section">
+        <h2>Liturgy (القداس)</h2>
+        <div class="section-header">
+          <p>Manage the Holy Liturgy content (القداس الإلهي).</p>
+          <button class="btn btn-primary" id="addLiturgyBtn">➕ Add Liturgy Part</button>
+        </div>
+        <div class="card">
+          <div class="search-bar"><input type="text" id="liturgySearch" placeholder="Search liturgy parts..." class="search-input"></div>
+          <div id="liturgy-list" class="items-list"></div>
+        </div>
+        <div id="liturgy-editor" class="modal" style="display:none">
+          <div class="modal-content modal-large">
+            <div class="modal-header"><h3 id="liturgy-editor-title">Edit Liturgy Part</h3><button class="btn-close" onclick="closeModal('liturgy-editor')">✕</button></div>
+            <div class="modal-body">
+              <div class="form-row">
+                <div class="form-group"><label>Part ID</label><input type="text" id="liturgy-id" placeholder="e.g., anaphora"></div>
+                <div class="form-group"><label>Order</label><input type="number" id="liturgy-order" placeholder="1"></div>
+              </div>
+              <div class="form-row">
+                <div class="form-group"><label>English Title</label><input type="text" id="liturgy-name-en" placeholder="The Anaphora"></div>
+                <div class="form-group"><label>Arabic Title</label><input type="text" id="liturgy-name-ar" placeholder="الأنافورا" dir="rtl"></div>
+              </div>
+              <div class="form-group"><label>Liturgy Sections (JSON)</label><textarea id="liturgy-content" rows="12" class="code-editor" placeholder='[{"title": "...", "lines": ["..."]}]'></textarea></div>
+            </div>
+            <div class="modal-footer">
+              <button class="btn btn-secondary" onclick="closeModal('liturgy-editor')">Cancel</button>
+              <button class="btn btn-danger" id="deleteLiturgyBtn" style="display:none">🗑️ Delete</button>
+              <button class="btn btn-primary" id="saveLiturgyBtn">💾 Save Part</button>
+            </div>
+      <!-- Coptic Readings Section -->
+      <section id="coptic-readings" class="content-section">
+        <h2>Coptic Readings</h2>
+        <div class="section-header">
+          <p>Manage daily Coptic readings mapped to liturgical calendar dates.</p>
+          <button class="btn btn-primary" id="addReadingBtn">➕ Add Reading</button>
+        </div>
+        <div class="card">
+          <div class="search-bar"><input type="text" id="readingsSearch" placeholder="Search readings..." class="search-input"></div>
+          <div id="readings-list" class="items-list"></div>
+        </div>
+        <div id="reading-editor" class="modal" style="display:none">
+          <div class="modal-content modal-large">
+            <div class="modal-header"><h3 id="reading-editor-title">Edit Reading</h3><button class="btn-close" onclick="closeModal('reading-editor')">✕</button></div>
+            <div class="modal-body">
+              <div class="form-row">
+                <div class="form-group"><label>Reading ID</label><input type="text" id="reading-id" placeholder="e.g., morning-1"></div>
+                <div class="form-group"><label>Type</label>
+                  <select id="reading-type">
+                    <option value="pauline">Pauline Epistle</option>
+                    <option value="catholic">Catholic Epistle</option>
+                    <option value="praxis">Praxis (Acts)</option>
+                    <option value="gospel">Gospel</option>
+                    <option value="psalm">Psalm</option>
+                    <option value="prophecy">Prophecy</option>
+                    <option value="sermon">Sermon</option>
+                    <option value="other">Other</option>
+                  </select>
+                </div>
+              </div>
+              <div class="form-row">
+                <div class="form-group"><label>English Title</label><input type="text" id="reading-name-en" placeholder="Morning Reading 1"></div>
+                <div class="form-group"><label>Arabic Title</label><input type="text" id="reading-name-ar" placeholder="القراءة الأولى" dir="rtl"></div>
+              </div>
+              <div class="form-group"><label>Date Mapping (Coptic date, e.g., "1-1" for 1 Tout)</label><input type="text" id="reading-date" placeholder="Coptic month-day"></div>
+              <div class="form-group"><label>Reading Content (JSON)</label><textarea id="reading-content" rows="10" class="code-editor" placeholder='{"reference": "Romans 1:1-7", "text": "..."}'></textarea></div>
+            </div>
+            <div class="modal-footer">
+              <button class="btn btn-secondary" onclick="closeModal('reading-editor')">Cancel</button>
+              <button class="btn btn-danger" id="deleteReadingBtn" style="display:none">🗑️ Delete</button>
+              <button class="btn btn-primary" id="saveReadingBtn">💾 Save Reading</button>
+            </div>
+      <!-- Translator Lexicon Section -->
+      <section id="translator" class="content-section">
+        <h2>Translator Lexicon</h2>
+        <div class="section-header">
+          <p>Manage the offline Coptic ↔ Arabic dictionary used by the translator.</p>
+          <button class="btn btn-primary" id="addLexiconBtn">➕ Add Entry</button>
+        </div>
+        <div class="card">
+          <div class="search-bar"><input type="text" id="lexiconSearch" placeholder="Search lexicon..." class="search-input"></div>
+          <div id="lexicon-list" class="items-list"></div>
+        </div>
+        <div id="lexicon-editor" class="modal" style="display:none">
+          <div class="modal-content">
+            <div class="modal-header"><h3 id="lexicon-editor-title">Edit Lexicon Entry</h3><button class="btn-close" onclick="closeModal('lexicon-editor')">✕</button></div>
+            <div class="modal-body">
+              <div class="form-group"><label>Coptic Word</label><input type="text" id="lexicon-coptic" placeholder="ⲛⲟⲩϯ"></div>
+              <div class="form-group"><label>Arabic Translation</label><input type="text" id="lexicon-arabic" placeholder="الله" dir="rtl"></div>
+              <div class="form-group"><label>English Translation</label><input type="text" id="lexicon-english" placeholder="God"></div>
+              <div class="form-group"><label>Type</label><select id="lexicon-type"><option value="word">Word</option><option value="phrase">Phrase</option></select></div>
+            </div>
+            <div class="modal-footer">
+              <button class="btn btn-secondary" onclick="closeModal('lexicon-editor')">Cancel</button>
+              <button class="btn btn-danger" id="deleteLexiconBtn" style="display:none">🗑️ Delete</button>
+              <button class="btn btn-primary" id="saveLexiconBtn">💾 Save Entry</button>
+            </div>
+      <!-- Design Section -->
+      <section id="design" class="content-section">
+        <h2>App Design</h2>
+        <div class="card">
+          <h3>App Identity</h3>
+          <div class="form-row">
+            <div class="form-group"><label>App Name (English)</label><input type="text" id="app-name-en" placeholder="Coptic Companion"></div>
+            <div class="form-group"><label>App Name (Arabic)</label><input type="text" id="app-name-ar" placeholder="الرفيق القبطي" dir="rtl"></div>
+          </div>
+          <div class="form-group"><label>App Description (English)</label><textarea id="app-desc-en" rows="3" placeholder="A comprehensive Coptic Orthodox app"></textarea></div>
+          <div class="form-group"><label>App Description (Arabic)</label><textarea id="app-desc-ar" rows="3" dir="rtl" placeholder="تطبيق قبطي أرثوذكسي شامل"></textarea></div>
+          <div class="form-group"><label>App Version</label><input type="text" id="app-version" placeholder="1.0.0"></div>
+        </div>
+        <div class="card">
+          <h3>Theme Colors</h3>
+          <div class="form-row">
+            <div class="form-group"><label>Primary Color</label><input type="color" id="color-primary" value="#8B4513"></div>
+            <div class="form-group"><label>Secondary Color</label><input type="color" id="color-secondary" value="#D4AF37"></div>
+          </div>
+          <div class="form-row">
+            <div class="form-group"><label>Background (Light)</label><input type="color" id="color-bg-light" value="#FFFBF0"></div>
+            <div class="form-group"><label>Background (Dark)</label><input type="color" id="color-bg-dark" value="#1A1A2E"></div>
+          </div>
+          <div class="form-row">
+            <div class="form-group"><label>Text Color (Light)</label><input type="color" id="color-text-light" value="#2C1810"></div>
+            <div class="form-group"><label>Text Color (Dark)</label><input type="color" id="color-text-dark" value="#F5F5DC"></div>
+          </div>
+        </div>
+        <div class="card">
+          <h3>Logo & Icons</h3>
+          <div class="form-group"><label>App Logo URL</label><input type="text" id="app-logo-url" placeholder="https://..."></div>
+          <div class="form-group"><label>Upload Logo</label><input type="file" id="app-logo-upload" accept="image/*"></div>
+          <div class="form-group"><label>Current Logo Preview</label><div id="logo-preview" class="logo-preview"><p>No logo uploaded</p></div></div>
+        </div>
+        <div class="card">
+          <h3>Font Settings</h3>
+          <div class="form-row">
+            <div class="form-group"><label>Primary Font</label><select id="font-primary"><option value="Roboto">Roboto</option><option value="Noto Sans">Noto Sans</option><option value="Noto Sans Arabic">Noto Sans Arabic</option><option value="Coptic">Coptic Font</option><option value="serif">Serif</option></select></div>
+            <div class="form-group"><label>Base Font Size</label><input type="number" id="font-size-base" value="16" min="12" max="24"></div>
+          </div>
+        </div>
+        <button class="btn btn-primary btn-block" id="saveDesignBtn">💾 Save Design Settings</button>
+      </section>
+      <!-- Settings Section -->
+      <section id="settings" class="content-section">
+        <h2>Settings</h2>
+        <div class="card">
+          <h3>GitHub Integration</h3>
+          <p class="hint">Connect to your GitHub repo (Meko277/soma) to sync content.</p>
+          <div class="form-group"><label>GitHub Repository</label><input type="text" id="github-repo" value="Meko277/soma" placeholder="owner/repo"></div>
+          <div class="form-group"><label>GitHub Token (for saving changes)</label><input type="password" id="github-token" placeholder="ghp_..."></div>
+          <div class="form-group"><label>Branch</label><input type="text" id="github-branch" value="main" placeholder="main"></div>
+          <button class="btn btn-primary" id="syncGithubBtn">🔄 Sync with GitHub</button>
+        </div>
+        <div class="card">
+          <h3>Data Management</h3>
+          <div class="quick-actions">
+            <button class="btn btn-primary" id="exportAllBtn">📥 Export All as JSON</button>
+            <button class="btn btn-secondary" id="importAllBtn">📤 Import from JSON</button>
+            <button class="btn btn-danger" id="resetAllBtn">⚠️ Reset All Data</button>
+          </div>
+          <input type="file" id="importAllFile" accept=".json" style="display:none">
+        </div>
+        <div class="card">
+          <h3>App Info</h3>
+          <p><strong>Version:</strong> 1.0.0</p>
+          <p><strong>Last Updated:</strong> <span id="last-updated">-</span></p>
+          <p><strong>Data Size:</strong> <span id="data-size">-</span></p>
+        </div>
+      </section>
+    </main>
+  </div>
+  <div id="toast" class="toast" style="display:none"><span id="toast-message"></span></div>
+  <script src="app.js"></script>
+</body>
+</html>
