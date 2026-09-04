@@ -1,0 +1,19 @@
+# IDE
+.idea/
+.vscode/
+
+# Project files (not needed for GitHub Pages)
+bible/
+vscode-scrcpy/
+assets/
+services/
+scripts/
+tools/
+*.log
+*.iml
+*.py
+*.yaml
+*.xml
+!index.html
+!styles.css
+!app.js
