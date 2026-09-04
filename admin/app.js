@@ -1,26 +1,28 @@
-// Coptic Companion - Full Admin Panel JavaScript
+﻿// Coptic Companion - Bilingual Admin Panel
 (function() {
   'use strict';
-
-  const STORAGE_KEY = 'coptic_admin_data';
-  const THEME_KEY = 'coptic_admin_theme';
-
-  // Data structure matching Flutter app assets
-  let appData = {
+  var STORAGE_KEY = 'coptic_admin_data';
+  var LANG_KEY = 'admin_lang';
+  var currentLang = localStorage.getItem(LANG_KEY) || 'en';
+  var appData = {
     traneem: { ar: [], en: [] },
     bible: { ar: [], en: [] },
     agpeya: { ar: [], en: [] },
     liturgy: { ar: [], en: [] },
     readings: [],
     design: {
-      nameEn: 'Coptic Companion', nameAr: 'الرفيق القبطي',
-      developer: '', version: '1.0.0',
-      descEn: '', descAr: '',
-      colors: { primary: '#8B4513', secondary: '#D4AF37', bgLight: '#FFFBF0', bgDark: '#1A1A2E', textLight: '#2C1810', textDark: '#F5F5DC', card: '#FFFFFF', border: '#E0D5C5' },
-      fonts: { body: 'Roboto', arabic: 'Noto Sans Arabic', sizeBase: 16, sizeHeading: 24 },
+      nameEn: 'Coptic Companion', nameAr: 'Ø§Ù„Ø±ÙÙŠÙ‚ Ø§Ù„Ù‚Ø¨Ø·ÙŠ',
+      developer: '', version: '1.0.0', descEn: '', descAr: '',
+      colors: { primary: '#8B2332', secondary: '#D4AF37', bgLight: '#FDF8F0', bgDark: '#1A0F0A', textLight: '#2C1810', textDark: '#E8D5A3', card: '#FFFFFF', border: '#E0D5C5' },
+      fonts: { body: 'Cairo', arabic: 'Amiri', sizeBase: 16, sizeHeading: 24 },
       logoUrl: '', iconUrl: '', bgLightUrl: '', bgDarkUrl: ''
     }
   };
+  var I18N = {
+    en: { appTitle:"Coptic Companion",appSubtitle:"Full App Admin",dashboard:"Dashboard",importExport:"Import / Export",traneem:"Traneem",bible:"Bible",agpeya:"Agpeya",liturgy:"Liturgy",readings:"Readings",themeDesign:"Theme & Design",preview:"Preview",settings:"Settings",overview:"Overview of all app content.",traneemHymns:"Traneem Hymns",bibleBooks:"Bible Books",agpeyaPrayers:"Agpeya Prayers",liturgyParts:"Liturgy Parts",copticReadings:"Coptic Readings",themes:"Themes",howToUse:"How to Use",dataSource:"Data Source",noData:"No data loaded. Import to begin.",dataLoaded:"Data loaded!",help1:"Import: Upload assets or JSON.",help2:"Edit: Navigate sections.",help3:"Preview: See content in app view.",help4:"Theme: Customize appearance.",help5:"Export: Download ZIP for Flutter.",importData:"Import Data",uploadZip:"Upload ZIP",uploadJson:"Upload JSON",pasteJson:"Paste JSON",importPaste:"Import",sampleData:"Load Sample Data",exportZip:"Export ZIP for Flutter",exportFlutter:"Export for Flutter",importBtn:"Import",traneemDesc:"Manage hymns.",addHymn:"Add Hymn",searchHymns:"Search hymns...",bibleDesc:"Manage Bible books.",addBook:"Add Book",searchBooks:"Search books...",agpeyaDesc:"Manage prayers.",addPrayer:"Add Prayer",searchPrayers:"Search...",liturgyDesc:"Manage liturgy.",addLiturgy:"Add Part",searchLiturgy:"Search...",readingsDesc:"Manage readings.",addReading:"Add Reading",searchReadings:"Search...",themeDesc:"Customize appearance.",appIdentity:"App Identity",appNameEn:"Name (EN)",appNameAr:"Name (AR)",developer:"Developer",version:"Version",descEn:"Description (EN)",descAr:"Description (AR)",themeColors:"Colors",primary:"Primary",secondary:"Secondary",bgLight:"BG Light",bgDark:"BG Dark",textLight:"Text Light",textDark:"Text Dark",cardBg:"Card BG",borderColor:"Border",backgroundImage:"Background",noBackground:"No background",logoIcons:"Logo & Icons",appLogo:"Logo",appIcon:"Icon",logoUrl:"Logo URL",iconUrl:"Icon URL",noLogo:"No logo",fontSettings:"Fonts",bodyFont:"Body Font",arabicFont:"Arabic Font",baseSize:"Base Size",headingSize:"Heading Size",saveTheme:"Save Theme",previewDesc:"Preview content.",lightMode:"Light",darkMode:"Dark",arabicLang:"Arabic",englishLang:"English",importToPreview:"Import data to preview",repo:"Repository",token:"Token",syncBtn:"Sync",dataManagement:"Data Management",resetAll:"Reset All",saved:"Saved!",deleted:"Deleted!",imported:"Imported!",invalidJson:"Invalid JSON",idRequired:"ID required",confirmReset:"Reset all data?",noDataFound:"No data found.",stanzas:"stanzas",chapters:"chapters",switchLang:"Ø¹Ø±Ø¨ÙŠ" },
+    ar: { appTitle:"Ø§Ù„Ø±ÙÙŠÙ‚ Ø§Ù„Ù‚Ø¨Ø·ÙŠ",appSubtitle:"Ù„ÙˆØ­Ø© Ø§Ù„Ø¥Ø¯Ø§Ø±Ø©",dashboard:"Ø§Ù„Ø±Ø¦ÙŠØ³ÙŠØ©",importExport:"Ø§Ø³ØªÙŠØ±Ø§Ø¯ / ØªØµØ¯ÙŠØ±",traneem:"Ø§Ù„ØªØ±Ø§Ù†ÙŠÙ…",bible:"Ø§Ù„ÙƒØªØ§Ø¨ Ø§Ù„Ù…Ù‚Ø¯Ø³",agpeya:"Ø§Ù„Ø£Ø¬Ø¨ÙŠØ©",liturgy:"Ø§Ù„Ù‚Ø¯Ø§Ø³",readings:"Ø§Ù„Ù‚Ø±Ø§Ø¡Ø§Øª",themeDesign:"Ø§Ù„Ù…Ø¸Ù‡Ø±",preview:"Ù…Ø¹Ø§ÙŠÙ†Ø©",settings:"Ø§Ù„Ø¥Ø¹Ø¯Ø§Ø¯Ø§Øª",overview:"Ù†Ø¸Ø±Ø© Ø¹Ø§Ù…Ø©.",traneemHymns:"ØªØ±Ø§Ù†ÙŠÙ…",bibleBooks:"Ø£Ø³ÙØ§Ø±",agpeyaPrayers:"ØµÙ„ÙˆØ§Øª",liturgyParts:"Ø£Ø¬Ø²Ø§Ø¡",copticReadings:"Ù‚Ø±Ø§Ø¡Ø§Øª",themes:"Ù…Ø¸Ø§Ù‡Ø±",howToUse:"ÙƒÙŠÙÙŠØ© Ø§Ù„Ø§Ø³ØªØ®Ø¯Ø§Ù…",dataSource:"Ù…ØµØ¯Ø± Ø§Ù„Ø¨ÙŠØ§Ù†Ø§Øª",noData:"Ù„Ø§ ØªÙˆØ¬Ø¯ Ø¨ÙŠØ§Ù†Ø§Øª",dataLoaded:"ØªÙ… Ø§Ù„ØªØ­Ù…ÙŠÙ„!",help1:"Ø§Ø³ØªÙŠØ±Ø§Ø¯: Ø§Ø±ÙØ¹ Ù…Ù„ÙØ§Øª.",help2:"ØªØ¹Ø¯ÙŠÙ„: ØªØµÙØ­ Ø§Ù„Ø£Ù‚Ø³Ø§Ù….",help3:"Ù…Ø¹Ø§ÙŠÙ†Ø©: Ø´Ø§Ù‡Ø¯ Ø§Ù„Ù…Ø­ØªÙˆÙ‰.",help4:"Ù…Ø¸Ù‡Ø±: Ø®ØµØµ Ø§Ù„Ø¥Ø¹Ø¯Ø§Ø¯Ø§Øª.",help5:"ØªØµØ¯ÙŠØ±: ØªØ­Ù…ÙŠÙ„ ZIP.",importData:"Ø§Ø³ØªÙŠØ±Ø§Ø¯",uploadZip:"Ø±ÙØ¹ ZIP",uploadJson:"Ø±ÙØ¹ JSON",pasteJson:"Ù„ØµÙ‚ JSON",importPaste:"Ø§Ø³ØªÙŠØ±Ø§Ø¯",sampleData:"Ø¨ÙŠØ§Ù†Ø§Øª Ù†Ù…ÙˆØ°Ø¬ÙŠØ©",exportZip:"ØªØµØ¯ÙŠØ± ZIP",exportFlutter:"ØªØµØ¯ÙŠØ±",importBtn:"Ø§Ø³ØªÙŠØ±Ø§Ø¯",traneemDesc:"Ø¥Ø¯Ø§Ø±Ø© Ø§Ù„ØªØ±Ø§Ù†ÙŠÙ….",addHymn:"Ø¥Ø¶Ø§ÙØ© ØªØ±Ù†ÙŠÙ…Ø©",searchHymns:"Ø¨Ø­Ø«...",bibleDesc:"Ø¥Ø¯Ø§Ø±Ø© Ø§Ù„Ø£Ø³ÙØ§Ø±.",addBook:"Ø¥Ø¶Ø§ÙØ© Ø³ÙØ±",searchBooks:"Ø¨Ø­Ø«...",agpeyaDesc:"Ø¥Ø¯Ø§Ø±Ø© Ø§Ù„ØµÙ„ÙˆØ§Øª.",addPrayer:"Ø¥Ø¶Ø§ÙØ© ØµÙ„Ø§Ø©",searchPrayers:"Ø¨Ø­Ø«...",liturgyDesc:"Ø¥Ø¯Ø§Ø±Ø© Ø§Ù„Ù‚Ø¯Ø§Ø³.",addLiturgy:"Ø¥Ø¶Ø§ÙØ© Ø¬Ø²Ø¡",searchLiturgy:"Ø¨Ø­Ø«...",readingsDesc:"Ø¥Ø¯Ø§Ø±Ø© Ø§Ù„Ù‚Ø±Ø§Ø¡Ø§Øª.",addReading:"Ø¥Ø¶Ø§ÙØ© Ù‚Ø±Ø§Ø¡Ø©",searchReadings:"Ø¨Ø­Ø«...",themeDesc:"ØªØ®ØµÙŠØµ Ø§Ù„Ù…Ø¸Ù‡Ø±.",appIdentity:"Ù‡ÙˆÙŠØ© Ø§Ù„ØªØ·Ø¨ÙŠÙ‚",appNameEn:"Ø§Ù„Ø§Ø³Ù… (Ø¥Ù†Ø¬Ù„ÙŠØ²ÙŠ)",appNameAr:"Ø§Ù„Ø§Ø³Ù… (Ø¹Ø±Ø¨ÙŠ)",developer:"Ø§Ù„Ù…Ø·ÙˆØ±",version:"Ø§Ù„Ø¥ØµØ¯Ø§Ø±",descEn:"Ø§Ù„ÙˆØµÙ (Ø¥Ù†Ø¬Ù„ÙŠØ²ÙŠ)",descAr:"Ø§Ù„ÙˆØµÙ (Ø¹Ø±Ø¨ÙŠ)",themeColors:"Ø§Ù„Ø£Ù„ÙˆØ§Ù†",primary:"Ø£Ø³Ø§Ø³ÙŠ",secondary:"Ø«Ø§Ù†ÙˆÙŠ",bgLight:"Ø®Ù„ÙÙŠØ© ÙØ§ØªØ­Ø©",bgDark:"Ø®Ù„ÙÙŠØ© Ø¯Ø§ÙƒÙ†Ø©",textLight:"Ù†Øµ ÙØ§ØªØ­",textDark:"Ù†Øµ Ø¯Ø§ÙƒÙ†",cardBg:"Ø®Ù„ÙÙŠØ© Ø§Ù„Ø¨Ø·Ø§Ù‚Ø©",borderColor:"Ø­Ø¯ÙˆØ¯",backgroundImage:"ØµÙˆØ±Ø© Ø®Ù„ÙÙŠØ©",noBackground:"Ù„Ø§ ØªÙˆØ¬Ø¯ ØµÙˆØ±Ø©",logoIcons:"Ø§Ù„Ø´Ø¹Ø§Ø±Ø§Øª",appLogo:"Ø´Ø¹Ø§Ø±",appIcon:"Ø£ÙŠÙ‚ÙˆÙ†Ø©",logoUrl:"Ø±Ø§Ø¨Ø· Ø§Ù„Ø´Ø¹Ø§Ø±",iconUrl:"Ø±Ø§Ø¨Ø· Ø§Ù„Ø£ÙŠÙ‚ÙˆÙ†Ø©",noLogo:"Ù„Ø§ ÙŠÙˆØ¬Ø¯ Ø´Ø¹Ø§Ø±",fontSettings:"Ø§Ù„Ø®Ø·ÙˆØ·",bodyFont:"Ø®Ø· Ø§Ù„Ù†Øµ",arabicFont:"Ø®Ø· Ø¹Ø±Ø¨ÙŠ",baseSize:"Ø§Ù„Ø­Ø¬Ù… Ø§Ù„Ø£Ø³Ø§Ø³ÙŠ",headingSize:"Ø­Ø¬Ù… Ø§Ù„Ø¹Ù†ÙˆØ§Ù†",saveTheme:"Ø­ÙØ¸",previewDesc:"Ù…Ø¹Ø§ÙŠÙ†Ø© Ø§Ù„Ù…Ø­ØªÙˆÙ‰.",lightMode:"ÙØ§ØªØ­",darkMode:"Ø¯Ø§ÙƒÙ†",arabicLang:"Ø¹Ø±Ø¨ÙŠ",englishLang:"Ø¥Ù†Ø¬Ù„ÙŠØ²ÙŠ",importToPreview:"Ø§Ø³ØªÙˆØ±Ø¯ Ø¨ÙŠØ§Ù†Ø§Øª",repo:"Ø§Ù„Ù…Ø³ØªÙˆØ¯Ø¹",token:"Ø§Ù„Ø±Ù…Ø²",syncBtn:"Ù…Ø²Ø§Ù…Ù†Ø©",dataManagement:"Ø¥Ø¯Ø§Ø±Ø© Ø§Ù„Ø¨ÙŠØ§Ù†Ø§Øª",resetAll:"Ø¥Ø¹Ø§Ø¯Ø© ØªØ¹ÙŠÙŠÙ†",saved:"ØªÙ… Ø§Ù„Ø­ÙØ¸!",deleted:"ØªÙ… Ø§Ù„Ø­Ø°Ù!",imported:"ØªÙ… Ø§Ù„Ø§Ø³ØªÙŠØ±Ø§Ø¯!",invalidJson:"JSON ØºÙŠØ± ØµØ§Ù„Ø­",idRequired:"Ø§Ù„Ù…Ø¹Ø±Ù Ù…Ø·Ù„ÙˆØ¨",confirmReset:"Ø¥Ø¹Ø§Ø¯Ø© ØªØ¹ÙŠÙŠÙ† Ø¬Ù…ÙŠØ¹ Ø§Ù„Ø¨ÙŠØ§Ù†Ø§ØªØŸ",noDataFound:"Ù„Ø§ ØªÙˆØ¬Ø¯ Ø¨ÙŠØ§Ù†Ø§Øª.",stanzas:"Ù…Ù‚Ø§Ø·Ø¹",chapters:"Ø£ØµØ­Ø§Ø­Ø§Øª",switchLang:"English" }
+  };
+  function t(k) { return (I18N[currentLang] && I18N[currentLang][k]) || (I18N.en[k] || k); }
 
   function loadAll() {
     try {
@@ -90,7 +92,7 @@
     var status = el('data-source-status');
     if (status && hasData()) {
       status.className = 'status-ok';
-      status.textContent = '✅ Data loaded - ' + getDataSummary();
+      status.textContent = 'âœ… Data loaded - ' + getDataSummary();
     }
   }
 
@@ -133,7 +135,7 @@
       var title = item.lang === 'ar' ? (d.title || d.id) : (d.title || d.id);
       var subtitle = item.lang === 'ar' ? (d.categoryAr || d.category || '') : (d.category || '');
       var stanzas = (d.stanzas || []).length;
-      return '<div class="item-row" onclick="editTraneem(\'' + item.lang + '\',\'' + (d.id || '') + '\')"><div><span class="item-title">' + title + '</span><br><span class="item-meta">' + subtitle + ' • ' + stanzas + ' stanzas • ' + item.lang.toUpperCase() + '</span></div><span>✏️</span></div>';
+      return '<div class="item-row" onclick="editTraneem(\'' + item.lang + '\',\'' + (d.id || '') + '\')"><div><span class="item-title">' + title + '</span><br><span class="item-meta">' + subtitle + ' â€¢ ' + stanzas + ' stanzas â€¢ ' + item.lang.toUpperCase() + '</span></div><span>âœï¸</span></div>';
     }).join('');
   }
 
@@ -151,7 +153,7 @@
   };
 
   window.newTraneem = function(lang) {
-    var sample = { id: 'new-hymn', title: 'New Hymn', arabicTitle: 'ترنيمة جديدة', category: 'Liturgical', categoryAr: 'طقسية', stanzas: [{ title: 'Stanza 1', lines: ['Line 1', 'Line 2'] }] };
+    var sample = { id: 'new-hymn', title: 'New Hymn', arabicTitle: 'ØªØ±Ù†ÙŠÙ…Ø© Ø¬Ø¯ÙŠØ¯Ø©', category: 'Liturgical', categoryAr: 'Ø·Ù‚Ø³ÙŠØ©', stanzas: [{ title: 'Stanza 1', lines: ['Line 1', 'Line 2'] }] };
     document.getElementById('hymn-modal-title').textContent = 'New Hymn';
     document.getElementById('hymn-json').value = JSON.stringify(sample, null, 2);
     document.getElementById('hymn-json').dataset.lang = lang || 'ar';
@@ -230,7 +232,7 @@
     container.innerHTML = filtered.map(function(item) {
       var d = item.data;
       var chCount = (d.chapters || []).length;
-      return '<div class="item-row" onclick="editBible(\'' + item.lang + '\',\'' + (d.bookId || '') + '\')"><div><span class="item-title">' + (d.bookName || d.bookId) + '</span><br><span class="item-meta">' + (d.bookId || '') + ' • ' + chCount + ' chapters • ' + item.lang.toUpperCase() + '</span></div><span>✏️</span></div>';
+      return '<div class="item-row" onclick="editBible(\'' + item.lang + '\',\'' + (d.bookId || '') + '\')"><div><span class="item-title">' + (d.bookName || d.bookId) + '</span><br><span class="item-meta">' + (d.bookId || '') + ' â€¢ ' + chCount + ' chapters â€¢ ' + item.lang.toUpperCase() + '</span></div><span>âœï¸</span></div>';
     }).join('');
   }
 
@@ -741,3 +743,4 @@
     refreshAll();
   });
 })();
+
