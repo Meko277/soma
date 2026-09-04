@@ -744,3 +744,714 @@
   });
 })();
 
+// Coptic Companion Admin - Firebase-powered Bilingual Panel
+(function() {
+  'use strict';
+  
+  var STORAGE_KEY = 'coptic_admin_data';
+  var LANG_KEY = 'admin_lang';
+  var currentLang = localStorage.getItem(LANG_KEY) || 'en';
+  var db = null;
+  var unsubscribers = [];
+  
+  var appData = {
+    traneem: { ar: [], en: [] },
+    bible: { ar: [], en: [] },
+    agpeya: { ar: [], en: [] },
+    liturgy: { ar: [], en: [] },
+    readings: [],
+    design: {
+      nameEn: "Coptic Companion", nameAr: "الرفيق القبطي",
+      developer: "", version: "1.0.0", descEn: "", descAr: "",
+      colors: { primary: "#8B2332", secondary: "#D4AF37", bgLight: "#FDF8F0", bgDark: "#1A0F0A", textLight: "#2C1810", textDark: "#E8D5A3", card: "#FFFFFF", border: "#E0D5C5" },
+      fonts: { body: "Cairo", arabic: "Amiri", sizeBase: 16, sizeHeading: 24 },
+      logoUrl: "", iconUrl: "", bgLightUrl: "", bgDarkUrl: ""
+    }
+  };
+
+  // Translations
+  var I18N = {
+    en: { appTitle:"Coptic Companion",appSubtitle:"Full App Admin",dashboard:"Dashboard",importExport:"Import / Export",traneem:"Traneem",bible:"Bible",agpeya:"Agpeya",liturgy:"Liturgy",readings:"Readings",themeDesign:"Theme & Design",preview:"Preview",settings:"Settings",overview:"Overview of all app content.",traneemHymns:"Traneem Hymns",bibleBooks:"Bible Books",agpeyaPrayers:"Agpeya Prayers",liturgyParts:"Liturgy Parts",copticReadings:"Coptic Readings",themes:"Themes",howToUse:"How to Use",dataSource:"Data Source",noData:"No data loaded.",dataLoaded:"Data loaded!",help1:"Import: Upload assets or JSON.",help2:"Edit: Navigate sections.",help3:"Preview: See content in app view.",help4:"Theme: Customize appearance.",help5:"Export: Download ZIP for Flutter.",importData:"Import Data",uploadZip:"Upload ZIP",uploadJson:"Upload JSON",pasteJson:"Paste JSON",importPaste:"Import",sampleData:"Load Sample Data",exportZip:"Export ZIP for Flutter",exportFlutter:"Export for Flutter",importBtn:"Import",traneemDesc:"Manage hymns.",addHymn:"Add Hymn",searchHymns:"Search hymns...",bibleDesc:"Manage Bible books.",addBook:"Add Book",searchBooks:"Search books...",agpeyaDesc:"Manage prayers.",addPrayer:"Add Prayer",searchPrayers:"Search...",liturgyDesc:"Manage liturgy.",addLiturgy:"Add Part",searchLiturgy:"Search...",readingsDesc:"Manage readings.",addReading:"Add Reading",searchReadings:"Search...",themeDesc:"Customize appearance.",appIdentity:"App Identity",appNameEn:"Name (EN)",appNameAr:"Name (AR)",developer:"Developer",version:"Version",descEn:"Description (EN)",descAr:"Description (AR)",themeColors:"Colors",primary:"Primary",secondary:"Secondary",bgLight:"BG Light",bgDark:"BG Dark",textLight:"Text Light",textDark:"Text Dark",cardBg:"Card BG",borderColor:"Border",backgroundImage:"Background",noBackground:"No background",logoIcons:"Logo & Icons",appLogo:"Logo",appIcon:"Icon",logoUrl:"Logo URL",iconUrl:"Icon URL",noLogo:"No logo",fontSettings:"Fonts",bodyFont:"Body Font",arabicFont:"Arabic Font",baseSize:"Base Size",headingSize:"Heading Size",saveTheme:"Save Theme",previewDesc:"Preview content.",lightMode:"Light",darkMode:"Dark",arabicLang:"Arabic",englishLang:"English",importToPreview:"Import data to preview",repo:"Repository",token:"Token",syncBtn:"Sync",dataManagement:"Data Management",resetAll:"Reset All",editHymn:"Edit Hymn",editBible:"Edit Book",editPrayer:"Edit Prayer",editLiturgy:"Edit Liturgy",editReading:"Edit Reading",jsonData:"JSON Data",livePreview:"Live Preview",cancel:"Cancel",deleteBtn:"Delete",saveBtn:"Save",fieldTitle:"Title",fieldTitleAr:"Title (Arabic)",fieldId:"ID",fieldCategory:"Category",fieldCategoryAr:"Category (Arabic)",fieldBookId:"Book ID",fieldBookName:"Book Name",fieldChapters:"Chapters",fieldStanzas:"Stanzas",fieldLines:"Lines",fieldVerse:"Verse",fieldText:"Text",fieldType:"Type",addLine:"Add Line",addStanza:"Add Stanza",addVerse:"Add Verse",addChapter:"Add Chapter",saved:"Saved!",deleted:"Deleted!",imported:"Imported!",invalidJson:"Invalid JSON",idRequired:"ID required",confirmReset:"Reset all data?",noDataFound:"No data found.",stanzas:"stanzas",chapters:"chapters",verses:"verses",switchLang:"عربي",syncing:"Syncing...",synced:"Synced!",offline:"Offline mode",online:"Online" },
+    ar: { appTitle:"الرفيق القبطي",appSubtitle:"لوحة الإدارة",dashboard:"الرئيسية",importExport:"استيراد / تصدير",traneem:"الترانيم",bible:"الكتاب المقدس",agpeya:"الأجبية",liturgy:"القداس",readings:"القراءات",themeDesign:"المظهر",preview:"معاينة",settings:"الإعدادات",overview:"نظرة عامة.",traneemHymns:"ترانيم",bibleBooks:"أسفار",agpeyaPrayers:"صلوات",liturgyParts:"أجزاء",copticReadings:"قراءات",themes:"مظاهر",howToUse:"كيفية الاستخدام",dataSource:"مصدر البيانات",noData:"لا توجد بيانات",dataLoaded:"تم التحميل!",help1:"استيراد: ارفع ملفات.",help2:"تعديل: تصفح الأقسام.",help3:"معاينة: شاهد المحتوى.",help4:"مظهر: خصص الإعدادات.",help5:"تصدير: تحميل ZIP.",importData:"استيراد",uploadZip:"رفع ZIP",uploadJson:"رفع JSON",pasteJson:"لصق JSON",importPaste:"استيراد",sampleData:"بيانات نموذجية",exportZip:"تصدير ZIP",exportFlutter:"تصدير",importBtn:"استيراد",traneemDesc:"إدارة الترانيم.",addHymn:"إضافة ترنيمة",searchHymns:"بحث...",bibleDesc:"إدارة الأسفار.",addBook:"إضافة سفر",searchBooks:"بحث...",agpeyaDesc:"إدارة الصلوات.",addPrayer:"إضافة صلاة",searchPrayers:"بحث...",liturgyDesc:"إدارة القداس.",addLiturgy:"إضافة جزء",searchLiturgy:"بحث...",readingsDesc:"إدارة القراءات.",addReading:"إضافة قراءة",searchReadings:"بحث...",themeDesc:"تخصيص المظهر.",appIdentity:"هوية التطبيق",appNameEn:"الاسم (إنجليزي)",appNameAr:"الاسم (عربي)",developer:"المطور",version:"الإصدار",descEn:"الوصف (إنجليزي)",descAr:"الوصف (عربي)",themeColors:"الألوان",primary:"أساسي",secondary:"ثانوي",bgLight:"خلفية فاتحة",bgDark:"خلفية داكنة",textLight:"نص فاتح",textDark:"نص داكن",cardBg:"خلفية البطاقة",borderColor:"حدود",backgroundImage:"صورة خلفية",noBackground:"لا توجد صورة",logoIcons:"الشعارات",appLogo:"شعار",appIcon:"أيقونة",logoUrl:"رابط الشعار",iconUrl:"رابط الأيقونة",noLogo:"لا يوجد شعار",fontSettings:"الخطوط",bodyFont:"خط النص",arabicFont:"خط عربي",baseSize:"الحجم الأساسي",headingSize:"حجم العنوان",saveTheme:"حفظ",previewDesc:"معاينة المحتوى.",lightMode:"فاتح",darkMode:"داكن",arabicLang:"عربي",englishLang:"إنجليزي",importToPreview:"استورد بيانات",repo:"المستودع",token:"الرمز",syncBtn:"مزامنة",dataManagement:"إدارة البيانات",resetAll:"إعادة تعيين",editHymn:"تعديل ترنيمة",editBible:"تعديل سفر",editPrayer:"تعديل صلاة",editLiturgy:"تعديل قداس",editReading:"تعديل قراءة",jsonData:"بيانات JSON",livePreview:"معاينة مباشرة",cancel:"إلغاء",deleteBtn:"حذف",saveBtn:"حفظ",fieldTitle:"العنوان",fieldTitleAr:"العنوان (عربي)",fieldId:"المعرف",fieldCategory:"الفئة",fieldCategoryAr:"الفئة (عربي)",fieldBookId:"معرف السفر",fieldBookName:"اسم السفر",fieldChapters:"الأصحاحات",fieldStanzas:"المقاطع",fieldLines:"الأسطر",fieldVerse:"آية",fieldText:"النص",fieldType:"النوع",addLine:"إضافة سطر",addStanza:"إضافة مقطع",addVerse:"إضافة آية",addChapter:"إضافة أصحاح",saved:"تم الحفظ!",deleted:"تم الحذف!",imported:"تم الاستيراد!",invalidJson:"JSON غير صالح",idRequired:"المعرف مطلوب",confirmReset:"إعادة تعيين جميع البيانات؟",noDataFound:"لا توجد بيانات.",stanzas:"مقاطع",chapters:"أصحاحات",verses:"آيات",switchLang:"English",syncing:"جاري المزامنة...",synced:"تمت المزامنة!",offline:"وضع عدم الاتصال",online:"متصل" }
+  };
+  function t(k) { return (I18N[currentLang] && I18N[currentLang][k]) || (I18N.en[k] || k); }
+  // ============================================================
+  // FIREBASE FUNCTIONS
+  // ============================================================
+  
+  // Load data from Firebase with real-time updates
+  function setupFirebaseListeners() {
+    if (!window.firebaseDB) {
+      console.warn('Firebase not available, using localStorage');
+      loadFromLocalStorage();
+      return;
+    }
+    
+    db = window.firebaseDB;
+    
+    // Listen to traneem collection
+    var traneemUnsub = onSnapshot(collection(db, 'traneem'), function(snapshot) {
+      appData.traneem.ar = [];
+      appData.traneem.en = [];
+      snapshot.forEach(function(doc) {
+        var data = doc.data();
+        if (data.lang === 'ar') appData.traneem.ar.push(data);
+        else appData.traneem.en.push(data);
+      });
+      refreshAll();
+    }, function(err) {
+      console.warn('Traneem listener error, using cache:', err);
+    });
+    unsubscribers.push(traneemUnsub);
+    
+    // Listen to bible collection
+    var bibleUnsub = onSnapshot(collection(db, 'bible'), function(snapshot) {
+      appData.bible.ar = [];
+      appData.bible.en = [];
+      snapshot.forEach(function(doc) {
+        var data = doc.data();
+        if (data.lang === 'ar') appData.bible.ar.push(data);
+        else appData.bible.en.push(data);
+      });
+      refreshAll();
+    });
+    unsubscribers.push(bibleUnsub);
+    
+    // Listen to agpeya collection
+    var agpeyaUnsub = onSnapshot(collection(db, 'agpeya'), function(snapshot) {
+      appData.agpeya.ar = [];
+      appData.agpeya.en = [];
+      snapshot.forEach(function(doc) {
+        var data = doc.data();
+        if (data.lang === 'ar') appData.agpeya.ar.push(data);
+        else appData.agpeya.en.push(data);
+      });
+      refreshAll();
+    });
+    unsubscribers.push(agpeyaUnsub);
+    
+    // Listen to liturgy collection
+    var liturgyUnsub = onSnapshot(collection(db, 'liturgy'), function(snapshot) {
+      appData.liturgy.ar = [];
+      appData.liturgy.en = [];
+      snapshot.forEach(function(doc) {
+        var data = doc.data();
+        if (data.lang === 'ar') appData.liturgy.ar.push(data);
+        else appData.liturgy.en.push(data);
+      });
+      refreshAll();
+    });
+    unsubscribers.push(liturgyUnsub);
+    
+    // Listen to readings collection
+    var readingsUnsub = onSnapshot(collection(db, 'readings'), function(snapshot) {
+      appData.readings = [];
+      snapshot.forEach(function(doc) {
+        appData.readings.push(doc.data());
+      });
+      refreshAll();
+    });
+    unsubscribers.push(readingsUnsub);
+    
+    // Listen to design document
+    var designUnsub = onSnapshot(doc(db, 'settings', 'design'), function(docSnap) {
+      if (docSnap.exists()) {
+        appData.design = docSnap.data();
+        refreshAll();
+      }
+    });
+    unsubscribers.push(designUnsub);
+    
+    // Update connection status
+    updateConnectionStatus();
+  }
+  
+  // Save to Firebase
+  async function saveToFirebase(collectionName, docId, data) {
+    if (!window.firebaseDB) return saveToLocalStorage();
+    try {
+      await setDoc(doc(window.firebaseDB, collectionName, docId), data);
+      return true;
+    } catch(e) {
+      console.error('Firebase save error:', e);
+      return false;
+    }
+  }
+  
+  // Delete from Firebase
+  async function deleteFromFirebase(collectionName, docId) {
+    if (!window.firebaseDB) return;
+    try {
+      await deleteDoc(doc(window.firebaseDB, collectionName, docId));
+      return true;
+    } catch(e) {
+      console.error('Firebase delete error:', e);
+      return false;
+    }
+  }
+  
+  // Local storage fallback
+  function loadFromLocalStorage() {
+    try {
+      var raw = localStorage.getItem(STORAGE_KEY);
+      if (raw) appData = JSON.parse(raw);
+    } catch(e) {}
+    refreshAll();
+  }
+  
+  function saveToLocalStorage() {
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(appData));
+    } catch(e) {}
+  }
+  
+  // Update connection status indicator
+  function updateConnectionStatus() {
+    var statusEl = document.getElementById('connectionStatus');
+    if (!statusEl) return;
+    if (navigator.onLine) {
+      statusEl.textContent = t('online');
+      statusEl.className = 'status-online';
+    } else {
+      statusEl.textContent = t('offline');
+      statusEl.className = 'status-offline';
+    }
+  }
+  // ============================================================
+  // CORE FUNCTIONS
+  // ============================================================
+  function showSection(id) {
+    document.querySelectorAll('.content-section').forEach(function(s) { s.classList.remove('active'); });
+    document.querySelectorAll('.nav-item').forEach(function(n) { n.classList.remove('active'); });
+    var el = document.getElementById(id); if (el) el.classList.add('active');
+    var nav = document.querySelector('.nav-item[data-section="' + id + '"]'); if (nav) nav.classList.add('active');
+  }
+  window.closeModal = function(id) { var m = document.getElementById(id); if (m) m.style.display = 'none'; };
+  window.showSection = showSection;
+  function showToast(msg) {
+    var t = document.getElementById('toast'); var m = document.getElementById('toast-message');
+    if (t && m) { m.textContent = msg; t.style.display = 'block'; setTimeout(function() { t.style.display = 'none'; }, 3000); }
+  }
+  function toggleLanguage() {
+    currentLang = currentLang === 'en' ? 'ar' : 'en';
+    localStorage.setItem(LANG_KEY, currentLang);
+    document.documentElement.setAttribute('dir', currentLang === 'ar' ? 'rtl' : 'ltr');
+    document.documentElement.setAttribute('lang', currentLang);
+    applyTranslations();
+    refreshAll();
+  }
+  window.toggleLanguage = toggleLanguage;
+  function applyTranslations() {
+    document.querySelectorAll('[data-t]').forEach(function(el) {
+      var key = el.getAttribute('data-t');
+      el.textContent = t(key);
+    });
+    var lbtn = document.getElementById('langToggle');
+    if (lbtn) lbtn.textContent = t('switchLang');
+  }
+  function updateStats() {
+    var el = function(id) { return document.getElementById(id); };
+    if (el('stat-traneem')) el('stat-traneem').textContent = appData.traneem.ar.length + appData.traneem.en.length;
+    if (el('stat-bible')) el('stat-bible').textContent = appData.bible.ar.length + appData.bible.en.length;
+    if (el('stat-agpeya')) el('stat-agpeya').textContent = appData.agpeya.ar.length + appData.agpeya.en.length;
+    if (el('stat-liturgy')) el('stat-liturgy').textContent = appData.liturgy.ar.length + appData.liturgy.en.length;
+    if (el('stat-readings')) el('stat-readings').textContent = appData.readings.length;
+    if (el('stat-themes')) el('stat-themes').textContent = 1;
+  }
+  function refreshAll() {
+    updateStats();
+    renderTraneemList();
+    renderBibleList();
+    renderAgpeyaList();
+    renderLiturgyList();
+    renderReadingsList();
+    renderDesignForm();
+  }
+  // ============================================================
+  // RENDER FUNCTIONS
+  // ============================================================
+  function renderTraneemList() {
+    var c = document.getElementById('traneem-list');
+    if (!c) return;
+    var all = [];
+    appData.traneem.ar.forEach(function(h) { all.push({ lang: 'ar', data: h }); });
+    appData.traneem.en.forEach(function(h) { all.push({ lang: 'en', data: h }); });
+    if (!all.length) { c.innerHTML = '<p class="empty-state">' + t('noDataFound') + '</p>'; return; }
+    c.innerHTML = all.map(function(it) {
+      var d = it.data; var title = d.title || d.id || 'Untitled';
+      var stanzas = (d.stanzas || []).length;
+      return '<div class="item-row" onclick="editTraneem(\'' + it.lang + '\',\'' + (d.id || '') + '\')"><div><span class="item-title">' + title + '</span><br><span class="item-meta">' + stanzas + ' ' + t('stanzas') + ' | ' + it.lang.toUpperCase() + '</span></div><span>✏️</span></div>';
+    }).join('');
+  }
+  function renderBibleList() {
+    var c = document.getElementById('bible-list');
+    if (!c) return;
+    var all = [];
+    appData.bible.ar.forEach(function(b) { all.push({ lang: 'ar', data: b }); });
+    appData.bible.en.forEach(function(b) { all.push({ lang: 'en', data: b }); });
+    if (!all.length) { c.innerHTML = '<p class="empty-state">' + t('noDataFound') + '</p>'; return; }
+    c.innerHTML = all.map(function(it) {
+      var d = it.data; var chCount = (d.chapters || []).length;
+      return '<div class="item-row" onclick="editBible(\'' + it.lang + '\',\'' + (d.bookId || '') + '\')"><div><span class="item-title">' + (d.bookName || d.bookId) + '</span><br><span class="item-meta">' + (d.bookId || '') + ' | ' + chCount + ' ' + t('chapters') + ' | ' + it.lang.toUpperCase() + '</span></div><span>✏️</span></div>';
+    }).join('');
+  }
+  function renderAgpeyaList() {
+    var c = document.getElementById('agpeya-list');
+    if (!c) return;
+    var all = [];
+    appData.agpeya.ar.forEach(function(p) { all.push({ lang: 'ar', data: p }); });
+    appData.agpeya.en.forEach(function(p) { all.push({ lang: 'en', data: p }); });
+    if (!all.length) { c.innerHTML = '<p class="empty-state">' + t('noDataFound') + '</p>'; return; }
+    c.innerHTML = all.map(function(it) {
+      var d = it.data; var name = d.name || d.englishName || d.id;
+      return '<div class="item-row" onclick="editAgpeya(\'' + it.lang + '\',\'' + (d.id || '') + '\')"><div><span class="item-title">' + name + '</span><br><span class="item-meta">' + (d.id || '') + ' | ' + it.lang.toUpperCase() + '</span></div><span>✏️</span></div>';
+    }).join('');
+  }
+  function renderLiturgyList() {
+    var c = document.getElementById('liturgy-list');
+    if (!c) return;
+    var all = [];
+    appData.liturgy.ar.forEach(function(l) { all.push({ lang: 'ar', data: l }); });
+    appData.liturgy.en.forEach(function(l) { all.push({ lang: 'en', data: l }); });
+    if (!all.length) { c.innerHTML = '<p class="empty-state">' + t('noDataFound') + '</p>'; return; }
+    c.innerHTML = all.map(function(it) {
+      var d = it.data;
+      return '<div class="item-row" onclick="editLiturgy(\'' + it.lang + '\',\'' + (d.id || d.name || '') + '\')"><div><span class="item-title">' + (d.name || d.id || 'Liturgy') + '</span><br><span class="item-meta">' + it.lang.toUpperCase() + '</span></div><span>✏️</span></div>';
+    }).join('');
+  }
+  function renderReadingsList() {
+    var c = document.getElementById('readings-list');
+    if (!c) return;
+    if (!appData.readings.length) { c.innerHTML = '<p class="empty-state">' + t('noDataFound') + '</p>'; return; }
+    c.innerHTML = appData.readings.map(function(r, i) {
+      return '<div class="item-row" onclick="editReading(' + i + ')"><div><span class="item-title">' + (r.title || r.type || 'Reading') + '</span><br><span class="item-meta">' + (r.type || '') + '</span></div><span>✏️</span></div>';
+    }).join('');
+  }
+  function renderDesignForm() {
+    var d = appData.design;
+    var s = function(id, val) { var e = document.getElementById(id); if (e) e.value = val; };
+    s('app-name-en', d.nameEn || '');
+    s('app-name-ar', d.nameAr || '');
+    s('app-developer', d.developer || '');
+    s('app-version', d.version || '1.0.0');
+    s('app-desc-en', d.descEn || '');
+    s('app-desc-ar', d.descAr || '');
+    s('color-primary', (d.colors || {}).primary || '#8B2332');
+    s('color-secondary', (d.colors || {}).secondary || '#D4AF37');
+    s('color-bg-light', (d.colors || {}).bgLight || '#FDF8F0');
+    s('color-bg-dark', (d.colors || {}).bgDark || '#1A0F0A');
+    s('color-text-light', (d.colors || {}).textLight || '#2C1810');
+    s('color-text-dark', (d.colors || {}).textDark || '#E8D5A3');
+    s('color-card', (d.colors || {}).card || '#FFFFFF');
+    s('color-border', (d.colors || {}).border || '#E0D5C5');
+    s('font-body', (d.fonts || {}).body || 'Cairo');
+    s('font-arabic', (d.fonts || {}).arabic || 'Amiri');
+    s('font-size-base', (d.fonts || {}).sizeBase || 16);
+    s('font-size-heading', (d.fonts || {}).sizeHeading || 24);
+    s('logo-url', d.logoUrl || '');
+    s('icon-url', d.iconUrl || '');
+    s('bg-light-url', d.bgLightUrl || '');
+    s('bg-dark-url', d.bgDarkUrl || '');
+  }
+  // ============================================================
+  // EDITOR FUNCTIONS
+  // ============================================================
+  window.editTraneem = function(lang, id) {
+    var list = lang === 'ar' ? appData.traneem.ar : appData.traneem.en;
+    var item = list.find(function(h) { return h.id === id; });
+    if (!item) return;
+    openModal('modal-hymn');
+    document.getElementById('hymn-modal-title').textContent = t('editHymn') + ': ' + (item.title || item.id);
+    document.getElementById('hymn-json').value = JSON.stringify(item, null, 2);
+    document.getElementById('hymn-json').dataset.lang = lang;
+    document.getElementById('hymn-json').dataset.id = id;
+    document.getElementById('deleteHymnBtn').style.display = 'inline-flex';
+  };
+  window.editBible = function(lang, id) {
+    var list = lang === 'ar' ? appData.bible.ar : appData.bible.en;
+    var item = list.find(function(b) { return b.bookId === id; });
+    if (!item) return;
+    openModal('modal-bible');
+    document.getElementById('bible-modal-title').textContent = t('editBible') + ': ' + (item.bookName || item.bookId);
+    document.getElementById('bible-json').value = JSON.stringify(item, null, 2);
+    document.getElementById('bible-json').dataset.lang = lang;
+    document.getElementById('bible-json').dataset.id = id;
+    document.getElementById('deleteBibleBtn').style.display = 'inline-flex';
+  };
+  window.editAgpeya = function(lang, id) {
+    var list = lang === 'ar' ? appData.agpeya.ar : appData.agpeya.en;
+    var item = list.find(function(p) { return p.id === id; });
+    if (!item) return;
+    openModal('modal-agpeya');
+    document.getElementById('agpeya-modal-title').textContent = t('editPrayer') + ': ' + (item.name || item.englishName || item.id);
+    document.getElementById('agpeya-json').value = JSON.stringify(item, null, 2);
+    document.getElementById('agpeya-json').dataset.lang = lang;
+    document.getElementById('agpeya-json').dataset.id = id;
+    document.getElementById('deleteAgpeyaBtn').style.display = 'inline-flex';
+  };
+  window.editLiturgy = function(lang, id) {
+    var list = lang === 'ar' ? appData.liturgy.ar : appData.liturgy.en;
+    var item = list.find(function(l) { return (l.id || l.name) === id; });
+    if (!item) return;
+    openModal('modal-liturgy');
+    document.getElementById('liturgy-modal-title').textContent = t('editLiturgy') + ': ' + (item.name || item.id);
+    document.getElementById('liturgy-json').value = JSON.stringify(item, null, 2);
+    document.getElementById('liturgy-json').dataset.lang = lang;
+    document.getElementById('liturgy-json').dataset.id = id;
+    document.getElementById('deleteLiturgyBtn').style.display = 'inline-flex';
+  };
+  window.editReading = function(idx) {
+    var item = appData.readings[idx];
+    if (!item) return;
+    openModal('modal-reading');
+    document.getElementById('reading-modal-title').textContent = t('editReading') + ': ' + (item.title || idx);
+    document.getElementById('reading-json').value = JSON.stringify(item, null, 2);
+    document.getElementById('reading-json').dataset.idx = idx;
+    document.getElementById('deleteReadingBtn').style.display = 'inline-flex';
+  };
+  
+  // Save functions - write to Firebase
+  async function saveHymn() {
+    var json = document.getElementById('hymn-json').value;
+    var lang = document.getElementById('hymn-json').dataset.lang;
+    try {
+      var data = JSON.parse(json);
+      if (!data.id) { showToast(t('idRequired')); return; }
+      data.lang = lang;
+      data.updatedAt = new Date().toISOString();
+      await saveToFirebase('traneem', data.id + '_' + lang, data);
+      closeModal('modal-hymn'); showToast(t('saved'));
+    } catch(e) { showToast(t('invalidJson')); }
+  }
+  async function deleteHymn() {
+    var lang = document.getElementById('hymn-json').dataset.lang;
+    var id = document.getElementById('hymn-json').dataset.id;
+    if (!id) return;
+    await deleteFromFirebase('traneem', id + '_' + lang);
+    closeModal('modal-hymn'); showToast(t('deleted'));
+  }
+  async function saveBible() {
+    var json = document.getElementById('bible-json').value;
+    var lang = document.getElementById('bible-json').dataset.lang;
+    try {
+      var data = JSON.parse(json);
+      if (!data.bookId) { showToast(t('idRequired')); return; }
+      data.lang = lang;
+      data.updatedAt = new Date().toISOString();
+      await saveToFirebase('bible', data.bookId + '_' + lang, data);
+      closeModal('modal-bible'); showToast(t('saved'));
+    } catch(e) { showToast(t('invalidJson')); }
+  }
+  async function deleteBible() {
+    var lang = document.getElementById('bible-json').dataset.lang;
+    var id = document.getElementById('bible-json').dataset.id;
+    if (!id) return;
+    await deleteFromFirebase('bible', id + '_' + lang);
+    closeModal('modal-bible'); showToast(t('deleted'));
+  }
+  async function saveAgpeya() {
+    var json = document.getElementById('agpeya-json').value;
+    var lang = document.getElementById('agpeya-json').dataset.lang;
+    try {
+      var data = JSON.parse(json);
+      if (!data.id) { showToast(t('idRequired')); return; }
+      data.lang = lang;
+      data.updatedAt = new Date().toISOString();
+      await saveToFirebase('agpeya', data.id + '_' + lang, data);
+      closeModal('modal-agpeya'); showToast(t('saved'));
+    } catch(e) { showToast(t('invalidJson')); }
+  }
+  async function deleteAgpeya() {
+    var lang = document.getElementById('agpeya-json').dataset.lang;
+    var id = document.getElementById('agpeya-json').dataset.id;
+    if (!id) return;
+    await deleteFromFirebase('agpeya', id + '_' + lang);
+    closeModal('modal-agpeya'); showToast(t('deleted'));
+  }
+  async function saveLiturgy() {
+    var json = document.getElementById('liturgy-json').value;
+    var lang = document.getElementById('liturgy-json').dataset.lang;
+    try {
+      var data = JSON.parse(json);
+      data.lang = lang;
+      data.updatedAt = new Date().toISOString();
+      var docId = (data.id || data.name || 'liturgy') + '_' + lang;
+      await saveToFirebase('liturgy', docId, data);
+      closeModal('modal-liturgy'); showToast(t('saved'));
+    } catch(e) { showToast(t('invalidJson')); }
+  }
+  async function deleteLiturgy() {
+    var lang = document.getElementById('liturgy-json').dataset.lang;
+    var id = document.getElementById('liturgy-json').dataset.id;
+    if (!id) return;
+    await deleteFromFirebase('liturgy', id + '_' + lang);
+    closeModal('modal-liturgy'); showToast(t('deleted'));
+  }
+  async function saveReading() {
+    var json = document.getElementById('reading-json').value;
+    var idx = parseInt(document.getElementById('reading-json').dataset.idx);
+    try {
+      var data = JSON.parse(json);
+      data.updatedAt = new Date().toISOString();
+      var docId = data.id || data.type || ('reading_' + idx);
+      await saveToFirebase('readings', docId, data);
+      closeModal('modal-reading'); showToast(t('saved'));
+    } catch(e) { showToast(t('invalidJson')); }
+  }
+  async function deleteReading() {
+    var idx = parseInt(document.getElementById('reading-json').dataset.idx);
+    var item = appData.readings[idx];
+    if (!item) return;
+    var docId = item.id || item.type || ('reading_' + idx);
+    await deleteFromFirebase('readings', docId);
+    closeModal('modal-reading'); showToast(t('deleted'));
+  }
+  async function saveDesign() {
+    var d = appData.design;
+    var s = function(id) { var e = document.getElementById(id); return e ? e.value : ''; };
+    d.nameEn = s('app-name-en'); d.nameAr = s('app-name-ar');
+    d.developer = s('app-developer'); d.version = s('app-version');
+    d.descEn = s('app-desc-en'); d.descAr = s('app-desc-ar');
+    d.colors = {
+      primary: s('color-primary'), secondary: s('color-secondary'),
+      bgLight: s('color-bg-light'), bgDark: s('color-bg-dark'),
+      textLight: s('color-text-light'), textDark: s('color-text-dark'),
+      card: s('color-card'), border: s('color-border')
+    };
+    d.fonts = {
+      body: s('font-body'), arabic: s('font-arabic'),
+      sizeBase: parseInt(s('font-size-base')) || 16,
+      sizeHeading: parseInt(s('font-size-heading')) || 24
+    };
+    d.logoUrl = s('logo-url'); d.iconUrl = s('icon-url');
+    d.bgLightUrl = s('bg-light-url'); d.bgDarkUrl = s('bg-dark-url');
+    d.updatedAt = new Date().toISOString();
+    await saveToFirebase('settings', 'design', d);
+    showToast(t('saved'));
+  }
+  // ============================================================
+  // INITIALIZATION
+  // ============================================================
+  document.addEventListener('DOMContentLoaded', function() {
+    // Set initial language direction
+    document.documentElement.setAttribute('dir', currentLang === 'ar' ? 'rtl' : 'ltr');
+    document.documentElement.setAttribute('lang', currentLang);
+    
+    var f = function(id) { return document.getElementById(id); };
+    var bind = function(el, ev, fn) { if (el) el.addEventListener(ev, fn); };
+    
+    // Navigation
+    document.querySelectorAll('.nav-item').forEach(function(btn) {
+      btn.addEventListener('click', function() { showSection(btn.dataset.section); });
+    });
+    
+    // Language toggle
+    bind(f('langToggle'), 'click', toggleLanguage);
+    
+    // Traneem
+    bind(f('addHymnBtn'), 'click', function() {
+      var sample = { id: 'new_' + Date.now(), title: 'New Hymn', arabicTitle: 'ترنيمة جديدة', category: 'Liturgical', categoryAr: 'طقسية', stanzas: [{ title: 'Stanza 1', lines: ['Line 1'] }] };
+      openModal('modal-hymn');
+      document.getElementById('hymn-modal-title').textContent = t('editHymn');
+      document.getElementById('hymn-json').value = JSON.stringify(sample, null, 2);
+      document.getElementById('hymn-json').dataset.lang = 'ar';
+      document.getElementById('hymn-json').dataset.id = sample.id;
+      document.getElementById('deleteHymnBtn').style.display = 'none';
+    });
+    bind(f('saveHymnBtn'), 'click', saveHymn);
+    bind(f('deleteHymnBtn'), 'click', deleteHymn);
+    bind(f('traneemSearch'), 'input', renderTraneemList);
+    
+    // Bible
+    bind(f('addBibleBookBtn'), 'click', function() {
+      var sample = { bookId: 'new_' + Date.now(), bookName: 'New Book', chapters: [{ chapterNumber: 1, verses: [{ number: 1, text: 'Verse 1' }] }] };
+      openModal('modal-bible');
+      document.getElementById('bible-modal-title').textContent = t('editBible');
+      document.getElementById('bible-json').value = JSON.stringify(sample, null, 2);
+      document.getElementById('bible-json').dataset.lang = 'ar';
+      document.getElementById('bible-json').dataset.id = sample.bookId;
+      document.getElementById('deleteBibleBtn').style.display = 'none';
+    });
+    bind(f('saveBibleBtn'), 'click', saveBible);
+    bind(f('deleteBibleBtn'), 'click', deleteBible);
+    bind(f('bibleSearch'), 'input', renderBibleList);
+    
+    // Agpeya
+    bind(f('addAgpeyaBtn'), 'click', function() {
+      var sample = { id: 'new_' + Date.now(), name: 'New Prayer', englishName: 'New Prayer', opening: { title: 'Introduction', content: ['Opening line'], inline: true } };
+      openModal('modal-agpeya');
+      document.getElementById('agpeya-modal-title').textContent = t('editPrayer');
+      document.getElementById('agpeya-json').value = JSON.stringify(sample, null, 2);
+      document.getElementById('agpeya-json').dataset.lang = 'ar';
+      document.getElementById('agpeya-json').dataset.id = sample.id;
+      document.getElementById('deleteAgpeyaBtn').style.display = 'none';
+    });
+    bind(f('saveAgpeyaBtn'), 'click', saveAgpeya);
+    bind(f('deleteAgpeyaBtn'), 'click', deleteAgpeya);
+    bind(f('agpeyaSearch'), 'input', renderAgpeyaList);
+    
+    // Liturgy
+    bind(f('addLiturgyBtn'), 'click', function() {
+      var sample = { id: 'new_' + Date.now(), name: 'New Liturgy', sections: [{ title: 'Section 1', content: ['Content line'] }] };
+      openModal('modal-liturgy');
+      document.getElementById('liturgy-modal-title').textContent = t('editLiturgy');
+      document.getElementById('liturgy-json').value = JSON.stringify(sample, null, 2);
+      document.getElementById('liturgy-json').dataset.lang = 'ar';
+      document.getElementById('liturgy-json').dataset.id = sample.id;
+      document.getElementById('deleteLiturgyBtn').style.display = 'none';
+    });
+    bind(f('saveLiturgyBtn'), 'click', saveLiturgy);
+    bind(f('deleteLiturgyBtn'), 'click', deleteLiturgy);
+    bind(f('liturgySearch'), 'input', renderLiturgyList);
+    
+    // Readings
+    bind(f('addReadingBtn'), 'click', function() {
+      var sample = { id: 'new_' + Date.now(), type: 'gospel', title: 'New Reading', reference: 'John 1:1-14', text: 'In the beginning...' };
+      openModal('modal-reading');
+      document.getElementById('reading-modal-title').textContent = t('editReading');
+      document.getElementById('reading-json').value = JSON.stringify(sample, null, 2);
+      document.getElementById('reading-json').dataset.idx = '-1';
+      document.getElementById('deleteReadingBtn').style.display = 'none';
+    });
+    bind(f('saveReadingBtn'), 'click', saveReading);
+    bind(f('deleteReadingBtn'), 'click', deleteReading);
+    bind(f('readingsSearch'), 'input', renderReadingsList);
+    
+    // Design
+    bind(f('saveDesignBtn'), 'click', saveDesign);
+    
+    // Import/Export
+    bind(f('exportAllBtn'), 'click', function() {
+      downloadJSON(JSON.stringify(appData, null, 2), 'coptic-data-backup.json');
+    });
+    bind(f('importBtn'), 'click', function() { f('importFile').click(); });
+    bind(f('importFile'), 'change', function(e) {
+      if (e.target.files.length > 0) {
+        var reader = new FileReader();
+        reader.onload = function(ev) { importJSON(ev.target.result); };
+        reader.readAsText(e.target.files[0]);
+      }
+    });
+    bind(f('importPasteBtn'), 'click', function() {
+      var val = f('importPaste').value;
+      if (val) importJSON(val);
+    });
+    bind(f('importJson'), 'change', function(e) {
+      if (e.target.files.length > 0) {
+        var reader = new FileReader();
+        reader.onload = function(ev) { importJSON(ev.target.result); };
+        reader.readAsText(e.target.files[0]);
+      }
+    });
+    
+    // Sample data
+    bind(f('loadSampleTraneem'), 'click', function() {
+      saveToFirebase('traneem', 'trisagion_ar', { id: 'trisagion', title: 'Trisagion', arabicTitle: 'القداس المقدس', category: 'Liturgical', categoryAr: 'طقسية', stanzas: [{ title: 'التقديس', lines: ['قدوس الله قدوس القوي', 'ارحمنا يا رب'] }, { title: 'المجد', lines: ['المجد للآب والابن والروح القدس'] }], lang: 'ar', updatedAt: new Date().toISOString() });
+      saveToFirebase('traneem', 'trisagion_en', { id: 'trisagion', title: 'Holy God', category: 'Liturgical', stanzas: [{ title: 'The Sanctus', lines: ['Holy God, Holy Mighty, Holy Immortal', 'Have mercy on us'] }, { title: 'Glory', lines: ['Glory be to the Father, Son, and Holy Spirit'] }], lang: 'en', updatedAt: new Date().toISOString() });
+      showToast('Sample loaded');
+    });
+    bind(f('loadSampleBible'), 'click', function() {
+      saveToFirebase('bible', 'genesis_ar', { bookId: 'genesis', bookName: 'التكوين', chapters: [{ chapterNumber: 1, verses: [{ number: 1, text: 'في البدء خلق الله السموات والأرض' }, { number: 2, text: 'وكانت الأرض خربة وخالية' }] }], lang: 'ar', updatedAt: new Date().toISOString() });
+      saveToFirebase('bible', 'genesis_en', { bookId: 'genesis', bookName: 'Genesis', chapters: [{ chapterNumber: 1, verses: [{ number: 1, text: 'In the beginning God created the heavens and the earth.' }, { number: 2, text: 'Now the earth was formless and empty.' }] }], lang: 'en', updatedAt: new Date().toISOString() });
+      showToast('Sample loaded');
+    });
+    bind(f('loadSampleAgpeya'), 'click', function() {
+      saveToFirebase('agpeya', 'prime_ar', { id: 'prime', name: 'باكر', englishName: 'Morning Prayer', opening: { title: 'مقدمة كل ساعة', content: ['باسم الآب والابن والروح القدس', 'يا رب ارحم'], inline: true }, lang: 'ar', updatedAt: new Date().toISOString() });
+      saveToFirebase('agpeya', 'prime_en', { id: 'prime', name: 'Morning', englishName: 'Morning Prayer', opening: { title: 'Introduction', content: ['In the name of the Father, Son, and Holy Spirit', 'Lord have mercy'], inline: true }, lang: 'en', updatedAt: new Date().toISOString() });
+      showToast('Sample loaded');
+    });
+    bind(f('loadSampleLiturgy'), 'click', function() {
+      saveToFirebase('liturgy', 'anaphora_ar', { id: 'anaphora', name: 'الأنافورا', sections: [{ title: 'الأنافورا', content: ['يا رب ارحمنا', 'يا رب اغفر لنا'] }], lang: 'ar', updatedAt: new Date().toISOString() });
+      saveToFirebase('liturgy', 'anaphora_en', { id: 'anaphora', name: 'The Anaphora', sections: [{ title: 'The Anaphora', content: ['O Lord have mercy', 'O Lord forgive us'] }], lang: 'en', updatedAt: new Date().toISOString() });
+      showToast('Sample loaded');
+    });
+    
+    // Logo upload
+    bind(f('logo-upload'), 'change', function(e) {
+      var file = e.target.files[0]; if (!file) return;
+      var reader = new FileReader();
+      reader.onload = function(ev) {
+        appData.design.logoUrl = ev.target.result;
+        f('logo-url').value = ev.target.result;
+        var prev = f('logo-preview');
+        if (prev) prev.innerHTML = '<img src="' + ev.target.result + '" alt="Logo">';
+        saveDesign();
+      };
+      reader.readAsDataURL(file);
+    });
+    bind(f('bg-light-upload'), 'change', function(e) {
+      var file = e.target.files[0]; if (!file) return;
+      var reader = new FileReader();
+      reader.onload = function(ev) {
+        appData.design.bgLightUrl = ev.target.result;
+        f('bg-light-url').value = ev.target.result;
+        saveDesign();
+      };
+      reader.readAsDataURL(file);
+    });
+    bind(f('icon-upload'), 'change', function(e) {
+      var file = e.target.files[0]; if (!file) return;
+      var reader = new FileReader();
+      reader.onload = function(ev) {
+        appData.design.iconUrl = ev.target.result;
+        f('icon-url').value = ev.target.result;
+        saveDesign();
+      };
+      reader.readAsDataURL(file);
+    });
+    
+    // Reset
+    bind(f('resetAllBtn'), 'click', function() {
+      if (confirm(t('confirmReset'))) {
+        localStorage.removeItem(STORAGE_KEY);
+        location.reload();
+      }
+    });
+    
+    // Online/offline detection
+    window.addEventListener('online', updateConnectionStatus);
+    window.addEventListener('offline', updateConnectionStatus);
+    
+    // Setup Firebase listeners (real-time sync)
+    setupFirebaseListeners();
+    
+    // Apply translations
+    applyTranslations();
+  });
+  
+  function importJSON(jsonStr) {
+    try {
+      var data = JSON.parse(jsonStr);
+      if (data.traneem) {
+        data.traneem.ar.forEach(function(item) { saveToFirebase('traneem', (item.id || 'item') + '_ar', item); });
+        data.traneem.en.forEach(function(item) { saveToFirebase('traneem', (item.id || 'item') + '_en', item); });
+      }
+      if (data.bible) {
+        data.bible.ar.forEach(function(item) { saveToFirebase('bible', (item.bookId || 'book') + '_ar', item); });
+        data.bible.en.forEach(function(item) { saveToFirebase('bible', (item.bookId || 'book') + '_en', item); });
+      }
+      if (data.agpeya) {
+        data.agpeya.ar.forEach(function(item) { saveToFirebase('agpeya', (item.id || 'prayer') + '_ar', item); });
+        data.agpeya.en.forEach(function(item) { saveToFirebase('agpeya', (item.id || 'prayer') + '_en', item); });
+      }
+      if (data.liturgy) {
+        data.liturgy.ar.forEach(function(item) { saveToFirebase('liturgy', (item.id || item.name || 'liturgy') + '_ar', item); });
+        data.liturgy.en.forEach(function(item) { saveToFirebase('liturgy', (item.id || item.name || 'liturgy') + '_en', item); });
+      }
+      if (data.readings) {
+        data.readings.forEach(function(item) { saveToFirebase('readings', item.id || item.type || 'reading', item); });
+      }
+      if (data.design) {
+        saveToFirebase('settings', 'design', data.design);
+      }
+      showToast(t('imported'));
+    } catch(e) { showToast(t('invalidJson')); }
+  }
+  
+  function downloadJSON(data, filename) {
+    var blob = new Blob([data], { type: 'application/json' });
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement('a'); a.href = url; a.download = filename; a.click();
+    URL.revokeObjectURL(url);
+  }
+})();
