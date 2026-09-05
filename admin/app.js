@@ -229,9 +229,8 @@
     }
     db = window.firebaseDB;
     try {
-      const col = function(name) { return collection(db, name); };
-      // Real-time listeners for each collection
-      onSnapshot(col('traneem'), function(snap) {
+      // Real-time listeners for each collection (Firebase compat / v8 API)
+      db.collection('traneem').onSnapshot(function(snap) {
         appData.traneem.ar = []; appData.traneem.en = [];
         snap.forEach(function(d) {
           var data = d.data();
@@ -241,7 +240,7 @@
         syncLocalFromState('traneem');
         renderTraneemList(); updateStats();
       });
-      onSnapshot(col('bible'), function(snap) {
+      db.collection('bible').onSnapshot(function(snap) {
         appData.bible.ar = []; appData.bible.en = [];
         snap.forEach(function(d) {
           var data = d.data();
@@ -250,7 +249,7 @@
         });
         renderBibleList(); updateStats();
       });
-      onSnapshot(col('agpeya'), function(snap) {
+      db.collection('agpeya').onSnapshot(function(snap) {
         appData.agpeya.ar = []; appData.agpeya.en = [];
         snap.forEach(function(d) {
           var data = d.data();
@@ -259,7 +258,7 @@
         });
         renderAgpeyaList(); updateStats();
       });
-      onSnapshot(col('liturgy'), function(snap) {
+      db.collection('liturgy').onSnapshot(function(snap) {
         appData.liturgy.ar = []; appData.liturgy.en = [];
         snap.forEach(function(d) {
           var data = d.data();
@@ -268,12 +267,12 @@
         });
         renderLiturgyList(); updateStats();
       });
-      onSnapshot(col('readings'), function(snap) {
+      db.collection('readings').onSnapshot(function(snap) {
         appData.readings = [];
         snap.forEach(function(d) { appData.readings.push(d.data()); });
         renderReadingsList(); updateStats();
       });
-      onSnapshot(doc(db, 'settings', 'design'), function(snap) {
+      db.doc('settings/design').onSnapshot(function(snap) {
         if (snap.exists()) appData.design = snap.data();
         renderDesignForm();
       });
@@ -300,7 +299,7 @@
   async function saveToFirebase(collectionName, docId, data) {
     if (!db) { saveLocal(); return; }
     try {
-      await setDoc(doc(db, collectionName, docId), data);
+      await db.collection(collectionName).doc(docId).set(data);
     } catch (e) {
       saveLocal();
       showToast('Offline save');
@@ -310,7 +309,7 @@
   async function deleteFromFirebase(collectionName, docId) {
     if (!db) return;
     try {
-      await deleteDoc(doc(db, collectionName, docId));
+      await db.collection(collectionName).doc(docId).delete();
     } catch (e) {}
   }
 
