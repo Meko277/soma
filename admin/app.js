@@ -18,7 +18,7 @@
     liturgy: { ar: [], en: [] },
     readings: [],
     design: {
-      nameEn: 'Coptic Companion', nameAr: 'الرفيق القبطي',
+      nameEn: 'Coptic Companion', nameAr: 'Ã˜Â§Ã™â€žÃ˜Â±Ã™ÂÃ™Å Ã™â€š Ã˜Â§Ã™â€žÃ™â€šÃ˜Â¨Ã˜Â·Ã™Å ',
       developer: '', version: '1.0.0', descEn: '', descAr: '',
       colors: {
         primary: '#8B2332', secondary: '#D4AF37',
@@ -61,34 +61,34 @@
       invalidJson: 'Invalid JSON', idRequired: 'ID required',
       confirmReset: 'Reset all data?', stanzas: 'stanzas', chapters: 'chapters',
       syncing: 'Syncing...', online: 'Online', offline: 'Offline',
-      switchLang: 'عربي'
+      switchLang: 'Ã˜Â¹Ã˜Â±Ã˜Â¨Ã™Å '
     },
     ar: {
-      appTitle: 'الرفيق القبطي', appSubtitle: 'لوحة الإدارة',
-      dashboard: 'الرئيسية', importExport: 'استيراد / تصدير',
-      traneem: 'الترانيم', bible: 'الكتاب المقدس', agpeya: 'الأجبية',
-      liturgy: 'القداس', readings: 'القراءات', themeDesign: 'المظهر',
-      preview: 'معاينة', settings: 'الإعدادات',
-      overview: 'نظرة عامة على المحتوى.',
-      traneemHymns: 'ترانيم', bibleBooks: 'أسفار',
-      agpeyaPrayers: 'صلوات', liturgyParts: 'أجزاء القداس',
-      copticReadings: 'قراءات', themes: 'مظاهر',
-      howToUse: 'كيفية الاستخدام', dataSource: 'مصدر البيانات',
-      noData: 'لا توجد بيانات', dataLoaded: 'تم التحميل!',
-      help1: 'استيراد: ارفع ملفات.',
-      help2: 'تعديل: تصفح الأقسام.',
-      help3: 'معاينة: شاهد المحتوى.',
-      help4: 'مظهر: خصص الإعدادات.',
-      help5: 'تصدير: تحميل ZIP.',
-      noDataFound: 'لا توجد بيانات.',
-      editHymn: 'تعديل ترنيمة', editBible: 'تعديل سفر', editPrayer: 'تعديل صلاة',
-      editLiturgy: 'تعديل قداس', editReading: 'تعديل قراءة',
-      jsonData: 'بيانات JSON', livePreview: 'معاينة مباشرة',
-      cancel: 'إلغاء', deleteBtn: 'حذف', saveBtn: 'حفظ',
-      saved: 'تم الحفظ!', deleted: 'تم الحذف!', imported: 'تم الاستيراد!',
-      invalidJson: 'JSON غير صالح', idRequired: 'المعرف مطلوب',
-      confirmReset: 'إعادة تعيين جميع البيانات؟', stanzas: 'مقاطع', chapters: 'أصحاحات',
-      syncing: 'جاري المزامنة...', online: 'متصل', offline: 'غير متصل',
+      appTitle: 'Ã˜Â§Ã™â€žÃ˜Â±Ã™ÂÃ™Å Ã™â€š Ã˜Â§Ã™â€žÃ™â€šÃ˜Â¨Ã˜Â·Ã™Å ', appSubtitle: 'Ã™â€žÃ™Ë†Ã˜Â­Ã˜Â© Ã˜Â§Ã™â€žÃ˜Â¥Ã˜Â¯Ã˜Â§Ã˜Â±Ã˜Â©',
+      dashboard: 'Ã˜Â§Ã™â€žÃ˜Â±Ã˜Â¦Ã™Å Ã˜Â³Ã™Å Ã˜Â©', importExport: 'Ã˜Â§Ã˜Â³Ã˜ÂªÃ™Å Ã˜Â±Ã˜Â§Ã˜Â¯ / Ã˜ÂªÃ˜ÂµÃ˜Â¯Ã™Å Ã˜Â±',
+      traneem: 'Ã˜Â§Ã™â€žÃ˜ÂªÃ˜Â±Ã˜Â§Ã™â€ Ã™Å Ã™â€¦', bible: 'Ã˜Â§Ã™â€žÃ™Æ’Ã˜ÂªÃ˜Â§Ã˜Â¨ Ã˜Â§Ã™â€žÃ™â€¦Ã™â€šÃ˜Â¯Ã˜Â³', agpeya: 'Ã˜Â§Ã™â€žÃ˜Â£Ã˜Â¬Ã˜Â¨Ã™Å Ã˜Â©',
+      liturgy: 'Ã˜Â§Ã™â€žÃ™â€šÃ˜Â¯Ã˜Â§Ã˜Â³', readings: 'Ã˜Â§Ã™â€žÃ™â€šÃ˜Â±Ã˜Â§Ã˜Â¡Ã˜Â§Ã˜Âª', themeDesign: 'Ã˜Â§Ã™â€žÃ™â€¦Ã˜Â¸Ã™â€¡Ã˜Â±',
+      preview: 'Ã™â€¦Ã˜Â¹Ã˜Â§Ã™Å Ã™â€ Ã˜Â©', settings: 'Ã˜Â§Ã™â€žÃ˜Â¥Ã˜Â¹Ã˜Â¯Ã˜Â§Ã˜Â¯Ã˜Â§Ã˜Âª',
+      overview: 'Ã™â€ Ã˜Â¸Ã˜Â±Ã˜Â© Ã˜Â¹Ã˜Â§Ã™â€¦Ã˜Â© Ã˜Â¹Ã™â€žÃ™â€° Ã˜Â§Ã™â€žÃ™â€¦Ã˜Â­Ã˜ÂªÃ™Ë†Ã™â€°.',
+      traneemHymns: 'Ã˜ÂªÃ˜Â±Ã˜Â§Ã™â€ Ã™Å Ã™â€¦', bibleBooks: 'Ã˜Â£Ã˜Â³Ã™ÂÃ˜Â§Ã˜Â±',
+      agpeyaPrayers: 'Ã˜ÂµÃ™â€žÃ™Ë†Ã˜Â§Ã˜Âª', liturgyParts: 'Ã˜Â£Ã˜Â¬Ã˜Â²Ã˜Â§Ã˜Â¡ Ã˜Â§Ã™â€žÃ™â€šÃ˜Â¯Ã˜Â§Ã˜Â³',
+      copticReadings: 'Ã™â€šÃ˜Â±Ã˜Â§Ã˜Â¡Ã˜Â§Ã˜Âª', themes: 'Ã™â€¦Ã˜Â¸Ã˜Â§Ã™â€¡Ã˜Â±',
+      howToUse: 'Ã™Æ’Ã™Å Ã™ÂÃ™Å Ã˜Â© Ã˜Â§Ã™â€žÃ˜Â§Ã˜Â³Ã˜ÂªÃ˜Â®Ã˜Â¯Ã˜Â§Ã™â€¦', dataSource: 'Ã™â€¦Ã˜ÂµÃ˜Â¯Ã˜Â± Ã˜Â§Ã™â€žÃ˜Â¨Ã™Å Ã˜Â§Ã™â€ Ã˜Â§Ã˜Âª',
+      noData: 'Ã™â€žÃ˜Â§ Ã˜ÂªÃ™Ë†Ã˜Â¬Ã˜Â¯ Ã˜Â¨Ã™Å Ã˜Â§Ã™â€ Ã˜Â§Ã˜Âª', dataLoaded: 'Ã˜ÂªÃ™â€¦ Ã˜Â§Ã™â€žÃ˜ÂªÃ˜Â­Ã™â€¦Ã™Å Ã™â€ž!',
+      help1: 'Ã˜Â§Ã˜Â³Ã˜ÂªÃ™Å Ã˜Â±Ã˜Â§Ã˜Â¯: Ã˜Â§Ã˜Â±Ã™ÂÃ˜Â¹ Ã™â€¦Ã™â€žÃ™ÂÃ˜Â§Ã˜Âª.',
+      help2: 'Ã˜ÂªÃ˜Â¹Ã˜Â¯Ã™Å Ã™â€ž: Ã˜ÂªÃ˜ÂµÃ™ÂÃ˜Â­ Ã˜Â§Ã™â€žÃ˜Â£Ã™â€šÃ˜Â³Ã˜Â§Ã™â€¦.',
+      help3: 'Ã™â€¦Ã˜Â¹Ã˜Â§Ã™Å Ã™â€ Ã˜Â©: Ã˜Â´Ã˜Â§Ã™â€¡Ã˜Â¯ Ã˜Â§Ã™â€žÃ™â€¦Ã˜Â­Ã˜ÂªÃ™Ë†Ã™â€°.',
+      help4: 'Ã™â€¦Ã˜Â¸Ã™â€¡Ã˜Â±: Ã˜Â®Ã˜ÂµÃ˜Âµ Ã˜Â§Ã™â€žÃ˜Â¥Ã˜Â¹Ã˜Â¯Ã˜Â§Ã˜Â¯Ã˜Â§Ã˜Âª.',
+      help5: 'Ã˜ÂªÃ˜ÂµÃ˜Â¯Ã™Å Ã˜Â±: Ã˜ÂªÃ˜Â­Ã™â€¦Ã™Å Ã™â€ž ZIP.',
+      noDataFound: 'Ã™â€žÃ˜Â§ Ã˜ÂªÃ™Ë†Ã˜Â¬Ã˜Â¯ Ã˜Â¨Ã™Å Ã˜Â§Ã™â€ Ã˜Â§Ã˜Âª.',
+      editHymn: 'Ã˜ÂªÃ˜Â¹Ã˜Â¯Ã™Å Ã™â€ž Ã˜ÂªÃ˜Â±Ã™â€ Ã™Å Ã™â€¦Ã˜Â©', editBible: 'Ã˜ÂªÃ˜Â¹Ã˜Â¯Ã™Å Ã™â€ž Ã˜Â³Ã™ÂÃ˜Â±', editPrayer: 'Ã˜ÂªÃ˜Â¹Ã˜Â¯Ã™Å Ã™â€ž Ã˜ÂµÃ™â€žÃ˜Â§Ã˜Â©',
+      editLiturgy: 'Ã˜ÂªÃ˜Â¹Ã˜Â¯Ã™Å Ã™â€ž Ã™â€šÃ˜Â¯Ã˜Â§Ã˜Â³', editReading: 'Ã˜ÂªÃ˜Â¹Ã˜Â¯Ã™Å Ã™â€ž Ã™â€šÃ˜Â±Ã˜Â§Ã˜Â¡Ã˜Â©',
+      jsonData: 'Ã˜Â¨Ã™Å Ã˜Â§Ã™â€ Ã˜Â§Ã˜Âª JSON', livePreview: 'Ã™â€¦Ã˜Â¹Ã˜Â§Ã™Å Ã™â€ Ã˜Â© Ã™â€¦Ã˜Â¨Ã˜Â§Ã˜Â´Ã˜Â±Ã˜Â©',
+      cancel: 'Ã˜Â¥Ã™â€žÃ˜ÂºÃ˜Â§Ã˜Â¡', deleteBtn: 'Ã˜Â­Ã˜Â°Ã™Â', saveBtn: 'Ã˜Â­Ã™ÂÃ˜Â¸',
+      saved: 'Ã˜ÂªÃ™â€¦ Ã˜Â§Ã™â€žÃ˜Â­Ã™ÂÃ˜Â¸!', deleted: 'Ã˜ÂªÃ™â€¦ Ã˜Â§Ã™â€žÃ˜Â­Ã˜Â°Ã™Â!', imported: 'Ã˜ÂªÃ™â€¦ Ã˜Â§Ã™â€žÃ˜Â§Ã˜Â³Ã˜ÂªÃ™Å Ã˜Â±Ã˜Â§Ã˜Â¯!',
+      invalidJson: 'JSON Ã˜ÂºÃ™Å Ã˜Â± Ã˜ÂµÃ˜Â§Ã™â€žÃ˜Â­', idRequired: 'Ã˜Â§Ã™â€žÃ™â€¦Ã˜Â¹Ã˜Â±Ã™Â Ã™â€¦Ã˜Â·Ã™â€žÃ™Ë†Ã˜Â¨',
+      confirmReset: 'Ã˜Â¥Ã˜Â¹Ã˜Â§Ã˜Â¯Ã˜Â© Ã˜ÂªÃ˜Â¹Ã™Å Ã™Å Ã™â€  Ã˜Â¬Ã™â€¦Ã™Å Ã˜Â¹ Ã˜Â§Ã™â€žÃ˜Â¨Ã™Å Ã˜Â§Ã™â€ Ã˜Â§Ã˜ÂªÃ˜Å¸', stanzas: 'Ã™â€¦Ã™â€šÃ˜Â§Ã˜Â·Ã˜Â¹', chapters: 'Ã˜Â£Ã˜ÂµÃ˜Â­Ã˜Â§Ã˜Â­Ã˜Â§Ã˜Âª',
+      syncing: 'Ã˜Â¬Ã˜Â§Ã˜Â±Ã™Å  Ã˜Â§Ã™â€žÃ™â€¦Ã˜Â²Ã˜Â§Ã™â€¦Ã™â€ Ã˜Â©...', online: 'Ã™â€¦Ã˜ÂªÃ˜ÂµÃ™â€ž', offline: 'Ã˜ÂºÃ™Å Ã˜Â± Ã™â€¦Ã˜ÂªÃ˜ÂµÃ™â€ž',
       switchLang: 'English'
     }
   };
@@ -151,10 +151,10 @@
     var el = document.getElementById('connectionStatus');
     if (!el) return;
     if (navigator.onLine) {
-      el.textContent = '🟢 ' + t('online');
+      el.textContent = 'Ã°Å¸Å¸Â¢ ' + t('online');
       el.className = 'status-online';
     } else {
-      el.textContent = '🔴 ' + t('offline');
+      el.textContent = 'Ã°Å¸â€Â´ ' + t('offline');
       el.className = 'status-offline';
     }
   }
@@ -398,79 +398,99 @@
     s('bg-light-url', d.bgLightUrl || ''); s('bg-dark-url', d.bgDarkUrl || '');
   }
   // ============================================================
-  // EDIT / OPEN MODAL
+  // EDIT / OPEN MODAL (VISUAL FORM EDITORS)
   // ============================================================
-  window.editTraneem = function(lang, id) {
+  function fv(id) { var e = document.getElementById(id); return e ? e.value : ''; }
+  function fs(id, v) { var e = document.getElementById(id); if (e) e.value = (v == null ? '' : v); }
+  function esc(s) { return String(s == null ? '' : s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;'); }
+
+  var editHymnBuffer = { stanzas: [] };
+  var editBibleBuffer = { chapters: [], chapterIdx: 0 };
+  var editAgpeyaBuffer = { sections: [] };
+  var editLiturgyBuffer = { sections: [] };
+  var editReadingData = null;
+
+  var editOriginal = null;
+  var editAgpeyaSectionKeys = [];
+  function deepClone(o) { return o ? JSON.parse(JSON.stringify(o)) : {}; }
+  function txtLines(s) { return String(s == null ? '' : s).split('\n').map(function(x) { return x.replace(/\r$/, ''); }).filter(function(x) { return x.trim() !== ''; }); }
+
+  // ================== HYMN EDITOR ================
+  function renderHymnPreview(data) {
+    var p = document.getElementById('hymn-preview');
+    if (!p) return;
+    data = data || {};
+    var stanzas = data.stanzas || editHymnBuffer.stanzas || [];
+    var h = '<h3 style="color:var(--coptic-burgundy);margin-bottom:12px">' + esc(data.title || data.arabicTitle || '') + '</h3>';
+    h += stanzas.map(function(s) {
+      return '<div class="preview-stanza"><div class="stanza-title">' + esc(s.title || '') + '</div>' + (s.lines || []).map(function(l) { return '<div class="stanza-line">' + esc(l) + '</div>'; }).join('') + '</div>';
+    }).join('');
+    p.innerHTML = h;
+  }
+  function renderHymnStanzas(stanzas) {
+    editHymnBuffer.stanzas = stanzas || [];
+    var wrap = document.getElementById('hymn-stanzas');
+    if (!wrap) return;
+    if (!editHymnBuffer.stanzas.length) { wrap.innerHTML = '<p class="empty-state">No stanzas</p>'; return; }
+    var html = editHymnBuffer.stanzas.map(function(s, i) {
+      var lines = (s.lines || []).map(function(l, j) {
+        return '<div class="editor-line-row"><input type="text" class="form-control" value="' + esc(l) + '" oninput="editHymnLine(' + i + ',' + j + ',this.value)"><button type="button" class="btn btn-danger btn-sm" onclick="removeHymnLine(' + i + ',' + j + ')">&times;</button></div>';
+      }).join('');
+      return '<div class="editor-block"><div class="editor-block-head"><input type="text" class="form-control editor-title-input" placeholder="Stanza title" value="' + esc(s.title || '') + '" oninput="editHymnStanzaTitle(' + i + ',this.value)"><button type="button" class="btn btn-danger btn-sm" onclick="removeHymnStanza(' + i + ')">&times; Stanza</button></div><div class="editor-lines">' + lines + '</div><button type="button" class="btn btn-secondary btn-sm" onclick="addHymnLine(' + i + ')">+ Line</button></div>';
+    }).join('');
+    wrap.innerHTML = html;
+  }
+  window.addHymnStanza = function() { editHymnBuffer.stanzas.push({ title: '', lines: [''] }); renderHymnStanzas(editHymnBuffer.stanzas); };
+  window.removeHymnStanza = function(i) { editHymnBuffer.stanzas.splice(i, 1); renderHymnStanzas(editHymnBuffer.stanzas); renderHymnPreview(); };
+  window.editHymnStanzaTitle = function(i, v) { if (editHymnBuffer.stanzas[i]) editHymnBuffer.stanzas[i].title = v; renderHymnPreview(); };
+  window.addHymnLine = function(i) { editHymnBuffer.stanzas[i].lines.push(''); renderHymnStanzas(editHymnBuffer.stanzas); };
+  window.removeHymnLine = function(i, j) { editHymnBuffer.stanzas[i].lines.splice(j, 1); renderHymnStanzas(editHymnBuffer.stanzas); };
+  window.editHymnLine = function(i, j, v) { if (editHymnBuffer.stanzas[i]) editHymnBuffer.stanzas[i].lines[j] = v; renderHymnPreview(); };  window.editTraneem = function(lang, id) {
     var list = lang === 'ar' ? appData.traneem.ar : appData.traneem.en;
     var item = list.find(function(h) { return h.id === id; });
     if (!item) return;
     openModal('modal-hymn');
     document.getElementById('hymn-modal-title').textContent = t('editHymn') + ': ' + (item.title || item.id);
-    document.getElementById('hymn-json').value = JSON.stringify(item, null, 2);
-    document.getElementById('hymn-json').dataset.lang = lang;
-    document.getElementById('hymn-json').dataset.id = id;
+    fs('hymn-lang', lang); fs('hymn-orig-id', id);
+    editOriginal = item;
+    fs('hymn-id-field', item.id || '');
+    fs('hymn-title-field', item.title || item.titleEn || '');
+    fs('hymn-arabic-title-field', item.arabicTitle || item.titleAr || '');
+    fs('hymn-coptic-title-field', item.copticTitle || item.titleCo || '');
+    fs('hymn-category-field', item.category || '');
+    fs('hymn-categoryar-field', item.categoryAr || '');
+    renderHymnStanzas(item.stanzas || []);
+    renderHymnPreview(item);
     document.getElementById('deleteHymnBtn').style.display = 'inline-flex';
   };
-  window.editBible = function(lang, id) {
-    var list = lang === 'ar' ? appData.bible.ar : appData.bible.en;
-    var item = list.find(function(b) { return b.bookId === id; });
-    if (!item) return;
-    openModal('modal-bible');
-    document.getElementById('bible-modal-title').textContent = t('editBible') + ': ' + (item.bookName || item.bookId);
-    document.getElementById('bible-json').value = JSON.stringify(item, null, 2);
-    document.getElementById('bible-json').dataset.lang = lang;
-    document.getElementById('bible-json').dataset.id = id;
-    document.getElementById('deleteBibleBtn').style.display = 'inline-flex';
+  window.newTraneem = function() {
+    openModal('modal-hymn');
+    document.getElementById('hymn-modal-title').textContent = t('editHymn');
+    fs('hymn-lang', 'ar'); fs('hymn-orig-id', '');
+    editOriginal = null;
+    fs('hymn-id-field', ''); fs('hymn-title-field', ''); fs('hymn-arabic-title-field', '');
+    fs('hymn-coptic-title-field', ''); fs('hymn-category-field', ''); fs('hymn-categoryar-field', '');
+    renderHymnStanzas([{ title: '', lines: [''] }]);
+    renderHymnPreview({ title: '' });
+    document.getElementById('deleteHymnBtn').style.display = 'none';
   };
-  window.editAgpeya = function(lang, id) {
-    var list = lang === 'ar' ? appData.agpeya.ar : appData.agpeya.en;
-    var item = list.find(function(p) { return p.id === id; });
-    if (!item) return;
-    openModal('modal-agpeya');
-    document.getElementById('agpeya-modal-title').textContent = t('editPrayer') + ': ' + (item.name || item.englishName || item.id);
-    document.getElementById('agpeya-json').value = JSON.stringify(item, null, 2);
-    document.getElementById('agpeya-json').dataset.lang = lang;
-    document.getElementById('agpeya-json').dataset.id = id;
-    document.getElementById('deleteAgpeyaBtn').style.display = 'inline-flex';
-  };
-  window.editLiturgy = function(lang, id) {
-    var list = lang === 'ar' ? appData.liturgy.ar : appData.liturgy.en;
-    var item = list.find(function(l) { return (l.id || l.name) === id; });
-    if (!item) return;
-    openModal('modal-liturgy');
-    document.getElementById('liturgy-modal-title').textContent = t('editLiturgy') + ': ' + (item.name || item.id);
-    document.getElementById('liturgy-json').value = JSON.stringify(item, null, 2);
-    document.getElementById('liturgy-json').dataset.lang = lang;
-    document.getElementById('liturgy-json').dataset.id = id;
-    document.getElementById('deleteLiturgyBtn').style.display = 'inline-flex';
-  };
-  window.editReading = function(idx) {
-    var item = appData.readings[idx];
-    if (!item) return;
-    openModal('modal-reading');
-    document.getElementById('reading-modal-title').textContent = t('editReading') + ': ' + (item.title || idx);
-    document.getElementById('reading-json').value = JSON.stringify(item, null, 2);
-    document.getElementById('reading-json').dataset.idx = idx;
-    document.getElementById('deleteReadingBtn').style.display = 'inline-flex';
-  };
-  // ============================================================
-  // SAVE / DELETE (WRITE TO FIREBASE)
-  // ============================================================
   async function saveHymn() {
-    var json = document.getElementById('hymn-json').value;
-    var lang = document.getElementById('hymn-json').dataset.lang;
-    try {
-      var data = JSON.parse(json);
-      if (!data.id) { showToast(t('idRequired')); return; }
-      data.lang = lang;
-      data.updatedAt = new Date().toISOString();
-      await saveToFirebase('traneem', data.id + '_' + lang, data);
-      saveLocal(); closeModal('modal-hymn'); showToast(t('saved'));
-    } catch(e) { showToast(t('invalidJson')); }
+    var lang = fv('hymn-lang');
+    var id = (fv('hymn-id-field') || '').trim();
+    if (!id) { showToast(t('idRequired')); return; }
+    var data = editOriginal || {};
+    data.id = id; data.title = fv('hymn-title-field'); data.lang = lang;
+    if (fv('hymn-arabic-title-field')) data.arabicTitle = fv('hymn-arabic-title-field'); else delete data.arabicTitle;
+    if (fv('hymn-coptic-title-field')) data.copticTitle = fv('hymn-coptic-title-field'); else delete data.copticTitle;
+    if (fv('hymn-category-field')) data.category = fv('hymn-category-field'); else delete data.category;
+    if (fv('hymn-categoryar-field')) data.categoryAr = fv('hymn-categoryar-field'); else delete data.categoryAr;
+    data.stanzas = editHymnBuffer.stanzas || [];
+    data.updatedAt = new Date().toISOString();
+    await saveToFirebase('traneem', id + '_' + lang, data);
+    saveLocal(); closeModal('modal-hymn'); showToast(t('saved'));
   }
   async function deleteHymn() {
-    var lang = document.getElementById('hymn-json').dataset.lang;
-    var id = document.getElementById('hymn-json').dataset.id;
+    var lang = fv('hymn-lang'); var id = fv('hymn-orig-id');
     if (!id) return;
     var list = lang === 'ar' ? appData.traneem.ar : appData.traneem.en;
     var idx = list.findIndex(function(h) { return h.id === id; });
@@ -478,20 +498,99 @@
     await deleteFromFirebase('traneem', id + '_' + lang);
     saveLocal(); closeModal('modal-hymn'); renderTraneemList(); showToast(t('deleted'));
   }
+  // ================= BIBLE EDITOR =================
+  function renderBiblePreview(data) {
+    var p = document.getElementById('bible-preview'); if (!p) return;
+    var name = (data && data.bookName) || fv('bible-book-name') || 'Bible';
+    var ch = editBibleBuffer.chapters[editBibleBuffer.chapterIdx] || { verses: [] };
+    var verses = (ch.verses || []);
+    var h = '<h3 style="color:var(--coptic-burgundy);margin-bottom:8px">' + esc(name) + '</h3>';
+    h += '<p style="color:#888;font-size:0.85rem">Chapter ' + (editBibleBuffer.chapterIdx + 1) + ' of ' + editBibleBuffer.chapters.length + ' &middot; ' + verses.length + ' verses</p>';
+    h += verses.slice(0, 5).map(function(v, i) {
+      var text = (typeof v === 'string') ? v : (v.text || '');
+      return '<div style="margin-bottom:6px"><span style="color:var(--coptic-gold);font-weight:600;margin-right:6px">' + (i + 1) + '.</span>' + esc(text) + '</div>';
+    }).join('');
+    if (!verses.length) h += '<p class="empty-state">No verses yet</p>';
+    p.innerHTML = h;
+  }
+  function renderBibleChapters(chapters) {
+    editBibleBuffer.chapters = chapters || [];
+    editBibleBuffer.chapterIdx = 0;
+    var sel = document.getElementById('bible-chapter-select');
+    if (!sel) return;
+    sel.innerHTML = editBibleBuffer.chapters.map(function(_, i) { return '<option value="' + i + '">Chapter ' + (i + 1) + '</option>'; }).join('');
+    showBibleChapter(0);
+  }
+  function showBibleChapter(idx) {
+    editBibleBuffer.chapterIdx = idx;
+    var ta = document.getElementById('bible-verses');
+    var ch = editBibleBuffer.chapters[idx] || { verses: [] };
+    var text = (ch.verses || []).map(function(v) { return (typeof v === 'string') ? v : v.text; }).join('\n');
+    if (ta) ta.value = text;
+    renderBiblePreview();
+  }
+  function collectBibleChapter() {
+    var ta = document.getElementById('bible-verses'); if (!ta) return;
+    var lines = ta.value.split('\n');
+    var verses = [];
+    for (var k = 0; k < lines.length; k++) {
+      var txt = lines[k].replace(/\r$/, '');
+      if (txt.trim() !== '') verses.push({ number: k + 1, text: txt });
+    }
+    editBibleBuffer.chapters[editBibleBuffer.chapterIdx] = { chapterNumber: editBibleBuffer.chapterIdx + 1, verses: verses };
+  }
+  window.selectBibleChapter = function() {
+    var sel = document.getElementById('bible-chapter-select'); if (!sel) return;
+    collectBibleChapter();
+    showBibleChapter(parseInt(sel.value) || 0);
+  };
+  window.addBibleChapter = function() {
+    collectBibleChapter();
+    editBibleBuffer.chapters.push({ chapterNumber: editBibleBuffer.chapters.length + 1, verses: [] });
+    renderBibleChapters(editBibleBuffer.chapters);
+    var sel = document.getElementById('bible-chapter-select');
+    if (sel) { sel.value = editBibleBuffer.chapters.length - 1; showBibleChapter(parseInt(sel.value)); }
+  };
+  window.removeBibleChapter = function() {
+    if (editBibleBuffer.chapters.length <= 1) return;
+    collectBibleChapter();
+    editBibleBuffer.chapters.splice(editBibleBuffer.chapterIdx, 1);
+    renderBibleChapters(editBibleBuffer.chapters);
+  };
+  window.editBible = function(lang, id) {
+    var list = lang === 'ar' ? appData.bible.ar : appData.bible.en;
+    var item = list.find(function(b) { return b.bookId === id; });
+    if (!item) return;
+    openModal('modal-bible');
+    document.getElementById('bible-modal-title').textContent = t('editBible') + ': ' + (item.bookName || item.bookId);
+    fs('bible-lang', lang); fs('bible-orig-id', id);
+    editOriginal = item;
+    fs('bible-book-id', item.bookId || ''); fs('bible-book-name', item.bookName || '');
+    renderBibleChapters(item.chapters || []);
+    document.getElementById('deleteBibleBtn').style.display = 'inline-flex';
+  };
+  window.newBible = function() {
+    openModal('modal-bible');
+    document.getElementById('bible-modal-title').textContent = t('editBible');
+    editOriginal = null;
+    fs('bible-lang', 'ar'); fs('bible-orig-id', '');
+    fs('bible-book-id', ''); fs('bible-book-name', '');
+    renderBibleChapters([{ chapterNumber: 1, verses: [] }]);
+    document.getElementById('deleteBibleBtn').style.display = 'none';
+  };
   async function saveBible() {
-    var json = document.getElementById('bible-json').value;
-    var lang = document.getElementById('bible-json').dataset.lang;
-    try {
-      var data = JSON.parse(json);
-      if (!data.bookId) { showToast(t('idRequired')); return; }
-      data.lang = lang; data.updatedAt = new Date().toISOString();
-      await saveToFirebase('bible', data.bookId + '_' + lang, data);
-      saveLocal(); closeModal('modal-bible'); showToast(t('saved'));
-    } catch(e) { showToast(t('invalidJson')); }
+    var lang = fv('bible-lang');
+    var id = (fv('bible-book-id') || '').trim();
+    if (!id) { showToast(t('idRequired')); return; }
+    collectBibleChapter();
+    var data = editOriginal || {};
+    data.bookId = id; data.bookName = fv('bible-book-name') || id; data.lang = lang; data.chapters = editBibleBuffer.chapters;
+    data.updatedAt = new Date().toISOString();
+    await saveToFirebase('bible', id + '_' + lang, data);
+    saveLocal(); closeModal('modal-bible'); showToast(t('saved'));
   }
   async function deleteBible() {
-    var lang = document.getElementById('bible-json').dataset.lang;
-    var id = document.getElementById('bible-json').dataset.id;
+    var lang = fv('bible-lang'); var id = fv('bible-orig-id');
     if (!id) return;
     var list = lang === 'ar' ? appData.bible.ar : appData.bible.en;
     var idx = list.findIndex(function(b) { return b.bookId === id; });
@@ -499,20 +598,91 @@
     await deleteFromFirebase('bible', id + '_' + lang);
     saveLocal(); closeModal('modal-bible'); renderBibleList(); showToast(t('deleted'));
   }
+  // ================= AGPEYA EDITOR =================
+  function renderAgpeyaPreview(data) {
+    var p = document.getElementById('agpeya-preview'); if (!p) return;
+    data = data || {};
+    var sections = editAgpeyaBuffer.sections || [];
+    var name = fv('agpeya-name') || data.name || data.englishName || 'Prayer';
+    var h = '<h3 style="color:var(--coptic-burgundy);margin-bottom:12px">' + esc(name) + '</h3>';
+    h += sections.map(function(s) {
+      return '<div class="preview-stanza"><div class="stanza-title">' + esc(s.title || s.key || '') + '</div>' + (s.content || []).map(function(l) { return '<div class="stanza-line">' + esc(l) + '</div>'; }).join('') + '</div>';
+    }).join('');
+    p.innerHTML = h;
+  }
+  function renderAgpeyaSections(sections) {
+    editAgpeyaBuffer.sections = sections || [];
+    var wrap = document.getElementById('agpeya-sections'); if (!wrap) return;
+    if (!editAgpeyaBuffer.sections.length) { wrap.innerHTML = '<p class="empty-state">No sections</p>'; return; }
+    wrap.innerHTML = editAgpeyaBuffer.sections.map(function(s, i) {
+      var lines = (s.content || []).map(function(l) { return esc(l); }).join('\n');
+      return '<div class="editor-block"><div class="editor-block-head"><span class="editor-key">' + esc(s.key || 'section') + '</span><input type="text" class="form-control editor-title-input" placeholder="Section title" value="' + esc(s.title || '') + '" oninput="editAgpeyaSectionTitle(' + i + ',this.value)"><button type="button" class="btn btn-danger btn-sm" onclick="removeAgpeyaSection(' + i + ')">&times;</button></div><textarea class="form-control editor-content" rows="3" placeholder="One paragraph per line" oninput="editAgpeyaSectionContent(' + i + ',this.value)">' + esc(lines) + '</textarea></div>';
+    }).join('');
+  }
+  window.addAgpeyaSection = function() { editAgpeyaBuffer.sections.push({ key: 'section', title: '', content: [''] }); renderAgpeyaSections(editAgpeyaBuffer.sections); renderAgpeyaPreview(); };
+  window.removeAgpeyaSection = function(i) { editAgpeyaBuffer.sections.splice(i, 1); renderAgpeyaSections(editAgpeyaBuffer.sections); renderAgpeyaPreview(); };
+  window.editAgpeyaSectionTitle = function(i, v) { if (editAgpeyaBuffer.sections[i]) editAgpeyaBuffer.sections[i].title = v; renderAgpeyaPreview(); };
+  window.editAgpeyaSectionContent = function(i, v) { if (editAgpeyaBuffer.sections[i]) editAgpeyaBuffer.sections[i].content = v.split('\n'); renderAgpeyaPreview(); };
+  window.editAgpeya = function(lang, id) {
+    var list = lang === 'ar' ? appData.agpeya.ar : appData.agpeya.en;
+    var item = list.find(function(p) { return p.id === id; });
+    if (!item) return;
+    openModal('modal-agpeya');
+    document.getElementById('agpeya-modal-title').textContent = t('editPrayer') + ': ' + (item.name || item.englishName || item.id);
+    fs('agpeya-lang', lang); fs('agpeya-orig-id', id);
+    editOriginal = item;
+    fs('agpeya-id', item.id || ''); fs('agpeya-name', item.name || '');
+    fs('agpeya-english-name', item.englishName || ''); fs('agpeya-traditional-time', item.traditionalTime || '');
+    fs('agpeya-introduction', item.introduction || '');
+    editAgpeyaSectionKeys = [];
+    var sections = [];
+    for (var k in item) {
+      var v = item[k];
+      if (k !== 'id' && v && typeof v === 'object' && !Array.isArray(v) && (v.content || v.title)) {
+        sections.push({ key: k, title: v.title || '', content: v.content || [], inline: !!v.inline });
+        editAgpeyaSectionKeys.push(k);
+      }
+    }
+    renderAgpeyaSections(sections);
+    renderAgpeyaPreview(item);
+    document.getElementById('deleteAgpeyaBtn').style.display = 'inline-flex';
+  };
+  window.newAgpeya = function() {
+    openModal('modal-agpeya');
+    document.getElementById('agpeya-modal-title').textContent = t('editPrayer');
+    editOriginal = null;
+    fs('agpeya-lang', 'ar'); fs('agpeya-orig-id', '');
+    fs('agpeya-id', ''); fs('agpeya-name', ''); fs('agpeya-english-name', ''); fs('agpeya-traditional-time', '');
+    fs('agpeya-introduction', '');
+    renderAgpeyaSections([{ key: 'opening', title: '', content: [''], inline: true }]);
+    renderAgpeyaPreview();
+    document.getElementById('deleteAgpeyaBtn').style.display = 'none';
+  };
   async function saveAgpeya() {
-    var json = document.getElementById('agpeya-json').value;
-    var lang = document.getElementById('agpeya-json').dataset.lang;
-    try {
-      var data = JSON.parse(json);
-      if (!data.id) { showToast(t('idRequired')); return; }
-      data.lang = lang; data.updatedAt = new Date().toISOString();
-      await saveToFirebase('agpeya', data.id + '_' + lang, data);
-      saveLocal(); closeModal('modal-agpeya'); showToast(t('saved'));
-    } catch(e) { showToast(t('invalidJson')); }
+    var lang = fv('agpeya-lang');
+    var id = (fv('agpeya-id') || '').trim();
+    if (!id) { showToast(t('idRequired')); return; }
+    var data = editOriginal || {};
+    data.id = id; data.name = fv('agpeya-name'); data.englishName = fv('agpeya-english-name'); data.lang = lang;
+    var intro = fv('agpeya-introduction'); if (intro) data.introduction = intro;
+    var ttime = fv('agpeya-traditional-time'); if (ttime) data.traditionalTime = ttime;
+    var i;
+    var currentKeys = [];
+    for (i = 0; i < editAgpeyaBuffer.sections.length; i++) {
+      var s = editAgpeyaBuffer.sections[i];
+      var sk = s.key || ('section' + i);
+      currentKeys.push(sk);
+      data[sk] = { title: s.title || '', content: s.content || [], inline: !!s.inline };
+    }
+    for (i = 0; i < editAgpeyaSectionKeys.length; i++) {
+      if (currentKeys.indexOf(editAgpeyaSectionKeys[i]) < 0) delete data[editAgpeyaSectionKeys[i]];
+    }
+    data.updatedAt = new Date().toISOString();
+    await saveToFirebase('agpeya', id + '_' + lang, data);
+    saveLocal(); closeModal('modal-agpeya'); showToast(t('saved'));
   }
   async function deleteAgpeya() {
-    var lang = document.getElementById('agpeya-json').dataset.lang;
-    var id = document.getElementById('agpeya-json').dataset.id;
+    var lang = fv('agpeya-lang'); var id = fv('agpeya-orig-id');
     if (!id) return;
     var list = lang === 'ar' ? appData.agpeya.ar : appData.agpeya.en;
     var idx = list.findIndex(function(p) { return p.id === id; });
@@ -520,20 +690,65 @@
     await deleteFromFirebase('agpeya', id + '_' + lang);
     saveLocal(); closeModal('modal-agpeya'); renderAgpeyaList(); showToast(t('deleted'));
   }
+  // ================= LITURGY EDITOR =================
+  function renderLiturgyPreview() {
+    var p = document.getElementById('liturgy-preview'); if (!p) return;
+    var name = fv('liturgy-name') || 'Liturgy';
+    var sections = editLiturgyBuffer.sections || [];
+    var h = '<h3 style="color:var(--coptic-burgundy);margin-bottom:12px">' + esc(name) + '</h3>';
+    h += sections.map(function(s) {
+      return '<div class="preview-stanza"><div class="stanza-title">' + esc(s.title || '') + '</div>' + (s.content || []).map(function(l) { return '<div class="stanza-line">' + esc(l) + '</div>'; }).join('') + '</div>';
+    }).join('');
+    p.innerHTML = h;
+  }
+  function renderLiturgySections(sections) {
+    editLiturgyBuffer.sections = sections || [];
+    var wrap = document.getElementById('liturgy-sections'); if (!wrap) return;
+    if (!editLiturgyBuffer.sections.length) { wrap.innerHTML = '<p class="empty-state">No sections</p>'; return; }
+    wrap.innerHTML = editLiturgyBuffer.sections.map(function(s, i) {
+      var lines = (s.content || []).map(function(l) { return esc(l); }).join('\n');
+      return '<div class="editor-block"><div class="editor-block-head"><input type="text" class="form-control editor-title-input" placeholder="Section title" value="' + esc(s.title || '') + '" oninput="editLiturgySectionTitle(' + i + ',this.value)"><button type="button" class="btn btn-danger btn-sm" onclick="removeLiturgySection(' + i + ')">&times;</button></div><textarea class="form-control editor-content" rows="3" placeholder="One paragraph per line" oninput="editLiturgySectionContent(' + i + ',this.value)">' + esc(lines) + '</textarea></div>';
+    }).join('');
+  }
+  window.addLiturgySection = function() { editLiturgyBuffer.sections.push({ title: '', content: [''] }); renderLiturgySections(editLiturgyBuffer.sections); renderLiturgyPreview(); };
+  window.removeLiturgySection = function(i) { editLiturgyBuffer.sections.splice(i, 1); renderLiturgySections(editLiturgyBuffer.sections); renderLiturgyPreview(); };
+  window.editLiturgySectionTitle = function(i, v) { if (editLiturgyBuffer.sections[i]) editLiturgyBuffer.sections[i].title = v; renderLiturgyPreview(); };
+  window.editLiturgySectionContent = function(i, v) { if (editLiturgyBuffer.sections[i]) editLiturgyBuffer.sections[i].content = v.split('\n'); renderLiturgyPreview(); };
+  window.editLiturgy = function(lang, id) {
+    var list = lang === 'ar' ? appData.liturgy.ar : appData.liturgy.en;
+    var item = list.find(function(l) { return (l.id || l.name) === id; });
+    if (!item) return;
+    openModal('modal-liturgy');
+    document.getElementById('liturgy-modal-title').textContent = t('editLiturgy') + ': ' + (item.name || item.id);
+    fs('liturgy-lang', lang); fs('liturgy-orig-id', id);
+    editOriginal = item;
+    fs('liturgy-id', item.id || ''); fs('liturgy-name', item.name || '');
+    renderLiturgySections(item.sections || []);
+    renderLiturgyPreview();
+    document.getElementById('deleteLiturgyBtn').style.display = 'inline-flex';
+  };
+  window.newLiturgy = function() {
+    openModal('modal-liturgy');
+    document.getElementById('liturgy-modal-title').textContent = t('editLiturgy');
+    editOriginal = null;
+    fs('liturgy-lang', 'ar'); fs('liturgy-orig-id', '');
+    fs('liturgy-id', ''); fs('liturgy-name', '');
+    renderLiturgySections([{ title: '', content: [''] }]);
+    renderLiturgyPreview();
+    document.getElementById('deleteLiturgyBtn').style.display = 'none';
+  };
   async function saveLiturgy() {
-    var json = document.getElementById('liturgy-json').value;
-    var lang = document.getElementById('liturgy-json').dataset.lang;
-    try {
-      var data = JSON.parse(json);
-      data.lang = lang; data.updatedAt = new Date().toISOString();
-      var docId = (data.id || data.name || 'liturgy') + '_' + lang;
-      await saveToFirebase('liturgy', docId, data);
-      saveLocal(); closeModal('modal-liturgy'); showToast(t('saved'));
-    } catch(e) { showToast(t('invalidJson')); }
+    var lang = fv('liturgy-lang');
+    var id = (fv('liturgy-id') || '').trim();
+    if (!id) { showToast(t('idRequired')); return; }
+    var data = editOriginal || {};
+    data.id = id; data.name = fv('liturgy-name') || id; data.lang = lang; data.sections = editLiturgyBuffer.sections || [];
+    data.updatedAt = new Date().toISOString();
+    await saveToFirebase('liturgy', id + '_' + lang, data);
+    saveLocal(); closeModal('modal-liturgy'); showToast(t('saved'));
   }
   async function deleteLiturgy() {
-    var lang = document.getElementById('liturgy-json').dataset.lang;
-    var id = document.getElementById('liturgy-json').dataset.id;
+    var lang = fv('liturgy-lang'); var id = fv('liturgy-orig-id');
     if (!id) return;
     var list = lang === 'ar' ? appData.liturgy.ar : appData.liturgy.en;
     var idx = list.findIndex(function(l) { return (l.id || l.name) === id; });
@@ -541,23 +756,57 @@
     await deleteFromFirebase('liturgy', id + '_' + lang);
     saveLocal(); closeModal('modal-liturgy'); renderLiturgyList(); showToast(t('deleted'));
   }
-  async function saveReading() {
-    var json = document.getElementById('reading-json').value;
-    try {
-      var data = JSON.parse(json);
-      data.updatedAt = new Date().toISOString();
-      var docId = data.id || data.type || 'reading';
-      await saveToFirebase('readings', docId, data);
-      saveLocal(); closeModal('modal-reading'); showToast(t('saved'));
-    } catch(e) { showToast(t('invalidJson')); }
+  // ================= READING EDITOR =================
+  function renderReadingPreview() {
+    var p = document.getElementById('reading-preview'); if (!p) return;
+    var title = fv('reading-title') || 'Reading';
+    var lines = (fv('reading-content') || '').split('\n').filter(function(x) { return x.trim() !== ''; });
+    var h = '<h3 style="color:var(--coptic-burgundy);margin-bottom:12px">' + esc(title) + '</h3>';
+    h += lines.map(function(l) { return '<div class="stanza-line">' + esc(l) + '</div>'; }).join('');
+    p.innerHTML = h;
   }
-  async function deleteReading() {
-    var idx = parseInt(document.getElementById('reading-json').dataset.idx);
+  window.editReading = function(idx) {
     var item = appData.readings[idx];
     if (!item) return;
-    var docId = item.id || item.type || 'reading';
-    if (!isNaN(idx) && idx >= 0 && idx < appData.readings.length) appData.readings.splice(idx, 1);
-    await deleteFromFirebase('readings', docId);
+    editReadingData = item;
+    editOriginal = item;
+    openModal('modal-reading');
+    document.getElementById('reading-modal-title').textContent = t('editReading') + ': ' + (item.title || idx);
+    fs('reading-id', item.id || ''); fs('reading-type', item.type || '');
+    fs('reading-title', item.title || '');
+    var arr = item.content || item.reads || item.verses || [];
+    var txt = arr.map(function(x) { return (typeof x === 'string') ? x : (x.text || ''); }).join('\n');
+    fs('reading-content', txt);
+    renderReadingPreview();
+    document.getElementById('deleteReadingBtn').style.display = 'inline-flex';
+  };
+  window.newReading = function() {
+    editReadingData = null;
+    editOriginal = null;
+    openModal('modal-reading');
+    document.getElementById('reading-modal-title').textContent = t('editReading');
+    fs('reading-id', ''); fs('reading-type', 'gospel'); fs('reading-title', ''); fs('reading-content', '');
+    renderReadingPreview();
+    document.getElementById('deleteReadingBtn').style.display = 'none';
+  };
+  async function saveReading() {
+    var id = (fv('reading-id') || '').trim();
+    if (!id) { showToast(t('idRequired')); return; }
+    var data = editReadingData || {};
+    data.id = id; data.type = fv('reading-type') || data.type || 'reading'; data.title = fv('reading-title') || id;
+    var lines = (fv('reading-content') || '').split('\n').map(function(x) { return x.replace(/\r$/, ''); }).filter(function(x) { return x.trim() !== ''; });
+    data.content = lines;
+    data.updatedAt = new Date().toISOString();
+    await saveToFirebase('readings', id, data);
+    saveLocal(); closeModal('modal-reading'); showToast(t('saved'));
+  }
+  async function deleteReading() {
+    var id = (fv('reading-id') || '').trim();
+    if (!id && editReadingData) id = editReadingData.id;
+    if (!id) return;
+    var idx = appData.readings.findIndex(function(r) { return r.id === id; });
+    if (idx >= 0) appData.readings.splice(idx, 1);
+    await deleteFromFirebase('readings', id);
     saveLocal(); closeModal('modal-reading'); renderReadingsList(); showToast(t('deleted'));
   }
   async function saveDesign() {
@@ -671,62 +920,35 @@
     bind(f('langToggle'), 'click', toggleLanguage);
 
     // Traneem buttons
-    bind(f('addHymnBtn'), 'click', function() {
-      var sample = { id: 'new_' + Date.now(), title: 'New Hymn', stanzas: [{ title: 'Stanza 1', lines: ['Line 1'] }] };
-      openModal('modal-hymn');
-      f('hymn-modal-title').textContent = t('editHymn');
-      f('hymn-json').value = JSON.stringify(sample, null, 2);
-      f('hymn-json').dataset.lang = 'ar'; f('hymn-json').dataset.id = sample.id;
-      f('deleteHymnBtn').style.display = 'none';
-    });
+    // Traneem buttons
+    bind(f('addHymnBtn'), 'click', window.newTraneem);
+
     bind(f('saveHymnBtn'), 'click', saveHymn);
     bind(f('deleteHymnBtn'), 'click', deleteHymn);
 
     // Bible buttons
-    bind(f('addBibleBookBtn'), 'click', function() {
-      var sample = { bookId: 'new_' + Date.now(), bookName: 'New Book', chapters: [{ chapterNumber: 1, verses: [{ number: 1, text: 'Verse 1' }] }] };
-      openModal('modal-bible');
-      f('bible-modal-title').textContent = t('editBible');
-      f('bible-json').value = JSON.stringify(sample, null, 2);
-      f('bible-json').dataset.lang = 'ar'; f('bible-json').dataset.id = sample.bookId;
-      f('deleteBibleBtn').style.display = 'none';
-    });
+    bind(f('addBibleBookBtn'), 'click', window.newBible);
+
     bind(f('saveBibleBtn'), 'click', saveBible);
     bind(f('deleteBibleBtn'), 'click', deleteBible);
 
     // Agpeya buttons
-    bind(f('addAgpeyaBtn'), 'click', function() {
-      var sample = { id: 'new_' + Date.now(), name: 'New Prayer', englishName: 'New Prayer', opening: { title: 'Introduction', content: ['Opening line'], inline: true } };
-      openModal('modal-agpeya');
-      f('agpeya-modal-title').textContent = t('editPrayer');
-      f('agpeya-json').value = JSON.stringify(sample, null, 2);
-      f('agpeya-json').dataset.lang = 'ar'; f('agpeya-json').dataset.id = sample.id;
-      f('deleteAgpeyaBtn').style.display = 'none';
-    });
+    bind(f('addAgpeyaBtn'), 'click', window.newAgpeya);
+
     bind(f('saveAgpeyaBtn'), 'click', saveAgpeya);
     bind(f('deleteAgpeyaBtn'), 'click', deleteAgpeya);
 
     // Liturgy buttons
-    bind(f('addLiturgyBtn'), 'click', function() {
-      var sample = { id: 'new_' + Date.now(), name: 'New Liturgy', sections: [{ title: 'Section 1', content: ['Content'] }] };
-      openModal('modal-liturgy');
-      f('liturgy-modal-title').textContent = t('editLiturgy');
-      f('liturgy-json').value = JSON.stringify(sample, null, 2);
-      f('liturgy-json').dataset.lang = 'ar'; f('liturgy-json').dataset.id = sample.id;
-      f('deleteLiturgyBtn').style.display = 'none';
-    });
+    bind(f('addLiturgyBtn'), 'click', window.newLiturgy);
+
     bind(f('saveLiturgyBtn'), 'click', saveLiturgy);
     bind(f('deleteLiturgyBtn'), 'click', deleteLiturgy);
 
     // Readings buttons
-    bind(f('addReadingBtn'), 'click', function() {
-      var sample = { id: 'new_' + Date.now(), type: 'gospel', title: 'New Reading' };
-      openModal('modal-reading');
-      f('reading-modal-title').textContent = t('editReading');
-      f('reading-json').value = JSON.stringify(sample, null, 2);
-      f('reading-json').dataset.idx = '-1';
-      f('deleteReadingBtn').style.display = 'none';
-    });
+    bind(f('addReadingBtn'), 'click', window.newReading);
+
+    bind(f('saveReadingBtn'), 'click', saveReading);
+    bind(f('deleteReadingBtn'), 'click', deleteReading);
     bind(f('saveReadingBtn'), 'click', saveReading);
     bind(f('deleteReadingBtn'), 'click', deleteReading);
 

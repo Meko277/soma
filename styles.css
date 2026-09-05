@@ -603,6 +603,32 @@ body::before {
 ::-webkit-scrollbar-thumb { background: linear-gradient(180deg, var(--coptic-gold), var(--coptic-burgundy)); border-radius: 4px; }
 ::-webkit-scrollbar-thumb:hover { background: var(--coptic-burgundy); }
 
+/* ===== VISUAL EDITOR BLOCKS ===== */
+.editor-block {
+  background: #fff;
+  border: 1px solid #E0D5C5;
+  border-left: 4px solid var(--coptic-gold);
+  border-radius: 10px;
+  padding: 14px;
+  margin-bottom: 14px;
+  box-shadow: 0 2px 8px rgba(139,35,50,0.06);
+}
+.editor-block-head { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; flex-wrap: wrap; }
+.editor-key {
+  font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;
+  color: #fff; background: linear-gradient(135deg, var(--coptic-burgundy), var(--coptic-gold));
+  border-radius: 20px; padding: 4px 12px; white-space: nowrap;
+}
+.editor-title-input { font-weight: 600; }
+.editor-content { font-family: 'Amiri', serif; line-height: 1.8; }
+.editor-lines { display: flex; flex-direction: column; gap: 6px; margin-bottom: 8px; }
+.editor-line-row { display: flex; gap: 6px; align-items: center; }
+.editor-line-row input { flex: 1; }
+.editor-label { font-weight: 600; color: var(--coptic-burgundy); margin-bottom: 10px; display: block; }
+.btn-sm { padding: 4px 10px; font-size: 0.75rem; border-radius: 8px; min-height: 26px; }
+.chapter-nav { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.chapter-nav select { flex: 1; min-width: 160px; }
+
 /* ===== RESPONSIVE ===== */
 @media (max-width: 768px) {
   .sidebar { width: 64px; }
