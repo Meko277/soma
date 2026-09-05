@@ -1,0 +1,5 @@
+﻿START folder=d:\bible\bible\assets\traneem\en collection=traneem lang=en files=3
+OK doxology.json
+OK lords-prayer.json
+OK trisagion.json
+DONE ok=3 fail=0 skipped=0 total=3

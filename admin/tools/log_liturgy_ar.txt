@@ -1,0 +1,5 @@
+﻿START folder=d:\bible\bible\assets\liturgy\ar collection=liturgy lang=ar files=3
+OK basil.json
+OK cyril.json
+OK gregory.json
+DONE ok=3 fail=0 skipped=0 total=3
