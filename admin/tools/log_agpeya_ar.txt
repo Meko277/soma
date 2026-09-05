@@ -1,0 +1,9 @@
+﻿START folder=d:\bible\bible\assets\agpeya\arabic collection=agpeya lang=ar files=7
+OK compline.json
+OK midnight.json
+OK morning.json
+OK ninth.json
+OK sixth.json
+OK third.json
+OK vespers.json
+DONE ok=7 fail=0 skipped=0 total=7

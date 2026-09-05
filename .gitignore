@@ -1,4 +1,4 @@
-# IDE
+﻿# IDE
 .idea/
 .vscode/
 
@@ -17,3 +17,5 @@ tools/
 !index.html
 !styles.css
 !app.js
+# Allow the Firestore upload tool (admin only)
+!admin/tools/
