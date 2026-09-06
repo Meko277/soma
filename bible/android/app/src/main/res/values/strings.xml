@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Soma</string>
+    <string name="widget_title">Soma • Coptic Calendar</string>
+    <string name="widget_logo_desc">Soma logo</string>
+    <string name="widget_calendar_title">Soma • Full Calendar</string>
+    <string name="widget_verse_title">آية اليوم • Verse of the Day</string>
+</resources>

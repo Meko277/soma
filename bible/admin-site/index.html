@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Soma — Bible Content Admin</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <header class="topbar"><div class="brand"><span class="cross">✠</span><div><strong>Soma</strong><small>Bible Content Admin</small></div></div><span class="status">Local editor</span></header>
+    <main class="layout">
+      <section class="intro"><p class="eyebrow">CONTENT MANAGEMENT</p><h1>Manage Bible chapters</h1><p>Add or replace offline chapters in English, Arabic, Coptic, or القبطية.</p></section>
+      <section class="panel">
+        <h2>Add chapter</h2>
+        <form id="chapter-form">
+          <div class="grid"><label>Book name<input id="book" required placeholder="John" /></label><label>Chapter number<input id="chapter" required type="number" min="1" placeholder="3" /></label></div>
+          <label>Content language<select id="language"><option value="english">English</option><option value="arabic">العربية</option><option value="coptic">Ⲙⲉⲧⲣⲉⲙⲛ̀ⲭⲏⲙⲓ</option><option value="copticInArabic">القبطية</option></select></label>
+          <label>Chapter reading<textarea id="reading" required rows="12" placeholder="Paste the approved chapter text here..."></textarea></label>
+          <div class="actions"><button type="submit">Save chapter</button><button class="secondary" type="button" id="export">Export JSON</button></div>
+        </form>
+      </section>
+      <section class="panel"><div class="list-heading"><h2>Saved chapters</h2><button class="secondary" type="button" id="clear">Clear local data</button></div><div id="empty">No chapters have been saved.</div><div id="chapter-list"></div></section>
+    </main>
+    <script type="module" src="app.js"></script>
+  </body>
+</html>

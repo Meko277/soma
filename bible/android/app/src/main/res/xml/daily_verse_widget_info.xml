@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- SOMA daily verse widget metadata -->
+<appwidget-provider xmlns:android="http://schemas.android.com/apk/res/android"
+    android:minWidth="180dp"
+    android:minHeight="85dp"
+    android:targetCellWidth="3"
+    android:targetCellHeight="2"
+    android:updatePeriodMillis="1800000"
+    android:initialLayout="@layout/daily_verse_widget"
+    android:previewLayout="@layout/daily_verse_widget"
+    android:resizeMode="horizontal|vertical"
+    android:description="@string/widget_verse_title"
+    android:widgetCategory="home_screen" />

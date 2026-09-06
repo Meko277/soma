@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- SOMA FULL CALENDAR home-screen widget -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/cal_root"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@drawable/widget_background"
+    android:paddingStart="10dp"
+    android:paddingEnd="10dp"
+    android:paddingTop="8dp"
+    android:paddingBottom="8dp">
+
+    <!-- Title row -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical">
+
+        <ImageView
+            android:layout_width="28dp"
+            android:layout_height="28dp"
+            android:src="@mipmap/ic_launcher"
+            android:contentDescription="@string/widget_logo_desc" />
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:layout_marginStart="8dp">
+
+            <TextView
+                android:id="@+id/cal_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="#D4AF37"
+                android:textSize="13sp"
+                android:textStyle="bold"
+                android:maxLines="1"
+                android:ellipsize="end" />
+
+            <TextView
+                android:id="@+id/cal_subtitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="#BFD0E8"
+                android:textSize="10sp"
+                android:maxLines="1"
+                android:ellipsize="end" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <!-- Week-day header -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginTop="5dp">
+
+        <TextView android:id="@+id/cal_h0" style="@style/CalHeader"/>
+        <TextView android:id="@+id/cal_h1" style="@style/CalHeader"/>
+        <TextView android:id="@+id/cal_h2" style="@style/CalHeader"/>
+        <TextView android:id="@+id/cal_h3" style="@style/CalHeader"/>
+        <TextView android:id="@+id/cal_h4" style="@style/CalHeader"/>
+        <TextView android:id="@+id/cal_h5" style="@style/CalHeader"/>
+        <TextView android:id="@+id/cal_h6" style="@style/CalHeader"/>
+    </LinearLayout>
+
+    <!-- Week 1 -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <TextView android:id="@+id/cal_cell0" style="@style/CalCell"/>
+        <TextView android:id="@+id/cal_cell1" style="@style/CalCell"/>
+        <TextView android:id="@+id/cal_cell2" style="@style/CalCell"/>
+        <TextView android:id="@+id/cal_cell3" style="@style/CalCell"/>
+        <TextView android:id="@+id/cal_cell4" style="@style/CalCell"/>
+        <TextView android:id="@+id/cal_cell5" style="@style/CalCell"/>
+        <TextView android:id="@+id/cal_cell6" style="@style/CalCell"/>
+    </LinearLayout>
+
+    <!-- Week 2 -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <TextView android:id="@+id/cal_cell7" style="@style/CalCell"/>
+        <TextView android:id="@+id/cal_cell8" style="@style/CalCell"/>
+        <TextView android:id="@+id/cal_cell9" style="@style/CalCell"/>
+        <TextView android:id="@+id/cal_cell10" style="@style/CalCell"/>
+        <TextView android:id="@+id/cal_cell11" style="@style/CalCell"/>
+        <TextView android:id="@+id/cal_cell12" style="@style/CalCell"/>
+        <TextView android:id="@+id/cal_cell13" style="@style/CalCell"/>
+    </LinearLayout>
+
+    <!-- Week 3 -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <TextView android:id="@+id/cal_cell14" style="@style/CalCell"/>
+        <TextView android:id="@+id/cal_cell15" style="@style/CalCell"/>
+        <TextView android:id="@+id/cal_cell16" style="@style/CalCell"/>
+        <TextView android:id="@+id/cal_cell17" style="@style/CalCell"/>
+        <TextView android:id="@+id/cal_cell18" style="@style/CalCell"/>
+        <TextView android:id="@+id/cal_cell19" style="@style/CalCell"/>
+        <TextView android:id="@+id/cal_cell20" style="@style/CalCell"/>
+    </LinearLayout>
+
+    <!-- Week 4 -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <TextView android:id="@+id/cal_cell21" style="@style/CalCell"/>
+        <TextView android:id="@+id/cal_cell22" style="@style/CalCell"/>
+        <TextView android:id="@+id/cal_cell23" style="@style/CalCell"/>
+        <TextView android:id="@+id/cal_cell24" style="@style/CalCell"/>
+        <TextView android:id="@+id/cal_cell25" style="@style/CalCell"/>
+        <TextView android:id="@+id/cal_cell26" style="@style/CalCell"/>
+        <TextView android:id="@+id/cal_cell27" style="@style/CalCell"/>
+    </LinearLayout>
+
+    <!-- Week 5 -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <TextView android:id="@+id/cal_cell28" style="@style/CalCell"/>
+        <TextView android:id="@+id/cal_cell29" style="@style/CalCell"/>
+        <TextView android:id="@+id/cal_cell30" style="@style/CalCell"/>
+        <TextView android:id="@+id/cal_cell31" style="@style/CalCell"/>
+        <TextView android:id="@+id/cal_cell32" style="@style/CalCell"/>
+        <TextView android:id="@+id/cal_cell33" style="@style/CalCell"/>
+        <TextView android:id="@+id/cal_cell34" style="@style/CalCell"/>
+    </LinearLayout>
+
+    <!-- Week 6 -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <TextView android:id="@+id/cal_cell35" style="@style/CalCell"/>
+        <TextView android:id="@+id/cal_cell36" style="@style/CalCell"/>
+        <TextView android:id="@+id/cal_cell37" style="@style/CalCell"/>
+        <TextView android:id="@+id/cal_cell38" style="@style/CalCell"/>
+        <TextView android:id="@+id/cal_cell39" style="@style/CalCell"/>
+        <TextView android:id="@+id/cal_cell40" style="@style/CalCell"/>
+        <TextView android:id="@+id/cal_cell41" style="@style/CalCell"/>
+    </LinearLayout>
+
+    <!-- Today's feast / event -->
+    <TextView
+        android:id="@+id/cal_event"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:textColor="#D4AF37"
+        android:textSize="11sp"
+        android:textStyle="bold"
+        android:maxLines="2"
+        android:ellipsize="end" />
+</LinearLayout>

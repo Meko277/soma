@@ -1,0 +1,66 @@
+class CompositeCopticTranslatorService implements CopticTranslatorService {
+  CompositeCopticTranslatorService({
+    required this.offline,
+    this.remote,
+  });
+
+  final CopticTranslatorService offline;
+
+  /// Non-null only when an endpoint was configured for this build.
+  final CopticTranslatorService? remote;
+
+  /// Whether an online gateway is configured for this build.
+  bool get isRemoteConfigured => remote != null;
+
+  @override
+  bool supports(String from, String to) =>
+      offline.supports(from, to) || (remote?.supports(from, to) ?? false);
+
+  @override
+  Future<TranslationResult> translate(TranslationRequest request) async {
+    Object? remoteError;
+    TranslationResult? offlineResult;
+
+    // 1) Try the online gateway first (only when actually configured).
+    final remoteService = remote;
+    if (remoteService != null &&
+        remoteService.supports(request.from, request.to)) {
+      try {
+        final result = await remoteService.translate(request);
+        if (result.hasMatches) {
+          return result;
+        }
+      } catch (error) {
+        remoteError = error; // fall through to the offline lexicon.
+      }
+    }
+
+    // 2) Offline lexicon - always available, no network.
+    if (offline.supports(request.from, request.to)) {
+      final result = await offline.translate(request);
+      if (result.hasMatches) {
+        return result;
+      }
+      offlineResult = result; // rows may still show "not in dictionary".
+    }
+
+    // 3) Nothing found anywhere: surface the network error (if any) so
+    //    the UI shows an error state instead of "not in dictionary".
+    if (remoteError != null) {
+      throw remoteError;
+    }
+
+    return offlineResult ?? const TranslationResult();
+  }
+}
+
+/// Builds the default app translator: offline lexicon + optional online
+/// gateway when one was configured for this build via --dart-define.
+CopticTranslatorService createCopticTranslatorService() {
+  final remote = RemoteCopticTranslatorService();
+  return CompositeCopticTranslatorService(
+    offline: OfflineLexiconTranslatorService(),
+    remote: remote.isConfigured ? remote : null,
+  );
+}
+
