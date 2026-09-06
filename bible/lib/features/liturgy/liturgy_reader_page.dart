@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -5,6 +7,7 @@ import '../../core/liturgy/liturgy_content_provider.dart';
 import '../../core/liturgy/liturgy_models.dart';
 import '../../core/localization/app_strings.dart';
 import '../../core/preferences/preferences_provider.dart';
+import '../../core/sync/sync_holder.dart';
 import '../../widgets/presentation_reader.dart';
 
 // ============================================================
@@ -66,11 +69,28 @@ class _LiturgyReaderPageState
   /// Last slide index so rotations resume where you were.
   int _lastSlideIndex = 0;
 
+  /// Reload when Firestore sync delivers newer content so the page
+  /// reflects admin edits without a restart.
+  StreamSubscription<void>? _syncSub;
+
   @override
   void initState() {
     super.initState();
 
     _startLoading();
+
+    // Listen for Firestore content updates and reload this liturgy.
+    final sync = SyncHolder.instance;
+    _syncSub = sync?.liturgyUpdates.listen((_) {
+      if (!mounted) return;
+      setState(_startLoading);
+    });
+  }
+
+  @override
+  void dispose() {
+    _syncSub?.cancel();
+    super.dispose();
   }
 
   void _startLoading() {

@@ -1,4 +1,4 @@
-
+import '../sync/sync_holder.dart';
 import 'traneem_content_provider.dart';
 import 'traneem_models.dart';
 
@@ -15,11 +15,6 @@ class TraneemContentRepository {
   final TraneemContentProvider provider;
 
   /// All hymns available in the Traneem catalogue.
-  ///
-  /// NOTE on content: the current set is an initial authoring
-  /// template of public-domain liturgical hymns. Additional
-  /// approved hymn lyrics (especially Arabic) should be added
-  /// as JSON files under assets/traneem/ and registered here.
   List<TraneemHymnMeta> get hymns => _hymns;
 
   static const List<TraneemHymnMeta> _hymns = [
@@ -52,21 +47,55 @@ class TraneemContentRepository {
         return hymn;
       }
     }
+
+    // Admin-added hymns (present in Firestore but not in the bundled
+    // catalogue) are resolved from the sync cache so they open fine.
+    final sync = SyncHolder.instance;
+    final synced = sync?.traneem(id, 'en') ?? sync?.traneem(id, 'ar');
+    if (synced != null) {
+      return TraneemHymnMeta(
+        id: synced.id,
+        title: synced.title,
+        arabicTitle: synced.arabicTitle,
+        category: synced.category,
+        categoryAr: synced.categoryAr,
+      );
+    }
+
     return null;
   }
 
   /// Loads one hymn's lyrics for the given language.
+  ///
+  /// OFFLINE-FIRST: if the Firestore sync service has fetched this
+  /// hymn (or it was persisted from a previous session), that
+  /// version is returned immediately so the app always shows the
+  /// latest admin-edited content. Otherwise falls back to the
+  /// bundled asset.
   Future<TraneemHymn> loadHymn(
     String id, {
     String language = 'en',
-  }) {
-    final meta = byId(id);
+  }) async {
+    // Prefer Firestore-synced content when available.
+    final synced = await traneemSyncedHymn(id, language);
+    if (synced != null) return synced;
 
+    final meta = byId(id);
     if (meta == null) {
       throw TraneemContentException('Unknown hymn: $id');
     }
-
     return provider.loadHymn(meta, language: language);
+  }
+
+  /// Returns the Firestore-synced hymn if present, else null.
+  Future<TraneemHymn?> traneemSyncedHymn(String id, String language) async {
+    try {
+      final sync = SyncHolder.instance;
+      if (sync == null) return null;
+      return sync.traneem(id, language);
+    } catch (_) {
+      return null;
+    }
   }
 
   // Keep provider debug output out of hot paths.

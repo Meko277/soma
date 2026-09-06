@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -7,6 +9,7 @@ import '../../core/preferences/app_preferences.dart';
 import '../../core/preferences/preferences_provider.dart';
 import '../../core/saved/saved_item.dart';
 import '../../core/saved/saved_items_provider.dart';
+import '../../core/sync/sync_holder.dart';
 import '../../core/traneem/traneem_content_providers.dart';
 import '../../core/traneem/traneem_models.dart';
 import '../../widgets/bilingual_text.dart';
@@ -45,6 +48,10 @@ class _TraneemReaderPageState
 
   late Future<TraneemHymn> _hymnFuture;
 
+  /// Reload when Firestore sync delivers newer content so the page
+  /// reflects admin edits without a restart.
+  StreamSubscription<void>? _syncSub;
+
   @override
   void initState() {
     super.initState();
@@ -54,6 +61,28 @@ class _TraneemReaderPageState
         .byId(widget.hymnId);
 
     _startLoading();
+
+    // Listen for Firestore content updates and reload this hymn.
+    final sync = SyncHolder.instance;
+    _syncSub = sync?.traneemUpdates.listen((_) {
+      if (!mounted) return;
+      // Re-resolve the meta in case this hymn only exists in
+      // Firestore (added by the admin) and arrived after this
+      // page opened.
+      final resolved = ref
+          .read(traneemContentRepositoryProvider)
+          .byId(widget.hymnId);
+      setState(() {
+        _meta = resolved;
+        _startLoading();
+      });
+    });
+  }
+
+  @override
+  void dispose() {
+    _syncSub?.cancel();
+    super.dispose();
   }
 
   void _startLoading() {

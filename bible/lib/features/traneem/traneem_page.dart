@@ -1,9 +1,12 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../core/localization/app_strings.dart';
 import '../../core/preferences/preferences_provider.dart';
+import '../../core/sync/sync_holder.dart';
 import '../../core/traneem/traneem_content_providers.dart';
 import '../../core/traneem/traneem_models.dart';
 import '../../widgets/bilingual_text.dart';
@@ -29,6 +32,8 @@ class _TraneemPageState extends ConsumerState<TraneemPage> {
 
   String _searchQuery = '';
 
+  StreamSubscription<void>? _syncSub;
+
   @override
   void initState() {
     super.initState();
@@ -38,10 +43,19 @@ class _TraneemPageState extends ConsumerState<TraneemPage> {
             _searchController.text.trim().toLowerCase();
       });
     });
+
+    // Rebuild the list when Firestore delivers new/edited hymns
+    // from the admin site.
+    final sync = SyncHolder.instance;
+    _syncSub = sync?.traneemUpdates.listen((_) {
+      if (!mounted) return;
+      setState(() {});
+    });
   }
 
   @override
   void dispose() {
+    _syncSub?.cancel();
     _searchController.dispose();
     super.dispose();
   }
@@ -59,7 +73,35 @@ class _TraneemPageState extends ConsumerState<TraneemPage> {
 
     final allHymns = repository.hymns;
 
-    final filtered = allHymns.where((hymn) {
+    // Merge hymns that exist in Firestore (added/edited by the admin)
+    // into the catalogue so they appear in the list automatically.
+    final catalog = <String, TraneemHymnMeta>{
+      for (final h in allHymns) h.id: h,
+    };
+    final synced = SyncHolder.instance;
+    if (synced != null) {
+      for (final entry in synced.allTraneem.entries) {
+        final id = entry.key;
+        final langs = entry.value;
+        // Prefer the UI language's title, fall back to either language.
+        final syncedMeta = langs.values.isNotEmpty
+            ? TraneemHymnMeta(
+                id: id,
+                title: langs.values.first.title,
+                arabicTitle: langs.containsKey('ar')
+                    ? langs['ar']!.arabicTitle
+                    : langs.values.first.title,
+                category: langs.values.first.category,
+                categoryAr: langs.values.first.categoryAr,
+              )
+            : null;
+        if (syncedMeta != null) catalog[id] = syncedMeta;
+      }
+    }
+    final allCatalog = catalog.values.toList()
+      ..sort((a, b) => a.title.toLowerCase().compareTo(b.title.toLowerCase()));
+
+    final filtered = allCatalog.where((hymn) {
       if (_searchQuery.isEmpty) {
         return true;
       }

@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -7,6 +9,7 @@ import '../../core/preferences/app_preferences.dart';
 import '../../core/preferences/preferences_provider.dart';
 import '../../core/saved/saved_item.dart';
 import '../../core/saved/saved_items_provider.dart';
+import '../../core/sync/sync_holder.dart';
 import '../../widgets/bilingual_text.dart';
 import '../../widgets/floating_text_zoom.dart';
 import '../../widgets/presentation_reader.dart';
@@ -210,6 +213,12 @@ class _AgpeyaPrayerPageState extends State<AgpeyaPrayerPage> {
   String get _settingsText => _isArabic ? 'الإعدادات' : 'Settings';
 
   // ============================================================
+  // SYNC — reload when Firestore content changes (admin edits)
+  // ============================================================
+
+  StreamSubscription<void>? _syncSub;
+
+  // ============================================================
   // INIT
   // ============================================================
 
@@ -220,6 +229,18 @@ class _AgpeyaPrayerPageState extends State<AgpeyaPrayerPage> {
     _loadHour();
 
     _scrollController.addListener(_updateActiveSection);
+
+    // Auto-update when the admin edits this prayer in Firestore.
+    final sync = SyncHolder.instance;
+    _syncSub = sync?.agpeyaUpdates.listen((_) {
+      if (!mounted) return;
+      setState(() {
+        _loadedHour = null;
+        _cachedSections = null;
+        _activeSection = null;
+        _loadHour();
+      });
+    });
   }
 
   // ============================================================
@@ -272,6 +293,7 @@ class _AgpeyaPrayerPageState extends State<AgpeyaPrayerPage> {
 
   @override
   void dispose() {
+    _syncSub?.cancel();
     _scrollController.removeListener(_updateActiveSection);
 
     _scrollController.dispose();

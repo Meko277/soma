@@ -12,6 +12,8 @@ import 'core/localization/daily_verse_home_widget_service.dart';
 import 'core/notifications/daily_plan_notification_service.dart';
 import 'core/preferences/preferences_provider.dart';
 import 'core/sync/firebase_sync_service.dart';
+import 'core/sync/firestore_content_sync.dart';
+import 'core/sync/sync_holder.dart';
 import 'firebase_options.dart';
 
 Future<void> main() async {
@@ -28,6 +30,16 @@ try {
 }
 
 // ============================================================
+// FIRESTORE CONTENT SYNC — bridge admin edits into the app.
+//
+// Initializes the offline-first sync service BEFORE the first
+// frame so cached Firestore content (SharedPreferences) is
+// available immediately, and live listeners keep the UI fresh
+// whenever the admin edits content while the app is online.
+// ============================================================
+
+  await initFirestoreContentSync();
+
 // SHOW THE UI FIRST
 //
 // Everything that used to block before runApp() (Firestore
@@ -140,4 +152,12 @@ Future<void> _bootstrapBackgroundServices() async {
   try {
     await DailyVerseHomeWidgetService.update();
   } catch (_) {}
+}
+
+/// Initialize Firestore content sync before the UI starts.
+/// The instance is kept in [SyncHolder] and shared app-wide.
+Future<void> initFirestoreContentSync() async {
+  final sync = FirestoreContentSync();
+  await sync.initialize();
+  SyncHolder.install(sync);
 }

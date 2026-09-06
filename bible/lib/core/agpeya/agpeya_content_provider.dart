@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 
+import '../sync/sync_holder.dart';
 import 'agpeya_models.dart';
 
 class AgpeyaContentProvider {
@@ -16,6 +17,10 @@ class AgpeyaContentProvider {
     String hourId, {
     String language = 'en',
   }) async {
+    // OFFLINE-FIRST: prefer Firestore-synced content when present.
+    final synced = await agpeyaSyncedHour(hourId, language);
+    if (synced != null) return synced;
+
     final fileName = _fileNameForHour(hourId);
 
     final folder = _folderForLanguage(language);
@@ -37,6 +42,17 @@ class AgpeyaContentProvider {
     final hour = AgpeyaHour.fromJson(decoded);
 
     return hour;
+  }
+
+  /// Returns the Firestore-synced hour if present, else null.
+  Future<AgpeyaHour?> agpeyaSyncedHour(String hourId, String language) async {
+    try {
+      final sync = SyncHolder.instance;
+      if (sync == null) return null;
+      return sync.agpeya(hourId, language);
+    } catch (_) {
+      return null;
+    }
   }
 
   // ============================================================
