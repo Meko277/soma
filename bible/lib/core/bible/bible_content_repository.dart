@@ -1,4 +1,5 @@
 import 'package:flutter/foundation.dart';
+import '../sync/sync_holder.dart';
 import 'bible_content_loader.dart';
 import 'bible_models.dart';
 
@@ -580,7 +581,25 @@ class BibleContentRepository {
     required String bookId,
     required int chapterNumber,
     String language = 'en',
-  }) {
+  }) async {
+    // Admin-edited content first: when the admin website has saved
+    // this book to Firestore (or it was cached from a previous
+    // session), show that version so edits reach the phone. The
+    // bundled asset below is only the offline fallback.
+    try {
+      final sync = SyncHolder.bibleSync;
+      if (sync != null) {
+        final synced = await sync.syncedChapter(
+          bookId: bookId,
+          chapterNumber: chapterNumber,
+          language: language,
+        );
+        if (synced != null) return synced;
+      }
+    } catch (_) {
+      // Never block reading on sync failures.
+    }
+
     return _loader.loadChapter(
       bookId: bookId,
       chapterNumber: chapterNumber,

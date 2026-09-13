@@ -10,6 +10,9 @@
   var LANG_KEY = 'admin_lang';
   var currentLang = localStorage.getItem(LANG_KEY) || 'en';
   var db = null;
+  // Live per-section search terms (set by the website's search
+  // inputs through window.setSearch).
+  var searchFilter = { traneem: '', bible: '', agpeya: '', liturgy: '', readings: '' };
 
   var appData = {
     traneem: { ar: [], en: [] },
@@ -18,7 +21,7 @@
     liturgy: { ar: [], en: [] },
     readings: [],
     design: {
-      nameEn: 'Coptic Companion', nameAr: 'Ã˜Â§Ã™â€žÃ˜Â±Ã™ÂÃ™Å Ã™â€š Ã˜Â§Ã™â€žÃ™â€šÃ˜Â¨Ã˜Â·Ã™Å ',
+      nameEn: 'Coptic Companion', nameAr: 'الرفيق القبطي',
       developer: '', version: '1.0.0', descEn: '', descAr: '',
       colors: {
         primary: '#8B2332', secondary: '#D4AF37',
@@ -58,37 +61,37 @@
       jsonData: 'JSON Data', livePreview: 'Live Preview',
       cancel: 'Cancel', deleteBtn: 'Delete', saveBtn: 'Save',
       saved: 'Saved!', deleted: 'Deleted!', imported: 'Imported!',
-      invalidJson: 'Invalid JSON', idRequired: 'ID required',
+      invalidJson: 'Invalid JSON', idRequired: 'ID required', nameRequired: 'Name required',
       confirmReset: 'Reset all data?', stanzas: 'stanzas', chapters: 'chapters',
       syncing: 'Syncing...', online: 'Online', offline: 'Offline',
-      switchLang: 'Ã˜Â¹Ã˜Â±Ã˜Â¨Ã™Å '
+      switchLang: 'عربٚ'
     },
     ar: {
-      appTitle: 'Ã˜Â§Ã™â€žÃ˜Â±Ã™ÂÃ™Å Ã™â€š Ã˜Â§Ã™â€žÃ™â€šÃ˜Â¨Ã˜Â·Ã™Å ', appSubtitle: 'Ã™â€žÃ™Ë†Ã˜Â­Ã˜Â© Ã˜Â§Ã™â€žÃ˜Â¥Ã˜Â¯Ã˜Â§Ã˜Â±Ã˜Â©',
-      dashboard: 'Ã˜Â§Ã™â€žÃ˜Â±Ã˜Â¦Ã™Å Ã˜Â³Ã™Å Ã˜Â©', importExport: 'Ã˜Â§Ã˜Â³Ã˜ÂªÃ™Å Ã˜Â±Ã˜Â§Ã˜Â¯ / Ã˜ÂªÃ˜ÂµÃ˜Â¯Ã™Å Ã˜Â±',
-      traneem: 'Ã˜Â§Ã™â€žÃ˜ÂªÃ˜Â±Ã˜Â§Ã™â€ Ã™Å Ã™â€¦', bible: 'Ã˜Â§Ã™â€žÃ™Æ’Ã˜ÂªÃ˜Â§Ã˜Â¨ Ã˜Â§Ã™â€žÃ™â€¦Ã™â€šÃ˜Â¯Ã˜Â³', agpeya: 'Ã˜Â§Ã™â€žÃ˜Â£Ã˜Â¬Ã˜Â¨Ã™Å Ã˜Â©',
-      liturgy: 'Ã˜Â§Ã™â€žÃ™â€šÃ˜Â¯Ã˜Â§Ã˜Â³', readings: 'Ã˜Â§Ã™â€žÃ™â€šÃ˜Â±Ã˜Â§Ã˜Â¡Ã˜Â§Ã˜Âª', themeDesign: 'Ã˜Â§Ã™â€žÃ™â€¦Ã˜Â¸Ã™â€¡Ã˜Â±',
-      preview: 'Ã™â€¦Ã˜Â¹Ã˜Â§Ã™Å Ã™â€ Ã˜Â©', settings: 'Ã˜Â§Ã™â€žÃ˜Â¥Ã˜Â¹Ã˜Â¯Ã˜Â§Ã˜Â¯Ã˜Â§Ã˜Âª',
-      overview: 'Ã™â€ Ã˜Â¸Ã˜Â±Ã˜Â© Ã˜Â¹Ã˜Â§Ã™â€¦Ã˜Â© Ã˜Â¹Ã™â€žÃ™â€° Ã˜Â§Ã™â€žÃ™â€¦Ã˜Â­Ã˜ÂªÃ™Ë†Ã™â€°.',
-      traneemHymns: 'Ã˜ÂªÃ˜Â±Ã˜Â§Ã™â€ Ã™Å Ã™â€¦', bibleBooks: 'Ã˜Â£Ã˜Â³Ã™ÂÃ˜Â§Ã˜Â±',
-      agpeyaPrayers: 'Ã˜ÂµÃ™â€žÃ™Ë†Ã˜Â§Ã˜Âª', liturgyParts: 'Ã˜Â£Ã˜Â¬Ã˜Â²Ã˜Â§Ã˜Â¡ Ã˜Â§Ã™â€žÃ™â€šÃ˜Â¯Ã˜Â§Ã˜Â³',
-      copticReadings: 'Ã™â€šÃ˜Â±Ã˜Â§Ã˜Â¡Ã˜Â§Ã˜Âª', themes: 'Ã™â€¦Ã˜Â¸Ã˜Â§Ã™â€¡Ã˜Â±',
-      howToUse: 'Ã™Æ’Ã™Å Ã™ÂÃ™Å Ã˜Â© Ã˜Â§Ã™â€žÃ˜Â§Ã˜Â³Ã˜ÂªÃ˜Â®Ã˜Â¯Ã˜Â§Ã™â€¦', dataSource: 'Ã™â€¦Ã˜ÂµÃ˜Â¯Ã˜Â± Ã˜Â§Ã™â€žÃ˜Â¨Ã™Å Ã˜Â§Ã™â€ Ã˜Â§Ã˜Âª',
-      noData: 'Ã™â€žÃ˜Â§ Ã˜ÂªÃ™Ë†Ã˜Â¬Ã˜Â¯ Ã˜Â¨Ã™Å Ã˜Â§Ã™â€ Ã˜Â§Ã˜Âª', dataLoaded: 'Ã˜ÂªÃ™â€¦ Ã˜Â§Ã™â€žÃ˜ÂªÃ˜Â­Ã™â€¦Ã™Å Ã™â€ž!',
-      help1: 'Ã˜Â§Ã˜Â³Ã˜ÂªÃ™Å Ã˜Â±Ã˜Â§Ã˜Â¯: Ã˜Â§Ã˜Â±Ã™ÂÃ˜Â¹ Ã™â€¦Ã™â€žÃ™ÂÃ˜Â§Ã˜Âª.',
-      help2: 'Ã˜ÂªÃ˜Â¹Ã˜Â¯Ã™Å Ã™â€ž: Ã˜ÂªÃ˜ÂµÃ™ÂÃ˜Â­ Ã˜Â§Ã™â€žÃ˜Â£Ã™â€šÃ˜Â³Ã˜Â§Ã™â€¦.',
-      help3: 'Ã™â€¦Ã˜Â¹Ã˜Â§Ã™Å Ã™â€ Ã˜Â©: Ã˜Â´Ã˜Â§Ã™â€¡Ã˜Â¯ Ã˜Â§Ã™â€žÃ™â€¦Ã˜Â­Ã˜ÂªÃ™Ë†Ã™â€°.',
-      help4: 'Ã™â€¦Ã˜Â¸Ã™â€¡Ã˜Â±: Ã˜Â®Ã˜ÂµÃ˜Âµ Ã˜Â§Ã™â€žÃ˜Â¥Ã˜Â¹Ã˜Â¯Ã˜Â§Ã˜Â¯Ã˜Â§Ã˜Âª.',
-      help5: 'Ã˜ÂªÃ˜ÂµÃ˜Â¯Ã™Å Ã˜Â±: Ã˜ÂªÃ˜Â­Ã™â€¦Ã™Å Ã™â€ž ZIP.',
-      noDataFound: 'Ã™â€žÃ˜Â§ Ã˜ÂªÃ™Ë†Ã˜Â¬Ã˜Â¯ Ã˜Â¨Ã™Å Ã˜Â§Ã™â€ Ã˜Â§Ã˜Âª.',
-      editHymn: 'Ã˜ÂªÃ˜Â¹Ã˜Â¯Ã™Å Ã™â€ž Ã˜ÂªÃ˜Â±Ã™â€ Ã™Å Ã™â€¦Ã˜Â©', editBible: 'Ã˜ÂªÃ˜Â¹Ã˜Â¯Ã™Å Ã™â€ž Ã˜Â³Ã™ÂÃ˜Â±', editPrayer: 'Ã˜ÂªÃ˜Â¹Ã˜Â¯Ã™Å Ã™â€ž Ã˜ÂµÃ™â€žÃ˜Â§Ã˜Â©',
-      editLiturgy: 'Ã˜ÂªÃ˜Â¹Ã˜Â¯Ã™Å Ã™â€ž Ã™â€šÃ˜Â¯Ã˜Â§Ã˜Â³', editReading: 'Ã˜ÂªÃ˜Â¹Ã˜Â¯Ã™Å Ã™â€ž Ã™â€šÃ˜Â±Ã˜Â§Ã˜Â¡Ã˜Â©',
-      jsonData: 'Ã˜Â¨Ã™Å Ã˜Â§Ã™â€ Ã˜Â§Ã˜Âª JSON', livePreview: 'Ã™â€¦Ã˜Â¹Ã˜Â§Ã™Å Ã™â€ Ã˜Â© Ã™â€¦Ã˜Â¨Ã˜Â§Ã˜Â´Ã˜Â±Ã˜Â©',
-      cancel: 'Ã˜Â¥Ã™â€žÃ˜ÂºÃ˜Â§Ã˜Â¡', deleteBtn: 'Ã˜Â­Ã˜Â°Ã™Â', saveBtn: 'Ã˜Â­Ã™ÂÃ˜Â¸',
-      saved: 'Ã˜ÂªÃ™â€¦ Ã˜Â§Ã™â€žÃ˜Â­Ã™ÂÃ˜Â¸!', deleted: 'Ã˜ÂªÃ™â€¦ Ã˜Â§Ã™â€žÃ˜Â­Ã˜Â°Ã™Â!', imported: 'Ã˜ÂªÃ™â€¦ Ã˜Â§Ã™â€žÃ˜Â§Ã˜Â³Ã˜ÂªÃ™Å Ã˜Â±Ã˜Â§Ã˜Â¯!',
-      invalidJson: 'JSON Ã˜ÂºÃ™Å Ã˜Â± Ã˜ÂµÃ˜Â§Ã™â€žÃ˜Â­', idRequired: 'Ã˜Â§Ã™â€žÃ™â€¦Ã˜Â¹Ã˜Â±Ã™Â Ã™â€¦Ã˜Â·Ã™â€žÃ™Ë†Ã˜Â¨',
-      confirmReset: 'Ã˜Â¥Ã˜Â¹Ã˜Â§Ã˜Â¯Ã˜Â© Ã˜ÂªÃ˜Â¹Ã™Å Ã™Å Ã™â€  Ã˜Â¬Ã™â€¦Ã™Å Ã˜Â¹ Ã˜Â§Ã™â€žÃ˜Â¨Ã™Å Ã˜Â§Ã™â€ Ã˜Â§Ã˜ÂªÃ˜Å¸', stanzas: 'Ã™â€¦Ã™â€šÃ˜Â§Ã˜Â·Ã˜Â¹', chapters: 'Ã˜Â£Ã˜ÂµÃ˜Â­Ã˜Â§Ã˜Â­Ã˜Â§Ã˜Âª',
-      syncing: 'Ã˜Â¬Ã˜Â§Ã˜Â±Ã™Å  Ã˜Â§Ã™â€žÃ™â€¦Ã˜Â²Ã˜Â§Ã™â€¦Ã™â€ Ã˜Â©...', online: 'Ã™â€¦Ã˜ÂªÃ˜ÂµÃ™â€ž', offline: 'Ã˜ÂºÃ™Å Ã˜Â± Ã™â€¦Ã˜ÂªÃ˜ÂµÃ™â€ž',
+      appTitle: 'الرفيق القبطي', appSubtitle: 'لوحة الإدارة',
+      dashboard: 'الرئيسية', importExport: 'استيراد / تصدير',
+      traneem: 'الترانيم', bible: 'الكتاب المقدس', agpeya: 'الأجبية',
+      liturgy: 'القداس', readings: 'القراءات', themeDesign: 'المظهر',
+      preview: 'معاينة', settings: 'الإعدادات',
+      overview: 'نظرة عامة على كل المحتوى.',
+      traneemHymns: 'ترانيم', bibleBooks: 'أسفار',
+      agpeyaPrayers: 'صلوات', liturgyParts: 'أجزاء القداس',
+      copticReadings: 'قراءات', themes: 'المظاهر',
+      howToUse: 'كيفية الاستخدام', dataSource: 'مصدر البيانات',
+      noData: 'لا توجد بيانات', dataLoaded: 'تم التحميل!',
+      help1: 'استيراد: ارفع ملفات.',
+      help2: 'تعديل: تصفح الأقسام.',
+      help3: 'معاينة: شاهد المحتوى.',
+      help4: 'المظهر: خصص الإعدادات.',
+      help5: 'تصدير: تحميل ZIP.',
+      noDataFound: 'لا توجد بيانات.',
+      editHymn: 'تعديل ترنيمة', editBible: 'تعديل سفر', editPrayer: 'تعديل صلاة',
+      editLiturgy: 'تعديل قداس', editReading: 'تعديل قراءة',
+      jsonData: 'بيانات JSON', livePreview: 'معاينة مباشرة',
+      cancel: 'إلغاء', deleteBtn: 'حذف', saveBtn: 'حفظ',
+      saved: 'تم الحفظ!', deleted: 'تم الحذف!', imported: 'تم الاستيراد!', 
+      invalidJson: 'JSON غير صالح', idRequired: 'المعرف مطلوب',
+      confirmReset: 'إعادة تعيين جميع البيانات؟', stanzas: 'مقاطع', chapters: 'أصحاحات',
+      syncing: 'جارٍ المزامنة...', online: 'متصل', offline: 'غير متصل',
       switchLang: 'English'
     }
   };
@@ -151,10 +154,10 @@
     var el = document.getElementById('connectionStatus');
     if (!el) return;
     if (navigator.onLine) {
-      el.textContent = 'Ã°Å¸Å¸Â¢ ' + t('online');
+      el.textContent = '\uD83D\uDFE2 ' + t('online');
       el.className = 'status-online';
     } else {
-      el.textContent = 'Ã°Å¸â€Â´ ' + t('offline');
+      el.textContent = '\uD83D\uDD34 ' + t('offline');
       el.className = 'status-offline';
     }
   }
@@ -318,15 +321,41 @@
   // ============================================================
   // RENDER FUNCTIONS
   // ============================================================
+  // ------------------------------------------------------------
+  // SEARCH (live filtering of <section>Search inputs)
+  // ------------------------------------------------------------
+  function searchMatches(itemData, term) {
+    if (!term) return true;
+    var hay = [];
+    var walk = function(v) {
+      if (v === null || v === undefined) return;
+      if (typeof v === 'string') hay.push(v.toLowerCase());
+      else if (typeof v === 'number') hay.push(String(v));
+      else if (Array.isArray(v)) v.forEach(walk);
+      else if (typeof v === 'object') Object.keys(v).forEach(function(k) { walk(v[k]); });
+    };
+    walk(itemData);
+    return hay.join(' ').indexOf(term) >= 0;
+  }
+  window.setSearch = function(section, value) {
+    searchFilter[section] = (value || '').trim().toLowerCase();
+    if (section === 'traneem') renderTraneemList();
+    else if (section === 'bible') renderBibleList();
+    else if (section === 'agpeya') renderAgpeyaList();
+    else if (section === 'liturgy') renderLiturgyList();
+    else if (section === 'readings') renderReadingsList();
+  };
   function renderTraneemList() {
     var c = document.getElementById('traneem-list');
     if (!c) return;
     var all = [];
     appData.traneem.ar.forEach(function(h) { all.push({ lang: 'ar', data: h }); });
     appData.traneem.en.forEach(function(h) { all.push({ lang: 'en', data: h }); });
-    if (!all.length) { c.innerHTML = '<p class="empty-state">' + t('noDataFound') + '</p>'; return; }
+    var term = searchFilter.traneem;
+    if (term) all = all.filter(function(it) { return searchMatches(it.data, term); });
+    if (!all.length) { c.innerHTML = '<p class="empty-state">' + (term ? 'No matches found' : t('noDataFound')) + '</p>'; return; }
     c.innerHTML = all.map(function(it) {
-      var d = it.data; var title = d.title || d.id || 'Untitled';
+      var d = it.data; var title = d.name || d.title || d.id || 'Untitled';
       var stanzas = (d.stanzas || []).length;
       return '<div class="item-row" onclick="editTraneem(\'' + it.lang + '\',\'' + (d.id || '') + '\')"><div><span class="item-title">' + title + '</span><br><span class="item-meta">' + stanzas + ' ' + t('stanzas') + ' | ' + it.lang.toUpperCase() + '</span></div><span>\u270F\uFE0F</span></div>';
     }).join('');
@@ -337,7 +366,9 @@
     var all = [];
     appData.bible.ar.forEach(function(b) { all.push({ lang: 'ar', data: b }); });
     appData.bible.en.forEach(function(b) { all.push({ lang: 'en', data: b }); });
-    if (!all.length) { c.innerHTML = '<p class="empty-state">' + t('noDataFound') + '</p>'; return; }
+    var term = searchFilter.bible;
+    if (term) all = all.filter(function(it) { return searchMatches(it.data, term); });
+    if (!all.length) { c.innerHTML = '<p class="empty-state">' + (term ? 'No matches found' : t('noDataFound')) + '</p>'; return; }
     c.innerHTML = all.map(function(it) {
       var d = it.data; var chCount = (d.chapters || []).length;
       return '<div class="item-row" onclick="editBible(\'' + it.lang + '\',\'' + (d.bookId || '') + '\')"><div><span class="item-title">' + (d.bookName || d.bookId) + '</span><br><span class="item-meta">' + chCount + ' ' + t('chapters') + ' | ' + it.lang.toUpperCase() + '</span></div><span>\u270F\uFE0F</span></div>';
@@ -349,7 +380,9 @@
     var all = [];
     appData.agpeya.ar.forEach(function(p) { all.push({ lang: 'ar', data: p }); });
     appData.agpeya.en.forEach(function(p) { all.push({ lang: 'en', data: p }); });
-    if (!all.length) { c.innerHTML = '<p class="empty-state">' + t('noDataFound') + '</p>'; return; }
+    var term = searchFilter.agpeya;
+    if (term) all = all.filter(function(it) { return searchMatches(it.data, term); });
+    if (!all.length) { c.innerHTML = '<p class="empty-state">' + (term ? 'No matches found' : t('noDataFound')) + '</p>'; return; }
     c.innerHTML = all.map(function(it) {
       var d = it.data; var name = d.name || d.englishName || d.id;
       return '<div class="item-row" onclick="editAgpeya(\'' + it.lang + '\',\'' + (d.id || '') + '\')"><div><span class="item-title">' + name + '</span><br><span class="item-meta">' + (d.id || '') + ' | ' + it.lang.toUpperCase() + '</span></div><span>\u270F\uFE0F</span></div>';
@@ -361,7 +394,9 @@
     var all = [];
     appData.liturgy.ar.forEach(function(l) { all.push({ lang: 'ar', data: l }); });
     appData.liturgy.en.forEach(function(l) { all.push({ lang: 'en', data: l }); });
-    if (!all.length) { c.innerHTML = '<p class="empty-state">' + t('noDataFound') + '</p>'; return; }
+    var term = searchFilter.liturgy;
+    if (term) all = all.filter(function(it) { return searchMatches(it.data, term); });
+    if (!all.length) { c.innerHTML = '<p class="empty-state">' + (term ? 'No matches found' : t('noDataFound')) + '</p>'; return; }
     c.innerHTML = all.map(function(it) {
       var d = it.data;
       return '<div class="item-row" onclick="editLiturgy(\'' + it.lang + '\',\'' + (d.id || d.name || '') + '\')"><div><span class="item-title">' + (d.name || d.id || 'Liturgy') + '</span><br><span class="item-meta">' + it.lang.toUpperCase() + '</span></div><span>\u270F\uFE0F</span></div>';
@@ -370,8 +405,10 @@
   function renderReadingsList() {
     var c = document.getElementById('readings-list');
     if (!c) return;
-    if (!appData.readings.length) { c.innerHTML = '<p class="empty-state">' + t('noDataFound') + '</p>'; return; }
-    c.innerHTML = appData.readings.map(function(r, i) {
+    var term = searchFilter.readings;
+    var list = term ? appData.readings.filter(function(r) { return searchMatches(r, term); }) : appData.readings;
+    if (!list.length) { c.innerHTML = '<p class="empty-state">' + (term ? 'No matches found' : t('noDataFound')) + '</p>'; return; }
+    c.innerHTML = list.map(function(r, i) {
       return '<div class="item-row" onclick="editReading(' + i + ')"><div><span class="item-title">' + (r.title || r.type || 'Reading') + '</span><br><span class="item-meta">' + (r.type || '') + '</span></div><span>\u270F\uFE0F</span></div>';
     }).join('');
   }
@@ -420,7 +457,7 @@
     if (!p) return;
     data = data || {};
     var stanzas = data.stanzas || editHymnBuffer.stanzas || [];
-    var h = '<h3 style="color:var(--coptic-burgundy);margin-bottom:12px">' + esc(data.title || data.arabicTitle || '') + '</h3>';
+    var h = '<h3 style="color:var(--coptic-burgundy);margin-bottom:12px">' + esc(data.name || data.title || data.arabicTitle || '') + '</h3>';
     h += stanzas.map(function(s) {
       return '<div class="preview-stanza"><div class="stanza-title">' + esc(s.title || '') + '</div>' + (s.lines || []).map(function(l) { return '<div class="stanza-line">' + esc(l) + '</div>'; }).join('') + '</div>';
     }).join('');
@@ -449,11 +486,11 @@
     var item = list.find(function(h) { return h.id === id; });
     if (!item) return;
     openModal('modal-hymn');
-    document.getElementById('hymn-modal-title').textContent = t('editHymn') + ': ' + (item.title || item.id);
+    document.getElementById('hymn-modal-title').textContent = t('editHymn') + ': ' + (item.name || item.title || item.id);
     fs('hymn-lang', lang); fs('hymn-orig-id', id);
     editOriginal = item;
-    fs('hymn-id-field', item.id || '');
-    fs('hymn-title-field', item.title || item.titleEn || '');
+    fs('hymn-name-field', item.name || item.title || item.titleEn || '');
+    fs('hymn-text-field', item.text || '');
     fs('hymn-arabic-title-field', item.arabicTitle || item.titleAr || '');
     fs('hymn-coptic-title-field', item.copticTitle || item.titleCo || '');
     fs('hymn-category-field', item.category || '');
@@ -467,18 +504,18 @@
     document.getElementById('hymn-modal-title').textContent = t('editHymn');
     fs('hymn-lang', 'ar'); fs('hymn-orig-id', '');
     editOriginal = null;
-    fs('hymn-id-field', ''); fs('hymn-title-field', ''); fs('hymn-arabic-title-field', '');
+    fs('hymn-name-field', ''); fs('hymn-text-field', ''); fs('hymn-arabic-title-field', '');
     fs('hymn-coptic-title-field', ''); fs('hymn-category-field', ''); fs('hymn-categoryar-field', '');
     renderHymnStanzas([{ title: '', lines: [''] }]);
-    renderHymnPreview({ title: '' });
+    renderHymnPreview({ name: '' });
     document.getElementById('deleteHymnBtn').style.display = 'none';
   };
   async function saveHymn() {
     var lang = fv('hymn-lang');
-    var id = (fv('hymn-id-field') || '').trim();
-    if (!id) { showToast(t('idRequired')); return; }
+    var name = (fv('hymn-name-field') || '').trim(); var id = (editOriginal && editOriginal.id) || (name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '') || 'hymn') + '-' + Date.now().toString(36);
+    if (!name) { showToast(t('nameRequired')); return; }
     var data = editOriginal || {};
-    data.id = id; data.title = fv('hymn-title-field'); data.lang = lang;
+    data.id = id; data.name = name; data.lang = lang; if (fv('hymn-text-field')) data.text = fv('hymn-text-field'); else delete data.text;
     if (fv('hymn-arabic-title-field')) data.arabicTitle = fv('hymn-arabic-title-field'); else delete data.arabicTitle;
     if (fv('hymn-coptic-title-field')) data.copticTitle = fv('hymn-coptic-title-field'); else delete data.copticTitle;
     if (fv('hymn-category-field')) data.category = fv('hymn-category-field'); else delete data.category;
@@ -839,8 +876,8 @@
       var data = JSON.parse(jsonStr);
       var count = 0;
       if (data.traneem) {
-        data.traneem.ar.forEach(function(item) { saveToFirebase('traneem', (item.id || 'item') + '_ar', item); count++; });
-        data.traneem.en.forEach(function(item) { saveToFirebase('traneem', (item.id || 'item') + '_en', item); count++; });
+        data.traneem.ar.forEach(function(item) { saveToFirebase('traneem', (item.id || item.name || 'hymn') + '_ar', item); count++; });
+        data.traneem.en.forEach(function(item) { saveToFirebase('traneem', (item.id || item.name || 'hymn') + '_en', item); count++; });
       }
       if (data.bible) {
         data.bible.ar.forEach(function(item) { saveToFirebase('bible', (item.bookId || 'book') + '_ar', item); count++; });

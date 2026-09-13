@@ -6,6 +6,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'app/coptic_companion_app.dart';
+import 'core/bible/bible_sync.dart';
 import 'core/calendar/calendar_home_widget_service.dart';
 import 'core/calendar/coptic_home_widget_service.dart';
 import 'core/localization/daily_verse_home_widget_service.dart';
@@ -155,9 +156,14 @@ Future<void> _bootstrapBackgroundServices() async {
 }
 
 /// Initialize Firestore content sync before the UI starts.
-/// The instance is kept in [SyncHolder] and shared app-wide.
+/// The instances are kept in [SyncHolder] and shared app-wide.
 Future<void> initFirestoreContentSync() async {
   final sync = FirestoreContentSync();
   await sync.initialize();
   SyncHolder.install(sync);
+
+  // The Bible is synced ON DEMAND (one book at a time) so it needs
+  // no eager initialization - it only must be installed before the
+  // first chapter is opened.
+  SyncHolder.installBible(BibleContentSync());
 }
