@@ -209,7 +209,7 @@
   function updateStats() {
     var el = function(id) { return document.getElementById(id); };
     if (el('stat-traneem')) el('stat-traneem').textContent =
-      appData.traneem.ar.length + appData.traneem.en.length;
+      uniqueTraneemIds().length;
     if (el('stat-bible')) el('stat-bible').textContent =
       appData.bible.ar.length + appData.bible.en.length;
     if (el('stat-agpeya')) el('stat-agpeya').textContent =
@@ -226,6 +226,14 @@
       status.textContent = hasData() ? t('dataLoaded') : t('noData');
       status.className = hasData() ? 'status-ok' : 'status-warning';
     }
+  }
+
+  function uniqueTraneemIds() {
+    var ids = {};
+    appData.traneem.ar.concat(appData.traneem.en).forEach(function(item) {
+      if (item && item.id) ids[item.id] = true;
+    });
+    return Object.keys(ids);
   }
 
   function hasData() {
@@ -386,16 +394,33 @@
   function renderTraneemList() {
     var c = document.getElementById('traneem-list');
     if (!c) return;
-    var all = [];
-    appData.traneem.ar.forEach(function(h) { all.push({ lang: 'ar', data: h }); });
-    appData.traneem.en.forEach(function(h) { all.push({ lang: 'en', data: h }); });
+    var grouped = {};
+    appData.traneem.ar.forEach(function(h) {
+      grouped[h.id] = grouped[h.id] || {};
+      grouped[h.id].ar = h;
+    });
+    appData.traneem.en.forEach(function(h) {
+      grouped[h.id] = grouped[h.id] || {};
+      grouped[h.id].en = h;
+    });
+    var all = Object.keys(grouped).map(function(id) {
+      return { id: id, ar: grouped[id].ar, en: grouped[id].en };
+    });
     var term = searchFilter.traneem;
-    if (term) all = all.filter(function(it) { return searchMatches(it.data, term); });
+    if (term) all = all.filter(function(it) {
+      return searchMatches(it.ar || {}, term) || searchMatches(it.en || {}, term);
+    });
     if (!all.length) { c.innerHTML = '<p class="empty-state">' + (term ? 'No matches found' : t('noDataFound')) + '</p>'; return; }
     c.innerHTML = all.map(function(it) {
-      var d = it.data; var title = d.name || d.title || d.id || 'Untitled';
-      var stanzas = (d.stanzas || []).length;
-      return '<div class="item-row" onclick="editTraneem(\'' + it.lang + '\',\'' + (d.id || '') + '\')"><div><span class="item-title">' + title + '</span><br><span class="item-meta">' + stanzas + ' ' + t('stanzas') + ' | ' + it.lang.toUpperCase() + '</span></div><span>\u270F\uFE0F</span></div>';
+      var d = it.en || it.ar || {};
+      var title = d.name || d.title || d.arabicTitle || it.id || 'Untitled';
+      var arButton = it.ar
+        ? '<button class="btn btn-secondary btn-sm" onclick="event.stopPropagation();editTraneem(\'ar\',\'' + it.id + '\')">AR</button>'
+        : '<span class="item-meta">AR missing</span>';
+      var enButton = it.en
+        ? '<button class="btn btn-secondary btn-sm" onclick="event.stopPropagation();editTraneem(\'en\',\'' + it.id + '\')">EN</button>'
+        : '<span class="item-meta">EN missing</span>';
+      return '<div class="item-row"><div><span class="item-title">' + esc(title) + '</span><br><span class="item-meta">' + it.id + ' | one hymn, available languages: ' + (it.ar ? 'AR ' : '') + (it.en ? 'EN' : '') + '</span></div><div>' + arButton + ' ' + enButton + '</div></div>';
     }).join('');
   }
   function renderBibleList() {
