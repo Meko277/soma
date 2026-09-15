@@ -191,6 +191,7 @@
     html.setAttribute('lang', currentLang);
     applyTranslations();
     refreshAll();
+    applyTranslations();
   }
 
   window.toggleLanguage = toggleLanguage;
@@ -203,7 +204,65 @@
     }
     var lbtn = document.getElementById('langToggle');
     if (lbtn) lbtn.textContent = t('switchLang');
+    translateStaticInterface();
     updateConnectionStatus();
+  }
+
+  function translateStaticInterface() {
+    var translations = {
+      'Coptic Companion': 'مرافق القبطي',
+      'Full App Admin': 'لوحة إدارة التطبيق',
+      'Dashboard': 'لوحة القيادة',
+      'Import/Export': 'استيراد/تصدير',
+      'Traneem': 'الترانيم',
+      'Bible': 'الكتاب المقدس',
+      'Agpeya': 'الأجبية',
+      'Liturgy': 'القداسات',
+      'Readings': 'القراءات',
+      'Theme/Design': 'المظهر والتصميم',
+      'Preview': 'معاينة',
+      'Settings': 'الإعدادات',
+      'How to Use': 'كيفية الاستخدام',
+      'Data Source': 'مصدر البيانات',
+      'Import Data': 'استيراد البيانات',
+      'Export Data for Flutter': 'تصدير البيانات إلى Flutter',
+      'Manage hymns with Arabic/English/Coptic text.': 'إدارة الترانيم بالعربية والإنجليزية والقبطية.',
+      'Manage Bible books, chapters, and verses.': 'إدارة أسفار الكتاب والأصحاحات والآيات.',
+      'Manage the seven daily prayers.': 'إدارة الساعات السبع للأجبية.',
+      'Manage liturgy content.': 'إدارة محتوى القداسات.',
+      'Manage daily Coptic readings.': 'إدارة القراءات القبطية اليومية.',
+      'Add New Hymn': 'إضافة ترنيمة',
+      'Add Bible Book': 'إضافة سفر',
+      'Add Prayer': 'إضافة صلاة',
+      'Add Liturgy Part': 'إضافة جزء من القداس',
+      'Add Reading': 'إضافة قراءة',
+      'Search hymns...': 'ابحث في الترانيم...',
+      'Search books...': 'ابحث في الأسفار...',
+      'Search prayers...': 'ابحث في الصلوات...',
+      'Search readings...': 'ابحث في القراءات...',
+      'Search...': 'بحث...',
+      'Export for Flutter': 'تصدير إلى Flutter',
+      'Import': 'استيراد',
+      'Save': 'حفظ',
+      'Cancel': 'إلغاء',
+      'Delete': 'حذف',
+      'English': 'الإنجليزية',
+      'Arabic': 'العربية',
+      'Coptic': 'القبطية',
+      'Language:': 'اللغة:'
+    };
+    var reverse = {};
+    Object.keys(translations).forEach(function(key) { reverse[translations[key]] = key; });
+    var table = currentLang === 'ar' ? translations : reverse;
+    var walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
+    var node;
+    while ((node = walker.nextNode())) {
+      var value = node.nodeValue.trim();
+      if (table[value]) node.nodeValue = node.nodeValue.replace(value, table[value]);
+    }
+    document.querySelectorAll('input[placeholder], textarea[placeholder]').forEach(function(input) {
+      if (table[input.placeholder]) input.placeholder = table[input.placeholder];
+    });
   }
 
   function updateStats() {
