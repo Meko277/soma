@@ -507,13 +507,40 @@ body::before {
 }
 
 /* ===== PREVIEW ===== */
-.preview-controls { display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; }
+/* ===== CHURCH MAP ===== */
+.church-result-item { padding: 10px 14px; border: 1px solid #E0D5C5; border-radius: 8px; margin-bottom: 8px; cursor: pointer; transition: all 0.2s; background: #fff; }
+.church-result-item:hover { border-color: var(--coptic-burgundy); background: rgba(139,35,50,0.04); transform: translateX(4px); }
+.church-result-item b { color: var(--coptic-burgundy); font-size: 0.85rem; }
+
+/* ===== PREVIEW ===== */
+.preview-controls { display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; align-items: center; }
+.preview-lang-label { font-size: 0.8rem; font-weight: 600; color: var(--coptic-burgundy); margin-right: 4px; }
+.radio-lang { display: inline-flex; align-items: center; gap: 4px; cursor: pointer; font-size: 0.8rem; padding: 4px 10px; border-radius: 20px; border: 2px solid var(--coptic-gold); transition: all 0.2s; user-select: none; }
+.radio-lang:hover { background: rgba(212,175,55,0.15); }
+.radio-lang input[type=radio] { display: none; }
+.radio-lang input[type=radio]:checked + span { font-weight: 700; color: var(--coptic-burgundy); }
+.radio-lang:has(input[type=radio]:checked) { background: linear-gradient(135deg, rgba(212,175,55,0.25), rgba(139,35,50,0.15)); border-color: var(--coptic-burgundy); }
+.reading-badge { display: inline-block; font-size: 0.6rem; font-weight: 700; padding: 2px 8px; border-radius: 12px; background: linear-gradient(135deg, var(--coptic-burgundy), var(--coptic-gold)); color: #fff; margin-left: 6px; vertical-align: middle; text-transform: uppercase; letter-spacing: 0.5px; }
+.reading-type-select { font-size: 0.75rem; padding: 3px 6px; border-radius: 6px; border: 1px solid var(--coptic-gold); }
+.preview-section { margin-bottom: 20px; padding-bottom: 16px; border-bottom: 1px dashed rgba(139,35,50,0.2); }
+.preview-intro { font-style: italic; color: #666; margin-bottom: 10px; }
 .preview-container {
   background: linear-gradient(135deg, #E8DCC8 0%, #D4C4A8 100%);
   border-radius: var(--radius-xl);
   padding: 32px;
   min-height: 500px;
   border: 3px dashed rgba(212,175,55,0.4);
+  transition: all 0.3s ease;
+}
+.preview-container.preview-dark {
+  background: linear-gradient(135deg, #1A0F0A 0%, #2C1810 100%);
+  color: #E8D5A3;
+}
+.preview-container.preview-dark .preview-stanza .stanza-line {
+  color: #E8D5A3;
+}
+.preview-container.preview-dark h3 {
+  color: var(--coptic-gold) !important;
 }
 
 .preview-content {
