@@ -12,11 +12,14 @@ import '../../features/bible/bible_chapter_reader_page.dart';
 import '../../features/bible/bible_page.dart';
 import '../../features/calendar/calendar_page.dart';
 import '../../features/church/church_page.dart';
+import '../../features/church/church_search_page.dart';
 import '../../features/home/home_page.dart';
 import '../../features/library/document_reader_page.dart';
+import '../../features/library/library_contents_page.dart';
 import '../../features/liturgy/liturgy_home_page.dart';
 import '../../features/liturgy/liturgy_reader_page.dart';
 import '../../features/more/more_page.dart';
+import '../../features/readings/readings_page.dart';
 import '../../features/settings/appearance_settings_page.dart';
 import '../../features/settings/language_settings_page.dart';
 import '../../features/today/today_page.dart';
@@ -41,9 +44,7 @@ final appRouterProvider = Provider<GoRouter>((ref) {
 
       ShellRoute(
         builder: (context, state, child) {
-          return AppNavigationScaffold(
-            child: child,
-          );
+          return AppNavigationScaffold(child: child);
         },
 
         routes: [
@@ -63,7 +64,6 @@ final appRouterProvider = Provider<GoRouter>((ref) {
           // BIBLE
           // /bible
           // =======================================================
-
           GoRoute(
             path: '/bible',
             name: 'bible',
@@ -71,13 +71,26 @@ final appRouterProvider = Provider<GoRouter>((ref) {
               return const BiblePage();
             },
           ),
-GoRoute(
-  path: '/agpeya',
-  name: 'agpeya',
-  builder: (context, state) {
-    return const AgpeyaPage();
-  },
-),
+
+          GoRoute(
+            path: '/library',
+            name: 'libraryContents',
+            builder: (context, state) {
+              return const LibraryContentsPage();
+            },
+          ),
+          GoRoute(
+            path: '/readings',
+            name: 'readings',
+            builder: (context, state) => const ReadingsPage(),
+          ),
+          GoRoute(
+            path: '/agpeya',
+            name: 'agpeya',
+            builder: (context, state) {
+              return const AgpeyaPage();
+            },
+          ),
 
           // =======================================================
           // BIBLE BOOK
@@ -86,29 +99,22 @@ GoRoute(
           // /book/matthew
           // etc.
           // =======================================================
-
           GoRoute(
             path: '/book/:id',
             name: 'bibleBook',
             builder: (context, state) {
-              final bookId =
-                  state.pathParameters['id'] ?? '';
+              final bookId = state.pathParameters['id'] ?? '';
 
               debugPrint('========== BOOK ROUTE ==========');
               debugPrint('Requested book ID: "$bookId"');
 
-              final book =
-                  repository.bookById(bookId);
+              final book = repository.bookById(bookId);
 
               if (book == null) {
-                debugPrint(
-                  'BOOK NOT FOUND: "$bookId"',
-                );
+                debugPrint('BOOK NOT FOUND: "$bookId"');
 
                 return Scaffold(
-                  appBar: AppBar(
-                    title: const Text('Bible'),
-                  ),
+                  appBar: AppBar(title: const Text('Bible')),
                   body: Center(
                     child: Text(
                       'Book not found\n\n'
@@ -119,26 +125,17 @@ GoRoute(
                 );
               }
 
-              debugPrint(
-                'BOOK FOUND: ${book.name}',
-              );
-              debugPrint(
-                'Chapter count: ${book.chapterCount}',
-              );
-              debugPrint(
-                '================================',
-              );
+              debugPrint('BOOK FOUND: ${book.name}');
+              debugPrint('Chapter count: ${book.chapterCount}');
+              debugPrint('================================');
 
-              return BibleBookChaptersPage(
-                book: book,
-              );
+              return BibleBookChaptersPage(book: book);
             },
           ),
 
           // =======================================================
           // CHURCH
           // =======================================================
-
           GoRoute(
             path: '/church',
             name: 'church',
@@ -148,9 +145,20 @@ GoRoute(
           ),
 
           // =======================================================
+          // CHURCH SEARCH (in-app Nominatim church finder)
+          // =======================================================
+          GoRoute(
+            path: '/church/search',
+            name: 'churchSearch',
+            builder: (context, state) {
+              final autoNearby = state.uri.queryParameters['nearby'] == '1';
+              return ChurchSearchPage(autoNearby: autoNearby);
+            },
+          ),
+
+          // =======================================================
           // TODAY
           // =======================================================
-
           GoRoute(
             path: '/today',
             name: 'today',
@@ -162,7 +170,6 @@ GoRoute(
           // =======================================================
           // TRANSLATOR (replaces Audio)
           // =======================================================
-
           GoRoute(
             path: '/translator',
             name: 'translator',
@@ -174,7 +181,6 @@ GoRoute(
           // =======================================================
           // MORE
           // =======================================================
-
           GoRoute(
             path: '/more',
             name: 'more',
@@ -193,7 +199,6 @@ GoRoute(
           // OUTSIDE the shell for immersive reading and
           // presentation mode.
           // =======================================================
-
           GoRoute(
             path: '/liturgy',
             name: 'liturgy',
@@ -212,15 +217,13 @@ GoRoute(
       // top of (and steal space from) the full-screen
       // PRESENTATION MODE when the phone is in landscape.
       // =========================================================
-
       GoRoute(
         path: '/agpeya/morning',
         name: 'agpeyaMorning',
         builder: (context, state) {
           return Consumer(
             builder: (context, ref, _) {
-              final language =
-                  ref.watch(preferencesProvider).contentLanguage;
+              final language = ref.watch(preferencesProvider).contentLanguage;
 
               return AgpeyaPrayerPage(
                 prayerId: 'morning',
@@ -239,8 +242,7 @@ GoRoute(
         builder: (context, state) {
           return Consumer(
             builder: (context, ref, _) {
-              final language =
-                  ref.watch(preferencesProvider).contentLanguage;
+              final language = ref.watch(preferencesProvider).contentLanguage;
 
               return AgpeyaPrayerPage(
                 prayerId: 'third',
@@ -259,8 +261,7 @@ GoRoute(
         builder: (context, state) {
           return Consumer(
             builder: (context, ref, _) {
-              final language =
-                  ref.watch(preferencesProvider).contentLanguage;
+              final language = ref.watch(preferencesProvider).contentLanguage;
 
               return AgpeyaPrayerPage(
                 prayerId: 'sixth',
@@ -279,8 +280,7 @@ GoRoute(
         builder: (context, state) {
           return Consumer(
             builder: (context, ref, _) {
-              final language =
-                  ref.watch(preferencesProvider).contentLanguage;
+              final language = ref.watch(preferencesProvider).contentLanguage;
 
               return AgpeyaPrayerPage(
                 prayerId: 'ninth',
@@ -299,8 +299,7 @@ GoRoute(
         builder: (context, state) {
           return Consumer(
             builder: (context, ref, _) {
-              final language =
-                  ref.watch(preferencesProvider).contentLanguage;
+              final language = ref.watch(preferencesProvider).contentLanguage;
 
               return AgpeyaPrayerPage(
                 prayerId: 'vespers',
@@ -319,8 +318,7 @@ GoRoute(
         builder: (context, state) {
           return Consumer(
             builder: (context, ref, _) {
-              final language =
-                  ref.watch(preferencesProvider).contentLanguage;
+              final language = ref.watch(preferencesProvider).contentLanguage;
 
               return AgpeyaPrayerPage(
                 prayerId: 'compline',
@@ -339,8 +337,7 @@ GoRoute(
         builder: (context, state) {
           return Consumer(
             builder: (context, ref, _) {
-              final language =
-                  ref.watch(preferencesProvider).contentLanguage;
+              final language = ref.watch(preferencesProvider).contentLanguage;
 
               return AgpeyaPrayerPage(
                 prayerId: 'midnight',
@@ -366,7 +363,6 @@ GoRoute(
       // =========================================================
       // CALENDAR
       // =========================================================
-
       GoRoute(
         path: '/calendar',
         name: 'calendar',
@@ -375,7 +371,7 @@ GoRoute(
         },
       ),
 
-// =========================================================
+      // =========================================================
       // TRANEEM (الترانيم)
       //
       // Text-only hymn lyrics (no audio / streaming). A main
@@ -383,7 +379,6 @@ GoRoute(
       // shell so the reader is immersive; reached from the
       // More page.
       // =========================================================
-
       GoRoute(
         path: '/traneem',
         name: 'traneem',
@@ -398,8 +393,7 @@ GoRoute(
         builder: (context, state) {
           return Consumer(
             builder: (context, ref, _) {
-              final language =
-                  ref.watch(preferencesProvider).contentLanguage;
+              final language = ref.watch(preferencesProvider).contentLanguage;
 
               return TraneemReaderPage(
                 hymnId: state.pathParameters['id'] ?? '',
@@ -413,7 +407,6 @@ GoRoute(
       // =========================================================
       // SAVED / BOOKMARKS (المحفوظات)
       // =========================================================
-
       GoRoute(
         path: '/saved',
         name: 'saved',
@@ -437,15 +430,11 @@ GoRoute(
       // DOCUMENT READER
       // /reader/:id
       // =========================================================
-
       GoRoute(
         path: '/reader/:id',
         name: 'reader',
         builder: (context, state) {
-          return DocumentReaderPage(
-            documentId:
-                state.pathParameters['id']!,
-          );
+          return DocumentReaderPage(documentId: state.pathParameters['id']!);
         },
       ),
 
@@ -455,21 +444,16 @@ GoRoute(
       // /chapter/exodus-1
       // etc.
       // =========================================================
-
       GoRoute(
         path: '/chapter/:id',
         name: 'chapter',
         builder: (context, state) {
-          final chapterId =
-              state.pathParameters['id'] ?? '';
+          final chapterId = state.pathParameters['id'] ?? '';
 
           // Optional role hint (?role=people|deacons|priests)
           final role = state.uri.queryParameters['role'];
 
-          return BibleChapterReaderPage(
-            chapterId: chapterId,
-            roleHint: role,
-          );
+          return BibleChapterReaderPage(chapterId: chapterId, roleHint: role);
         },
       ),
 
@@ -481,24 +465,18 @@ GoRoute(
       // PRESENTATION MODE are fully immersive (no bottom
       // NavigationBar).
       // =========================================================
-
       GoRoute(
         path: '/liturgy/:kind',
         name: 'liturgyKind',
         builder: (context, state) {
           return Consumer(
             builder: (context, ref, _) {
-              final language = ref
-                  .watch(preferencesProvider)
-                  .contentLanguage;
+              final language = ref.watch(preferencesProvider).contentLanguage;
 
               return LiturgyReaderPage(
-                kindId:
-                    state.pathParameters['kind'] ??
-                        'basil',
+                kindId: state.pathParameters['kind'] ?? 'basil',
 
-                language:
-                    _languageCode(language),
+                language: _languageCode(language),
               );
             },
           );
@@ -508,7 +486,6 @@ GoRoute(
       // =========================================================
       // SETTINGS - APPEARANCE
       // =========================================================
-
       GoRoute(
         path: '/settings/appearance',
         name: 'appearanceSettings',
@@ -520,7 +497,6 @@ GoRoute(
       // =========================================================
       // SETTINGS - LANGUAGE
       // =========================================================
-
       GoRoute(
         path: '/settings/language',
         name: 'languageSettings',

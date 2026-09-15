@@ -148,6 +148,15 @@ class HomePage extends ConsumerWidget {
         ),
 
         SectionCard(
+          title: strings.isArabic ? 'محتويات المكتبة' : 'Library Contents',
+          subtitle: strings.isArabic
+              ? 'الكتاب المقدس والأجبية والقداسات والقراءات'
+              : 'Bible, Agpeya, liturgies, and church readings',
+          icon: Icons.grid_view_outlined,
+          onTap: () => context.push('/library'),
+        ),
+
+        SectionCard(
           title: strings.calendar,
           subtitle:
               '${strings.isArabic ? day.copticDate.displayArabic : day.copticDate.display} • ${strings.calendarDescription}',
@@ -173,10 +182,25 @@ class HomePage extends ConsumerWidget {
         ),
 
         SectionCard(
-          title: strings.translator,
-          subtitle: strings.translatorSubtitle,
-          icon: Icons.translate_outlined,
-          onTap: () => context.push('/translator'),
+          title: strings.church,
+          subtitle: strings.churchDescription,
+          icon: Icons.church_outlined,
+          onTap: () => context.push('/church'),
+        ),
+        Padding(
+          padding: const EdgeInsets.only(left: 56, bottom: 6),
+          child: TextButton.icon(
+            onPressed: () => context.push('/church/search'),
+            icon: Icon(
+              strings.isArabic ? Icons.search : Icons.search,
+              size: 18,
+            ),
+            label: Text(
+              strings.isArabic
+                  ? 'بحث عن كنائس قريبة'
+                  : 'Search nearby churches',
+            ),
+          ),
         ),
 
         const SizedBox(height: 24),

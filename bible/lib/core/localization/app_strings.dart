@@ -522,6 +522,36 @@ class AppStrings {
       ? 'صلاة وعبادة وألحان وقديسين وطقوس وأسرار.'
       : 'Prayer, worship, hymns, saints, rites, and sacraments.';
 
+  String get churchSearchTitle =>
+      isArabic ? 'بحث الكنائس' : 'Church Search';
+
+  String get churchSearch =>
+      isArabic ? 'بحث' : 'Search';
+
+  String get churchSearchHint => isArabic
+      ? 'اسم المدينة أو الكنيسة أو المنطقة…'
+      : 'City, church, or region…';
+
+  String get churchSearching => isArabic
+      ? 'جارٍ البحث…'
+      : 'Searching…';
+
+  String get churchNotFound => isArabic
+      ? 'لم يعثر على كنائس في هذه المنطقة'
+      : 'No churches found in this area';
+
+  String get churchNoResults => isArabic
+      ? 'لا توجد نتائج — جرب تغيير البحث أو الدولة'
+      : 'No results — try a different search or country';
+
+  String get churchSearchAgain => isArabic
+      ? 'بحث آخر'
+      : 'Search again';
+
+  String get churchOpenMaps => isArabic
+      ? 'تعذّر فتح الخريطة الخارجية'
+      : 'Could not open the external map';
+
   // ----------------------------------------------------------
   // BIBLE READER ERROR STATES
   // ----------------------------------------------------------
@@ -536,4 +566,16 @@ class AppStrings {
   String chapterNotAddedYet(String name, int number) => isArabic
       ? '$name $number لم يُضف بعد.'
       : '$name $number has not been added yet.';
+
+  // ----------------------------------------------------------
+  // NEAREST ORTHODOX CHURCH
+  // ----------------------------------------------------------
+
+  String get moreChurchTitle => isArabic
+      ? 'أقرب كنيسة أرثوذكسية'
+      : 'Nearest Orthodox Church';
+
+  String get moreChurchSubtitle => isArabic
+      ? 'افتح الخريطة لإيجاد كنيسة قبطية أرثوذكسية قريبة منك'
+      : 'Open the map to find a nearby Coptic Orthodox church';
 }

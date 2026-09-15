@@ -13,6 +13,7 @@ import '../../widgets/bilingual_text.dart';
 import '../../widgets/floating_text_zoom.dart';
 import '../../widgets/presentation_reader.dart';
 import '../../widgets/reading_settings_drawer.dart';
+import 'parallel_chapter_reader.dart';
 
 // ============================================================
 // BIBLE CHAPTER READER PAGE
@@ -101,9 +102,7 @@ class _BibleChapterReaderPageState
 
     final wasLandscape = _isLandscape;
 
-    _isLandscape =
-        MediaQuery.of(context).orientation ==
-            Orientation.landscape;
+    _isLandscape = MediaQuery.of(context).orientation == Orientation.landscape;
 
     // Returning to portrait re-arms presentation mode
     // after a local dismissal (X button).
@@ -130,9 +129,7 @@ class _BibleChapterReaderPageState
   }
 
   @override
-  void didUpdateWidget(
-    covariant BibleChapterReaderPage oldWidget,
-  ) {
+  void didUpdateWidget(covariant BibleChapterReaderPage oldWidget) {
     super.didUpdateWidget(oldWidget);
 
     if (oldWidget.chapterId != widget.chapterId) {
@@ -158,8 +155,7 @@ class _BibleChapterReaderPageState
   // ============================================================
 
   void _resolveLocation() {
-    final repository =
-        ref.read(bibleContentRepositoryProvider);
+    final repository = ref.read(bibleContentRepositoryProvider);
 
     _bookId = '';
     _chapterNumber = 1;
@@ -170,10 +166,8 @@ class _BibleChapterReaderPageState
       if (widget.chapterId.startsWith(prefix)) {
         _bookId = book.id;
 
-        _chapterNumber = int.tryParse(
-              widget.chapterId.substring(prefix.length),
-            ) ??
-            1;
+        _chapterNumber =
+            int.tryParse(widget.chapterId.substring(prefix.length)) ?? 1;
 
         break;
       }
@@ -183,8 +177,7 @@ class _BibleChapterReaderPageState
   }
 
   void _startLoading() {
-    final repository =
-        ref.read(bibleContentRepositoryProvider);
+    final repository = ref.read(bibleContentRepositoryProvider);
 
     _chapterFuture = repository.loadChapter(
       bookId: _bookId,
@@ -209,11 +202,9 @@ class _BibleChapterReaderPageState
     // (with the other language shown underneath in
     // titles), while scripture text follows the
     // CONTENT language preference.
-    final uiIsArabic =
-        preferences.interfaceLanguage.isRtl;
+    final uiIsArabic = preferences.interfaceLanguage.isRtl;
 
-    final language =
-        _getBibleLanguage(preferences.contentLanguage);
+    final language = _getBibleLanguage(preferences.contentLanguage);
 
     // ----------------------------------------------------------
     // Content language changed from the settings panel:
@@ -227,9 +218,7 @@ class _BibleChapterReaderPageState
 
     final book = _book;
 
-    final strings = AppStrings(
-      preferences.interfaceLanguage,
-    );
+    final strings = AppStrings(preferences.interfaceLanguage);
 
     // ----------------------------------------------------------
     // BOOK NOT FOUND
@@ -237,9 +226,7 @@ class _BibleChapterReaderPageState
 
     if (book == null) {
       return Scaffold(
-        appBar: AppBar(
-          title: Text(strings.bible),
-        ),
+        appBar: AppBar(title: Text(strings.bible)),
         body: Center(
           child: Text(
             '${strings.bookNotFoundLabel}\n\nID: $_bookId',
@@ -268,8 +255,8 @@ class _BibleChapterReaderPageState
 
     final presenting =
         preferences.presentationModeEnabled &&
-            _isLandscape &&
-            !_presentationDismissed;
+        _isLandscape &&
+        !_presentationDismissed;
 
     return Directionality(
       textDirection: TextDirection.ltr,
@@ -290,105 +277,93 @@ class _BibleChapterReaderPageState
         // ==============================================
         // APP BAR (hidden in presentation mode)
         // ==============================================
-
-        appBar: presenting ? null : AppBar(
-          // Bilingual format: chosen language on top,
-          // the other underneath.
-          title: BilingualText(
-            english: '${book.name} $_chapterNumber',
-            arabic: '${book.arabicName} $_chapterNumber',
-            primaryIsArabic: uiIsArabic,
-            spacing: 1,
-            style:
-                Theme.of(context).textTheme.titleMedium?.copyWith(
-                      fontWeight: FontWeight.bold,
-                    ),
-          ),
-
-          actions: [
-            // ------------------------------------------
-            // LAST READING BUTTON
-            //
-            // Sits beside the drawer button and jumps
-            // back to the previously read chapter.
-            // Hidden until at least two different
-            // chapters have been read.
-            // ------------------------------------------
-
-            _buildLastReadingButton(preferences),
-
-            // ------------------------------------------
-            // SAVE READING BUTTON
-            //
-            // Explicitly saves the CURRENT chapter as
-            // the last reading. Nothing is ever saved
-            // automatically.
-            // ------------------------------------------
-
-            _buildSaveReadingButton(preferences),
-
-            // ------------------------------------------
-            // BOOKMARK BUTTON (Saved page)
-            //
-            // Adds/removes the CURRENT chapter in the
-            // Saved list - persisted by SharedPreferences
-            // and shown on the Saved screen.
-            // ------------------------------------------
-
-            _buildBookmarkButton(preferences),
-
-            // ------------------------------------------
-            // Builder gives a context that is UNDER
-            // the Scaffold, so Scaffold.of() works
-            // (same pattern as the Agpeya page).
-            // ------------------------------------------
-
-            Builder(
-              builder: (context) {
-                return IconButton(
-                  tooltip: uiIsArabic
-                      ? 'الأصحاح'
-                      : 'Chapters',
-                  icon: const Icon(
-                    Icons.grid_view_outlined,
+        appBar: presenting
+            ? null
+            : AppBar(
+                // Bilingual format: chosen language on top,
+                // the other underneath.
+                title: BilingualText(
+                  english: '${book.name} $_chapterNumber',
+                  arabic: '${book.arabicName} $_chapterNumber',
+                  primaryIsArabic: uiIsArabic,
+                  spacing: 1,
+                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                    fontWeight: FontWeight.bold,
                   ),
-                  onPressed: () {
-                    Scaffold.of(context)
-                        .openEndDrawer();
-                  },
-                );
-              },
-            ),
-          ],
-        ),
+                ),
+
+                actions: [
+                  // ------------------------------------------
+                  // LAST READING BUTTON
+                  //
+                  // Sits beside the drawer button and jumps
+                  // back to the previously read chapter.
+                  // Hidden until at least two different
+                  // chapters have been read.
+                  // ------------------------------------------
+
+                  _buildLastReadingButton(preferences),
+
+                  // ------------------------------------------
+                  // SAVE READING BUTTON
+                  //
+                  // Explicitly saves the CURRENT chapter as
+                  // the last reading. Nothing is ever saved
+                  // automatically.
+                  // ------------------------------------------
+                  _buildSaveReadingButton(preferences),
+
+                  // ------------------------------------------
+                  // BOOKMARK BUTTON (Saved page)
+                  //
+                  // Adds/removes the CURRENT chapter in the
+                  // Saved list - persisted by SharedPreferences
+                  // and shown on the Saved screen.
+                  // ------------------------------------------
+                  _buildBookmarkButton(preferences),
+
+                  // ------------------------------------------
+                  // Builder gives a context that is UNDER
+                  // the Scaffold, so Scaffold.of() works
+                  // (same pattern as the Agpeya page).
+                  // ------------------------------------------
+                  Builder(
+                    builder: (context) {
+                      return IconButton(
+                        tooltip: uiIsArabic ? 'الأصحاح' : 'Chapters',
+                        icon: const Icon(Icons.grid_view_outlined),
+                        onPressed: () {
+                          Scaffold.of(context).openEndDrawer();
+                        },
+                      );
+                    },
+                  ),
+                ],
+              ),
 
         // ==============================================
         // RIGHT DRAWER -> CHAPTERS (+ SETTINGS INSIDE)
         // ==============================================
-
-            endDrawer: presenting
-                ? null
-                : _showSettingsInDrawer
-                ? _buildSettingsDrawer()
-                : _ChaptersDrawer(
-                    book: book,
-                    currentChapter: _chapterNumber,
-                    language: _language,
-                    primaryIsArabic: uiIsArabic,
-                    chaptersLabel: uiIsArabic
-                        ? 'الأصحاح'
-                        : 'Chapters',
-                    onOpenSettings: () {
-                      setState(() {
-                        _showSettingsInDrawer = true;
-                      });
-                    },
-                  ),
+        endDrawer: presenting
+            ? null
+            : _showSettingsInDrawer
+            ? _buildSettingsDrawer()
+            : _ChaptersDrawer(
+                book: book,
+                currentChapter: _chapterNumber,
+                language: _language,
+                primaryIsArabic: uiIsArabic,
+                chaptersLabel: uiIsArabic ? 'الأصحاح' : 'Chapters',
+                onOpenSettings: () {
+                  setState(() {
+                    _showSettingsInDrawer = true;
+                  });
+                },
+              ),
 
         // ==============================================
         // BODY
         // ==============================================
-
         body: FutureBuilder<BibleChapter?>(
           future: _chapterFuture,
 
@@ -397,11 +372,8 @@ class _BibleChapterReaderPageState
             // LOADING
             // ----------------------------------------
 
-            if (snapshot.connectionState ==
-                ConnectionState.waiting) {
-              return const Center(
-                child: CircularProgressIndicator(),
-              );
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const Center(child: CircularProgressIndicator());
             }
 
             // ----------------------------------------
@@ -443,22 +415,19 @@ class _BibleChapterReaderPageState
             // background; swipe / tap to navigate.
             // ----------------------------------------
 
-            if (presenting &&
-                chapter.verses.isNotEmpty) {
+            if (presenting && chapter.verses.isNotEmpty) {
               return PresentationReader(
                 slides: [
-                  for (final verse
-                      in chapter.verses)
+                  for (final verse in chapter.verses)
                     PresentationSlide(
                       text: verse.text,
                       badge: '${verse.number}',
                     ),
                 ],
 
-                headerTitle:
-                    _language == 'ar'
-                        ? '${book.arabicName} $_chapterNumber'
-                        : '${book.name} $_chapterNumber',
+                headerTitle: _language == 'ar'
+                    ? '${book.arabicName} $_chapterNumber'
+                    : '${book.name} $_chapterNumber',
 
                 isRtl: _language == 'ar',
 
@@ -466,11 +435,9 @@ class _BibleChapterReaderPageState
                 // visible instead of verse 1.
                 startIndex: _lastPresentationIndex,
 
-                onPageChanged: (page) =>
-                    _lastPresentationIndex = page,
+                onPageChanged: (page) => _lastPresentationIndex = page,
 
-                exitTooltip:
-                    strings.presentationExitLabel,
+                exitTooltip: strings.presentationExitLabel,
 
                 onExit: () {
                   // LOCAL dismissal only - rotating back
@@ -490,6 +457,7 @@ class _BibleChapterReaderPageState
                   book: book,
                   chapter: chapter,
                   language: _language,
+                  displayLanguages: preferences.selectedBibleDisplayLanguages,
                   uiIsArabic: uiIsArabic,
                   roleHint: widget.roleHint,
                 ),
@@ -518,9 +486,7 @@ class _BibleChapterReaderPageState
   // between your two latest chapters.
   // ============================================================
 
-  Widget _buildLastReadingButton(
-    AppPreferences preferences,
-  ) {
+  Widget _buildLastReadingButton(AppPreferences preferences) {
     String? jumpTarget;
 
     for (final id in preferences.readingHistory) {
@@ -534,13 +500,10 @@ class _BibleChapterReaderPageState
       return const SizedBox.shrink();
     }
 
-    final isArabic =
-        preferences.interfaceLanguage.isRtl;
+    final isArabic = preferences.interfaceLanguage.isRtl;
 
     return IconButton(
-      tooltip: isArabic
-          ? 'آخر قراءة'
-          : 'Last reading',
+      tooltip: isArabic ? 'آخر قراءة' : 'Last reading',
       icon: const Icon(Icons.history),
       onPressed: () {
         context.go('/chapter/$jumpTarget');
@@ -556,30 +519,18 @@ class _BibleChapterReaderPageState
   // already the saved one.
   // ============================================================
 
-  Widget _buildSaveReadingButton(
-    AppPreferences preferences,
-  ) {
+  Widget _buildSaveReadingButton(AppPreferences preferences) {
     final isSaved =
         preferences.readingHistory.isNotEmpty &&
-            preferences.readingHistory.first ==
-                widget.chapterId;
+        preferences.readingHistory.first == widget.chapterId;
 
-    final isArabic =
-        preferences.interfaceLanguage.isRtl;
+    final isArabic = preferences.interfaceLanguage.isRtl;
 
     return IconButton(
       tooltip: isArabic
-          ? (isSaved
-              ? 'القراءة محفوظة'
-              : 'حفظ القراءة')
-          : (isSaved
-              ? 'Reading saved'
-              : 'Save reading'),
-      icon: Icon(
-        isSaved
-            ? Icons.bookmark
-            : Icons.bookmark_border,
-      ),
+          ? (isSaved ? 'القراءة محفوظة' : 'حفظ القراءة')
+          : (isSaved ? 'Reading saved' : 'Save reading'),
+      icon: Icon(isSaved ? Icons.bookmark : Icons.bookmark_border),
       onPressed: isSaved
           ? null
           : () {
@@ -625,16 +576,16 @@ class _BibleChapterReaderPageState
       onPressed: book == null
           ? null
           : () {
-              ref.read(savedItemsProvider.notifier).toggle(
+              ref
+                  .read(savedItemsProvider.notifier)
+                  .toggle(
                     SavedItem(
                       id: savedId,
                       kind: SavedContentKind.bibleChapter,
                       title: isArabic
                           ? '${book.arabicName} $_chapterNumber'
                           : '${book.name} $_chapterNumber',
-                      subtitle: isArabic
-                          ? 'الكتاب المقدس'
-                          : 'Bible',
+                      subtitle: isArabic ? 'الكتاب المقدس' : 'Bible',
                       routePath: '/chapter/${widget.chapterId}',
                     ),
                   );
@@ -656,9 +607,7 @@ class _BibleChapterReaderPageState
 
       child: SafeArea(
         child: Directionality(
-          textDirection: isArabic
-              ? TextDirection.rtl
-              : TextDirection.ltr,
+          textDirection: isArabic ? TextDirection.rtl : TextDirection.ltr,
 
           child: Column(
             children: [
@@ -668,44 +617,28 @@ class _BibleChapterReaderPageState
 
               Container(
                 width: double.infinity,
-                padding: const EdgeInsets.fromLTRB(
-                  4,
-                  8,
-                  16,
-                  16,
-                ),
+                padding: const EdgeInsets.fromLTRB(4, 8, 16, 16),
                 decoration: BoxDecoration(
-                  color:
-                      theme.colorScheme.primaryContainer,
+                  color: theme.colorScheme.primaryContainer,
                 ),
                 child: Row(
                   children: [
                     BackButton(
-                      color: theme.colorScheme
-                          .onPrimaryContainer,
+                      color: theme.colorScheme.onPrimaryContainer,
                       onPressed: () {
                         setState(() {
-                          _showSettingsInDrawer =
-                              false;
+                          _showSettingsInDrawer = false;
                         });
                       },
                     ),
 
                     Expanded(
                       child: Text(
-                        isArabic
-                            ? 'الإعدادات'
-                            : 'Settings',
-                        textAlign: isArabic
-                            ? TextAlign.right
-                            : TextAlign.left,
-                        style: theme.textTheme
-                            .headlineSmall
-                            ?.copyWith(
-                          fontWeight:
-                              FontWeight.bold,
-                          color: theme.colorScheme
-                              .onPrimaryContainer,
+                        isArabic ? 'الإعدادات' : 'Settings',
+                        textAlign: isArabic ? TextAlign.right : TextAlign.left,
+                        style: theme.textTheme.headlineSmall?.copyWith(
+                          fontWeight: FontWeight.bold,
+                          color: theme.colorScheme.onPrimaryContainer,
                         ),
                       ),
                     ),
@@ -713,9 +646,7 @@ class _BibleChapterReaderPageState
                 ),
               ),
 
-              const Expanded(
-                child: ReadingSettingsPanel(),
-              ),
+              const Expanded(child: ReadingSettingsPanel()),
             ],
           ),
         ),
@@ -728,9 +659,7 @@ class _BibleChapterReaderPageState
   // ============================================================
 
   String _getBibleLanguage(AppLanguage language) {
-    return language == AppLanguage.arabic
-        ? 'ar'
-        : 'en';
+    return language == AppLanguage.arabic ? 'ar' : 'en';
   }
 }
 
@@ -743,6 +672,7 @@ class _ReaderPage extends StatelessWidget {
     required this.book,
     required this.chapter,
     required this.language,
+    required this.displayLanguages,
     required this.uiIsArabic,
     this.roleHint,
   });
@@ -750,6 +680,7 @@ class _ReaderPage extends StatelessWidget {
   final BibleBook book;
   final BibleChapter chapter;
   final String language;
+  final List<String> displayLanguages;
 
   /// Interface-language RTL flag (for the banner).
   final bool uiIsArabic;
@@ -759,6 +690,15 @@ class _ReaderPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    if (displayLanguages.length > 1) {
+      return ParallelChapterReader(
+        book: book,
+        primaryChapter: chapter,
+        primaryLanguage: language,
+        languages: displayLanguages,
+      );
+    }
+
     final isArabic = language == 'ar';
 
     final theme = Theme.of(context);
@@ -774,23 +714,17 @@ class _ReaderPage extends StatelessWidget {
     if (roleHint != null) {
       switch (roleHint) {
         case 'people':
-          roleLabel = isArabic
-              ? 'يقرؤها الشعب'
-              : 'Read by the People';
+          roleLabel = isArabic ? 'يقرؤها الشعب' : 'Read by the People';
           roleIcon = Icons.groups;
           break;
 
         case 'deacons':
-          roleLabel = isArabic
-              ? 'يقرؤها الشمامسة'
-              : 'Read by the Deacons';
+          roleLabel = isArabic ? 'يقرؤها الشمامسة' : 'Read by the Deacons';
           roleIcon = Icons.record_voice_over;
           break;
 
         case 'priests':
-          roleLabel = isArabic
-              ? 'يقرؤها الكهنة'
-              : 'Read by the Priests';
+          roleLabel = isArabic ? 'يقرؤها الكهنة' : 'Read by the Priests';
           roleIcon = Icons.church;
           break;
       }
@@ -798,9 +732,7 @@ class _ReaderPage extends StatelessWidget {
 
     return SafeArea(
       child: Directionality(
-        textDirection: isArabic
-            ? TextDirection.rtl
-            : TextDirection.ltr,
+        textDirection: isArabic ? TextDirection.rtl : TextDirection.ltr,
 
         child: Column(
           children: [
@@ -811,20 +743,14 @@ class _ReaderPage extends StatelessWidget {
             if (roleLabel != null)
               Container(
                 width: double.infinity,
-                margin: const EdgeInsets.fromLTRB(
-                  24,
-                  12,
-                  24,
-                  0,
-                ),
+                margin: const EdgeInsets.fromLTRB(24, 12, 24, 0),
                 padding: const EdgeInsets.symmetric(
                   horizontal: 14,
                   vertical: 10,
                 ),
                 decoration: BoxDecoration(
                   color: theme.colorScheme.primaryContainer,
-                  borderRadius:
-                      BorderRadius.circular(12),
+                  borderRadius: BorderRadius.circular(12),
                 ),
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
@@ -835,17 +761,14 @@ class _ReaderPage extends StatelessWidget {
                     Icon(
                       roleIcon,
                       size: 18,
-                      color: theme
-                          .colorScheme.onPrimaryContainer,
+                      color: theme.colorScheme.onPrimaryContainer,
                     ),
                     const SizedBox(width: 8),
                     Text(
                       roleLabel,
-                      style: theme.textTheme.titleSmall
-                          ?.copyWith(
+                      style: theme.textTheme.titleSmall?.copyWith(
                         fontWeight: FontWeight.bold,
-                        color: theme.colorScheme
-                            .onPrimaryContainer,
+                        color: theme.colorScheme.onPrimaryContainer,
                       ),
                     ),
                   ],
@@ -855,83 +778,62 @@ class _ReaderPage extends StatelessWidget {
             // ------------------------------------------
             // VERSES
             // ------------------------------------------
-
-            Expanded(
-              child: _buildVerseList(context, theme),
-            ),
+            Expanded(child: _buildVerseList(context, theme)),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildVerseList(
-    BuildContext context,
-    ThemeData theme,
-  ) {
+  Widget _buildVerseList(BuildContext context, ThemeData theme) {
     final isArabic = language == 'ar';
 
     return ListView.builder(
-          physics: const BouncingScrollPhysics(),
+      physics: const BouncingScrollPhysics(),
 
-          padding: const EdgeInsets.fromLTRB(
-            24,
-            24,
-            24,
-            40,
-          ),
+      padding: const EdgeInsets.fromLTRB(24, 24, 24, 40),
 
-          itemCount: chapter.verses.length + 1,
+      itemCount: chapter.verses.length + 1,
 
-          itemBuilder: (context, index) {
-            // --------------------------------------
-            // HEADER
-            // --------------------------------------
+      itemBuilder: (context, index) {
+        // --------------------------------------
+        // HEADER
+        // --------------------------------------
 
-            if (index == 0) {
-              return Column(
-                crossAxisAlignment: isArabic
-                    ? CrossAxisAlignment.end
-                    : CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    isArabic
-                        ? book.arabicName
-                        : book.name,
-                    style: theme
-                        .textTheme
-                        .headlineMedium
-                        ?.copyWith(
-                      fontWeight:
-                          FontWeight.bold,
-                    ),
-                  ),
+        if (index == 0) {
+          return Column(
+            crossAxisAlignment: isArabic
+                ? CrossAxisAlignment.end
+                : CrossAxisAlignment.start,
+            children: [
+              Text(
+                isArabic ? book.arabicName : book.name,
+                style: theme.textTheme.headlineMedium?.copyWith(
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
 
-                  const SizedBox(height: 8),
+              const SizedBox(height: 8),
 
-                  Text(
-                    isArabic
-                        ? 'الإصحاح ${chapter.chapterNumber}'
-                        : 'Chapter ${chapter.chapterNumber}',
-                    style: theme
-                        .textTheme.titleLarge,
-                  ),
+              Text(
+                isArabic
+                    ? 'الإصحاح ${chapter.chapterNumber}'
+                    : 'Chapter ${chapter.chapterNumber}',
+                style: theme.textTheme.titleLarge,
+              ),
 
-                  const SizedBox(height: 28),
-                ],
-              );
-            }
+              const SizedBox(height: 28),
+            ],
+          );
+        }
 
-            // --------------------------------------
-            // VERSE
-            // --------------------------------------
+        // --------------------------------------
+        // VERSE
+        // --------------------------------------
 
-            return _VerseTile(
-              verse: chapter.verses[index - 1],
-              language: language,
-            );
-          },
-        );
+        return _VerseTile(verse: chapter.verses[index - 1], language: language);
+      },
+    );
   }
 }
 
@@ -940,10 +842,7 @@ class _ReaderPage extends StatelessWidget {
 // ============================================================
 
 class _VerseTile extends StatelessWidget {
-  const _VerseTile({
-    required this.verse,
-    required this.language,
-  });
+  const _VerseTile({required this.verse, required this.language});
 
   final BibleVerse verse;
   final String language;
@@ -963,19 +862,15 @@ class _VerseTile extends StatelessWidget {
             height: 34,
             alignment: Alignment.center,
             decoration: BoxDecoration(
-              color: Theme.of(context)
-                  .colorScheme
-                  .primary
-                  .withValues(alpha: 0.10),
-              borderRadius:
-                  BorderRadius.circular(10),
+              color: Theme.of(
+                context,
+              ).colorScheme.primary.withValues(alpha: 0.10),
+              borderRadius: BorderRadius.circular(10),
             ),
             child: Text(
               '${verse.number}',
               style: TextStyle(
-                color: Theme.of(context)
-                    .colorScheme
-                    .primary,
+                color: Theme.of(context).colorScheme.primary,
                 fontWeight: FontWeight.bold,
               ),
             ),
@@ -986,16 +881,10 @@ class _VerseTile extends StatelessWidget {
           Expanded(
             child: Text(
               verse.text,
-              textAlign: isArabic
-                  ? TextAlign.right
-                  : TextAlign.left,
-              style: Theme.of(context)
-                  .textTheme
-                  .bodyLarge
-                  ?.copyWith(
-                    fontSize: 19,
-                    height: 1.75,
-                  ),
+              textAlign: isArabic ? TextAlign.right : TextAlign.left,
+              style: Theme.of(
+                context,
+              ).textTheme.bodyLarge?.copyWith(fontSize: 19, height: 1.75),
             ),
           ),
         ],
@@ -1044,8 +933,7 @@ class _ChaptersDrawer extends StatelessWidget {
   TextDirection get _textDirection =>
       _isArabic ? TextDirection.rtl : TextDirection.ltr;
 
-  String get _settingsText =>
-      _isArabic ? 'الإعدادات' : 'Settings';
+  String get _settingsText => _isArabic ? 'الإعدادات' : 'Settings';
 
   @override
   Widget build(BuildContext context) {
@@ -1066,21 +954,14 @@ class _ChaptersDrawer extends StatelessWidget {
 
               Container(
                 width: double.infinity,
-                padding: const EdgeInsets.fromLTRB(
-                  20,
-                  24,
-                  20,
-                  24,
-                ),
+                padding: const EdgeInsets.fromLTRB(20, 24, 20, 24),
                 decoration: BoxDecoration(
-                  color: theme
-                      .colorScheme.primaryContainer,
+                  color: theme.colorScheme.primaryContainer,
                 ),
                 child: Column(
-                  crossAxisAlignment:
-                      _isArabic
-                          ? CrossAxisAlignment.end
-                          : CrossAxisAlignment.start,
+                  crossAxisAlignment: _isArabic
+                      ? CrossAxisAlignment.end
+                      : CrossAxisAlignment.start,
                   children: [
                     Align(
                       alignment: _isArabic
@@ -1089,8 +970,7 @@ class _ChaptersDrawer extends StatelessWidget {
                       child: Icon(
                         Icons.auto_stories_outlined,
                         size: 38,
-                        color: theme.colorScheme
-                            .onPrimaryContainer,
+                        color: theme.colorScheme.onPrimaryContainer,
                       ),
                     ),
 
@@ -1099,22 +979,14 @@ class _ChaptersDrawer extends StatelessWidget {
                     BilingualText(
                       english: book.name,
                       arabic: book.arabicName,
-                      primaryIsArabic:
-                          primaryIsArabic,
-                      textAlign: _isArabic
-                          ? TextAlign.right
-                          : TextAlign.left,
-                      crossAxisAlignment:
-                          _isArabic
-                              ? CrossAxisAlignment.end
-                              : CrossAxisAlignment.start,
-                      style: theme.textTheme
-                          .headlineSmall
-                          ?.copyWith(
-                        fontWeight:
-                            FontWeight.bold,
-                        color: theme.colorScheme
-                            .onPrimaryContainer,
+                      primaryIsArabic: primaryIsArabic,
+                      textAlign: _isArabic ? TextAlign.right : TextAlign.left,
+                      crossAxisAlignment: _isArabic
+                          ? CrossAxisAlignment.end
+                          : CrossAxisAlignment.start,
+                      style: theme.textTheme.headlineSmall?.copyWith(
+                        fontWeight: FontWeight.bold,
+                        color: theme.colorScheme.onPrimaryContainer,
                       ),
                     ),
 
@@ -1122,14 +994,9 @@ class _ChaptersDrawer extends StatelessWidget {
 
                     Text(
                       chaptersLabel,
-                      textAlign: _isArabic
-                          ? TextAlign.right
-                          : TextAlign.left,
-                      style: theme.textTheme
-                          .titleMedium
-                          ?.copyWith(
-                        color: theme.colorScheme
-                            .onPrimaryContainer,
+                      textAlign: _isArabic ? TextAlign.right : TextAlign.left,
+                      style: theme.textTheme.titleMedium?.copyWith(
+                        color: theme.colorScheme.onPrimaryContainer,
                       ),
                     ),
                   ],
@@ -1139,15 +1006,11 @@ class _ChaptersDrawer extends StatelessWidget {
               // ==============================================
               // CHAPTERS GRID
               // ==============================================
-
               Expanded(
                 child: GridView.builder(
-                  physics:
-                      const BouncingScrollPhysics(),
-                  padding:
-                      const EdgeInsets.all(16),
-                  gridDelegate:
-                      const SliverGridDelegateWithFixedCrossAxisCount(
+                  physics: const BouncingScrollPhysics(),
+                  padding: const EdgeInsets.all(16),
+                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                     crossAxisCount: 4,
                     crossAxisSpacing: 12,
                     mainAxisSpacing: 12,
@@ -1157,48 +1020,32 @@ class _ChaptersDrawer extends StatelessWidget {
                   itemBuilder: (context, index) {
                     final chapter = index + 1;
 
-                    final selected =
-                        chapter == currentChapter;
+                    final selected = chapter == currentChapter;
 
                     return Card(
                       elevation: 0,
                       color: selected
-                          ? theme
-                              .colorScheme
-                              .primary
-                          : theme
-                              .colorScheme
-                              .surfaceContainerHighest
-                              .withValues(
-                                alpha: 0.5,
-                              ),
+                          ? theme.colorScheme.primary
+                          : theme.colorScheme.surfaceContainerHighest
+                                .withValues(alpha: 0.5),
                       child: InkWell(
-                        borderRadius:
-                            BorderRadius.circular(
-                          12,
-                        ),
+                        borderRadius: BorderRadius.circular(12),
                         onTap: () {
                           // Close the drawer first,
                           // then navigate (same
                           // pattern as the Agpeya
                           // drawer).
-                          Navigator.of(context)
-                              .pop();
+                          Navigator.of(context).pop();
 
-                          context.go(
-                            '/chapter/${book.id}-$chapter',
-                          );
+                          context.go('/chapter/${book.id}-$chapter');
                         },
                         child: Center(
                           child: Text(
                             '$chapter',
                             style: TextStyle(
-                              fontWeight:
-                                  FontWeight.bold,
+                              fontWeight: FontWeight.bold,
                               color: selected
-                                  ? theme
-                                      .colorScheme
-                                      .onPrimary
+                                  ? theme.colorScheme.onPrimary
                                   : null,
                             ),
                           ),
@@ -1212,36 +1059,22 @@ class _ChaptersDrawer extends StatelessWidget {
               // ==============================================
               // SETTINGS BUTTON (footer, like Agpeya)
               // ==============================================
-
               Padding(
-                padding: const EdgeInsets.fromLTRB(
-                  10,
-                  4,
-                  10,
-                  10,
-                ),
+                padding: const EdgeInsets.fromLTRB(10, 4, 10, 10),
                 child: ListTile(
                   shape: RoundedRectangleBorder(
-                    borderRadius:
-                        BorderRadius.circular(14),
+                    borderRadius: BorderRadius.circular(14),
                   ),
                   leading: Icon(
                     Icons.settings_outlined,
-                    color:
-                        theme.colorScheme.primary,
+                    color: theme.colorScheme.primary,
                   ),
                   title: Text(
                     _settingsText,
-                    textAlign: _isArabic
-                        ? TextAlign.right
-                        : TextAlign.left,
-                    style: const TextStyle(
-                      fontWeight: FontWeight.w600,
-                    ),
+                    textAlign: _isArabic ? TextAlign.right : TextAlign.left,
+                    style: const TextStyle(fontWeight: FontWeight.w600),
                   ),
-                  trailing: const Icon(
-                    Icons.chevron_right,
-                  ),
+                  trailing: const Icon(Icons.chevron_right),
                   onTap: onOpenSettings,
                 ),
               ),
@@ -1278,23 +1111,16 @@ class _ErrorView extends StatelessWidget {
       child: Padding(
         padding: const EdgeInsets.all(24),
         child: Column(
-          mainAxisAlignment:
-              MainAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Icon(
-              Icons.error_outline,
-              size: 60,
-            ),
+            const Icon(Icons.error_outline, size: 60),
 
             const SizedBox(height: 20),
 
             Text(
               strings.unableToLoadChapter,
               textAlign: TextAlign.center,
-              style: const TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-              ),
+              style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
 
             const SizedBox(height: 12),
@@ -1302,9 +1128,7 @@ class _ErrorView extends StatelessWidget {
             Text(
               error,
               textAlign: TextAlign.center,
-              style: const TextStyle(
-                fontSize: 14,
-              ),
+              style: const TextStyle(fontSize: 14),
             ),
 
             const SizedBox(height: 20),
@@ -1344,9 +1168,7 @@ class _EmptyChapter extends StatelessWidget {
         padding: const EdgeInsets.all(32),
         child: Text(
           strings.chapterNotAddedYet(
-            strings.isArabic
-                ? book.arabicName
-                : book.name,
+            strings.isArabic ? book.arabicName : book.name,
             chapterNumber,
           ),
           textAlign: TextAlign.center,

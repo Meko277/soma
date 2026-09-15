@@ -45,6 +45,7 @@ class FirebaseSyncService {
   static const String cacheAgpeya = 'cache_agpeya';
   static const String cacheLiturgy = 'cache_liturgy';
   static const String cacheReadings = 'cache_readings';
+  static const String cacheContent = 'cache_content';
   static const String cacheDesign = 'cache_design';
   static const String cacheLastSync = 'cache_last_sync';
 
@@ -54,6 +55,7 @@ class FirebaseSyncService {
   final _agpeya = StreamController<List<Map<String, dynamic>>>.broadcast();
   final _liturgy = StreamController<List<Map<String, dynamic>>>.broadcast();
   final _readings = StreamController<List<Map<String, dynamic>>>.broadcast();
+  final _content = StreamController<List<Map<String, dynamic>>>.broadcast();
   final _design = StreamController<Map<String, dynamic>>.broadcast();
   final _conn = StreamController<bool>.broadcast();
 
@@ -62,6 +64,7 @@ class FirebaseSyncService {
   Stream<List<Map<String, dynamic>>> get agpeyaStream => _agpeya.stream;
   Stream<List<Map<String, dynamic>>> get liturgyStream => _liturgy.stream;
   Stream<List<Map<String, dynamic>>> get readingsStream => _readings.stream;
+  Stream<List<Map<String, dynamic>>> get contentStream => _content.stream;
   Stream<Map<String, dynamic>> get designStream => _design.stream;
   Stream<bool> get connectionStream => _conn.stream;
 
@@ -101,6 +104,7 @@ class FirebaseSyncService {
       return false;
     }
   }
+
   void _setupListeners() {
     // NOTE: the 'bible' collection is intentionally NOT synced.
     // It holds all 66 books x 2 languages with every chapter
@@ -113,16 +117,14 @@ class FirebaseSyncService {
     _listen(_firestore.collection('agpeya'), _agpeya, cacheAgpeya);
     _listen(_firestore.collection('liturgy'), _liturgy, cacheLiturgy);
     _listen(_firestore.collection('readings'), _readings, cacheReadings);
+    _listen(_firestore.collection('content'), _content, cacheContent);
 
-    _firestore.collection('settings').doc('design').snapshots().listen(
-      (snap) {
-        if (!snap.exists) return;
-        final data = snap.data()!;
-        _design.add(data);
-        _cacheJson(cacheDesign, [data]);
-      },
-      onError: (Object e) => _conn.add(false),
-    );
+    _firestore.collection('settings').doc('design').snapshots().listen((snap) {
+      if (!snap.exists) return;
+      final data = snap.data()!;
+      _design.add(data);
+      _cacheJson(cacheDesign, [data]);
+    }, onError: (Object e) => _conn.add(false));
   }
 
   void _listen(
@@ -165,6 +167,7 @@ class FirebaseSyncService {
       (cacheAgpeya, _agpeya),
       (cacheLiturgy, _liturgy),
       (cacheReadings, _readings),
+      (cacheContent, _content),
     ];
 
     for (final (key, controller) in pairs) {
@@ -179,7 +182,8 @@ class FirebaseSyncService {
     final designRaw = prefs.getString(cacheDesign);
     if (designRaw != null) {
       try {
-        final list = (jsonDecode(designRaw) as List).cast<Map<String, dynamic>>();
+        final list = (jsonDecode(designRaw) as List)
+            .cast<Map<String, dynamic>>();
         if (list.isNotEmpty) _design.add(list.first);
       } catch (_) {}
     }

@@ -132,8 +132,7 @@ class _AgpeyaPrayerPageState extends State<AgpeyaPrayerPage> {
     super.didChangeDependencies();
 
     final isLandscape =
-        MediaQuery.of(context).orientation ==
-            Orientation.landscape;
+        MediaQuery.of(context).orientation == Orientation.landscape;
 
     if (_wasLandscape && !isLandscape) {
       // Back to portrait -> re-arm presentation mode.
@@ -153,7 +152,9 @@ class _AgpeyaPrayerPageState extends State<AgpeyaPrayerPage> {
   // Language
   // ============================================================
 
-  bool get _isArabic => widget.language == 'ar';
+  String _displayLanguage = 'en';
+
+  bool get _isArabic => _displayLanguage == 'ar';
 
   TextDirection get _textDirection =>
       _isArabic ? TextDirection.rtl : TextDirection.ltr;
@@ -226,6 +227,8 @@ class _AgpeyaPrayerPageState extends State<AgpeyaPrayerPage> {
   void initState() {
     super.initState();
 
+    _displayLanguage = widget.language;
+
     _loadHour();
 
     _scrollController.addListener(_updateActiveSection);
@@ -250,7 +253,7 @@ class _AgpeyaPrayerPageState extends State<AgpeyaPrayerPage> {
   void _loadHour() {
     _hourFuture = _provider.loadHour(
       widget.prayerId,
-      language: widget.language,
+      language: _displayLanguage == 'co' ? 'en' : _displayLanguage,
     );
 
     _hourFuture.then((hour) {
@@ -283,6 +286,7 @@ class _AgpeyaPrayerPageState extends State<AgpeyaPrayerPage> {
 
     if (oldWidget.language != widget.language) {
       setState(() {
+        _displayLanguage = widget.language;
         _loadedHour = null;
         _cachedSections = null;
         _activeSection = null;
@@ -1432,24 +1436,23 @@ class _AgpeyaPrayerPageState extends State<AgpeyaPrayerPage> {
 
                           final isSaved = ref.watch(
                             savedItemsProvider.select(
-                              (items) => items
-                                  .any((item) => item.id == savedId),
+                              (items) =>
+                                  items.any((item) => item.id == savedId),
                             ),
                           );
 
                           return IconButton(
                             tooltip: isArabic
                                 ? (isSaved
-                                    ? 'إزالة من المحفوظات'
-                                    : 'حفظ في المحفوظات')
+                                      ? 'إزالة من المحفوظات'
+                                      : 'حفظ في المحفوظات')
                                 : (isSaved
-                                    ? 'Remove from Saved'
-                                    : 'Save to Saved'),
+                                      ? 'Remove from Saved'
+                                      : 'Save to Saved'),
                             icon: Icon(
                               isSaved
                                   ? Icons.collections_bookmark
-                                  : Icons
-                                      .collections_bookmark_outlined,
+                                  : Icons.collections_bookmark_outlined,
                             ),
                             onPressed: () {
                               ref
@@ -1461,11 +1464,8 @@ class _AgpeyaPrayerPageState extends State<AgpeyaPrayerPage> {
                                       title: isArabic
                                           ? widget.arabicTitle
                                           : widget.title,
-                                      subtitle: isArabic
-                                          ? 'الأجبية'
-                                          : 'Agpeya',
-                                      routePath:
-                                          '/agpeya/${widget.prayerId}',
+                                      subtitle: isArabic ? 'الأجبية' : 'Agpeya',
+                                      routePath: '/agpeya/${widget.prayerId}',
                                     ),
                                   );
                             },
@@ -1517,8 +1517,7 @@ class _AgpeyaPrayerPageState extends State<AgpeyaPrayerPage> {
                     // of jumping back to slide 1.
                     startIndex: _lastPresentationIndex,
 
-                    onPageChanged: (page) =>
-                        _lastPresentationIndex = page,
+                    onPageChanged: (page) => _lastPresentationIndex = page,
 
                     exitTooltip: _isArabic
                         ? 'خروج من وضع العرض'
@@ -1597,6 +1596,34 @@ class _AgpeyaPrayerPageState extends State<AgpeyaPrayerPage> {
     // font scale live (see reading_settings_drawer / preferences).
     return Stack(
       children: [
+        Padding(
+          padding: const EdgeInsets.fromLTRB(16, 12, 16, 0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              _AgpeyaLanguageRow(
+                value: _displayLanguage,
+                copticAvailable: false,
+                onChanged: (language) {
+                  setState(() {
+                    _displayLanguage = language;
+                    _loadedHour = null;
+                    _cachedSections = null;
+                    _activeSection = null;
+                    _loadHour();
+                  });
+                },
+              ),
+              const SizedBox(height: 6),
+              Text(
+                _isArabic
+                    ? 'القبطي غير متوفر للأجبية حاليًا'
+                    : 'Coptic Agpeya text is not installed yet',
+                style: Theme.of(context).textTheme.bodySmall,
+              ),
+            ],
+          ),
+        ),
         SingleChildScrollView(
           controller: _scrollController,
 
@@ -1605,239 +1632,237 @@ class _AgpeyaPrayerPageState extends State<AgpeyaPrayerPage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
 
-        children: [
-          // ======================================================
-          // HEADER
-          // ======================================================
+            children: [
+              // ======================================================
+              // HEADER
+              // ======================================================
 
-          Text(
-            hour.name,
-            textAlign: _isArabic ? TextAlign.right : TextAlign.left,
-            style: theme.textTheme.headlineMedium?.copyWith(
-              fontWeight: FontWeight.bold,
-            ),
+              Text(
+                hour.name,
+                textAlign: _isArabic ? TextAlign.right : TextAlign.left,
+                style: theme.textTheme.headlineMedium?.copyWith(
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+
+              // ======================================================
+              // English mode:
+              // show Arabic prayer title underneath.
+              // Arabic mode:
+              // JSON already contains Arabic name.
+              // ======================================================
+              if (!_isArabic) ...[
+                const SizedBox(height: 4),
+
+                Text(
+                  widget.arabicTitle,
+                  textAlign: TextAlign.left,
+                  style: theme.textTheme.titleMedium?.copyWith(
+                    color: theme.colorScheme.primary,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ],
+
+              if (hour.englishName != null && _isArabic == false) ...[
+                const SizedBox(height: 4),
+
+                Text(
+                  hour.englishName!,
+                  textAlign: TextAlign.left,
+                  style: theme.textTheme.bodyMedium,
+                ),
+              ],
+
+              if (hour.traditionalTime != null) ...[
+                const SizedBox(height: 6),
+
+                Text(
+                  hour.traditionalTime!,
+                  textAlign: _isArabic ? TextAlign.right : TextAlign.left,
+                  style: theme.textTheme.bodyMedium,
+                ),
+              ],
+
+              const SizedBox(height: 20),
+
+              // ======================================================
+              // INTRODUCTION
+              // ======================================================
+              if (hour.introduction != null)
+                Container(
+                  key: _introductionKey,
+                  child: _sectionCard(
+                    context,
+                    title: _introductionText,
+                    paragraphs: [hour.introduction!],
+                  ),
+                ),
+
+              // ======================================================
+              // OPENING
+              // ======================================================
+              if (hour.opening != null)
+                Container(
+                  key: _openingKey,
+                  child: _buildSection(context, hour.opening!),
+                ),
+
+              // ======================================================
+              // HOUR INTRO
+              // ======================================================
+              if (hour.hourIntro != null)
+                Container(
+                  key: _hourIntroKey,
+                  child: _buildSection(context, hour.hourIntro!),
+                ),
+
+              // ======================================================
+              // COME LET US WORSHIP
+              // ======================================================
+              if (hour.comeLetUsWorship != null)
+                Container(
+                  key: _comeLetUsWorshipKey,
+                  child: _buildSection(context, hour.comeLetUsWorship!),
+                ),
+
+              // ======================================================
+              // THANKSGIVING
+              // ======================================================
+              if (hour.thanksgiving != null)
+                Container(
+                  key: _thanksgivingKey,
+                  child: _buildSection(context, hour.thanksgiving!),
+                ),
+
+              // ======================================================
+              // PSALM 50
+              // ======================================================
+              if (hour.introductoryPsalm != null)
+                Container(
+                  key: _introductoryPsalmKey,
+                  child: _buildPsalm(context, hour.introductoryPsalm!),
+                ),
+
+              // ======================================================
+              // WATCHES (Midnight prayer)
+              // ======================================================
+              if (hour.watches.isNotEmpty)
+                Container(
+                  key: _watchesKey,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      for (var i = 0; i < hour.watches.length; i++)
+                        Container(
+                          key: _getWatchKey(hour.watches[i], i),
+                          child: _buildWatch(context, hour.watches[i]),
+                        ),
+                    ],
+                  ),
+                ),
+
+              // ======================================================
+              // PSALMS
+              // ======================================================
+              if (hour.psalms.isNotEmpty)
+                Container(
+                  key: _psalmsKey,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      if (hour.psalmsIntro != null)
+                        _sectionCard(
+                          context,
+                          title: _psalmsText,
+                          paragraphs: [hour.psalmsIntro!],
+                        ),
+
+                      ...List.generate(hour.psalms.length, (index) {
+                        final psalm = hour.psalms[index];
+
+                        return Container(
+                          key: _getPsalmKey(psalm, index),
+                          child: _buildPsalm(context, psalm),
+                        );
+                      }),
+                    ],
+                  ),
+                ),
+
+              // ======================================================
+              // GOSPEL
+              // ======================================================
+              if (hour.gospel != null)
+                Container(
+                  key: _gospelKey,
+                  child: _buildGospel(context, hour.gospel!),
+                ),
+
+              // ======================================================
+              // LITANIES
+              // ======================================================
+              if (hour.litanies != null)
+                Container(
+                  key: _litaniesKey,
+                  child: _buildLitanies(context, hour.litanies!),
+                ),
+
+              // ======================================================
+              // LORD'S PRAYER
+              // ======================================================
+              if (hour.lordsPrayer != null)
+                Container(
+                  key: _lordsPrayerKey,
+                  child: _buildSection(context, hour.lordsPrayer!),
+                ),
+
+              // ======================================================
+              // CLOSING
+              // ======================================================
+              if (hour.closing != null)
+                Container(
+                  key: _closingKey,
+                  child: _buildContentSection(context, hour.closing!),
+                ),
+
+              // ======================================================
+              // ADDITIONAL SECTIONS
+              // ======================================================
+              if (hour.additionalSections.isNotEmpty)
+                Container(
+                  key: _additionalSectionsKey,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: hour.additionalSections
+                        .map(
+                          (section) => _buildContentSection(context, section),
+                        )
+                        .toList(),
+                  ),
+                ),
+
+              // ======================================================
+              // CHAPTERS (fallback format in some Arabic files)
+              // ======================================================
+              if (hour.chapters.isNotEmpty)
+                Container(
+                  key: _chaptersKey,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      for (var i = 0; i < hour.chapters.length; i++)
+                        Container(
+                          key: _getChapterKey(i),
+                          child: _buildChapter(context, hour.chapters[i]),
+                        ),
+                    ],
+                  ),
+                ),
+            ],
           ),
-
-          // ======================================================
-          // English mode:
-          // show Arabic prayer title underneath.
-          // Arabic mode:
-          // JSON already contains Arabic name.
-          // ======================================================
-          if (!_isArabic) ...[
-            const SizedBox(height: 4),
-
-            Text(
-              widget.arabicTitle,
-              textAlign: TextAlign.left,
-              style: theme.textTheme.titleMedium?.copyWith(
-                color: theme.colorScheme.primary,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-          ],
-
-          if (hour.englishName != null && _isArabic == false) ...[
-            const SizedBox(height: 4),
-
-            Text(
-              hour.englishName!,
-              textAlign: TextAlign.left,
-              style: theme.textTheme.bodyMedium,
-            ),
-          ],
-
-          if (hour.traditionalTime != null) ...[
-            const SizedBox(height: 6),
-
-            Text(
-              hour.traditionalTime!,
-              textAlign: _isArabic ? TextAlign.right : TextAlign.left,
-              style: theme.textTheme.bodyMedium,
-            ),
-          ],
-
-          const SizedBox(height: 20),
-
-          // ======================================================
-          // INTRODUCTION
-          // ======================================================
-          if (hour.introduction != null)
-            Container(
-              key: _introductionKey,
-              child: _sectionCard(
-                context,
-                title: _introductionText,
-                paragraphs: [hour.introduction!],
-              ),
-            ),
-
-          // ======================================================
-          // OPENING
-          // ======================================================
-          if (hour.opening != null)
-            Container(
-              key: _openingKey,
-              child: _buildSection(context, hour.opening!),
-            ),
-
-          // ======================================================
-          // HOUR INTRO
-          // ======================================================
-          if (hour.hourIntro != null)
-            Container(
-              key: _hourIntroKey,
-              child: _buildSection(context, hour.hourIntro!),
-            ),
-
-          // ======================================================
-          // COME LET US WORSHIP
-          // ======================================================
-          if (hour.comeLetUsWorship != null)
-            Container(
-              key: _comeLetUsWorshipKey,
-              child: _buildSection(context, hour.comeLetUsWorship!),
-            ),
-
-          // ======================================================
-          // THANKSGIVING
-          // ======================================================
-          if (hour.thanksgiving != null)
-            Container(
-              key: _thanksgivingKey,
-              child: _buildSection(context, hour.thanksgiving!),
-            ),
-
-          // ======================================================
-          // PSALM 50
-          // ======================================================
-          if (hour.introductoryPsalm != null)
-            Container(
-              key: _introductoryPsalmKey,
-              child: _buildPsalm(context, hour.introductoryPsalm!),
-            ),
-
-          // ======================================================
-          // WATCHES (Midnight prayer)
-          // ======================================================
-          if (hour.watches.isNotEmpty)
-            Container(
-              key: _watchesKey,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  for (var i = 0; i < hour.watches.length; i++)
-                    Container(
-                      key: _getWatchKey(hour.watches[i], i),
-                      child: _buildWatch(context, hour.watches[i]),
-                    ),
-                ],
-              ),
-            ),
-
-          // ======================================================
-          // PSALMS
-          // ======================================================
-          if (hour.psalms.isNotEmpty)
-            Container(
-              key: _psalmsKey,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  if (hour.psalmsIntro != null)
-                    _sectionCard(
-                      context,
-                      title: _psalmsText,
-                      paragraphs: [hour.psalmsIntro!],
-                    ),
-
-                  ...List.generate(hour.psalms.length, (index) {
-                    final psalm = hour.psalms[index];
-
-                    return Container(
-                      key: _getPsalmKey(psalm, index),
-                      child: _buildPsalm(context, psalm),
-                    );
-                  }),
-                ],
-              ),
-            ),
-
-          // ======================================================
-          // GOSPEL
-          // ======================================================
-          if (hour.gospel != null)
-            Container(
-              key: _gospelKey,
-              child: _buildGospel(context, hour.gospel!),
-            ),
-
-          // ======================================================
-          // LITANIES
-          // ======================================================
-          if (hour.litanies != null)
-            Container(
-              key: _litaniesKey,
-              child: _buildLitanies(context, hour.litanies!),
-            ),
-
-          // ======================================================
-          // LORD'S PRAYER
-          // ======================================================
-          if (hour.lordsPrayer != null)
-            Container(
-              key: _lordsPrayerKey,
-              child: _buildSection(context, hour.lordsPrayer!),
-            ),
-
-          // ======================================================
-          // CLOSING
-          // ======================================================
-          if (hour.closing != null)
-            Container(
-              key: _closingKey,
-              child: _buildContentSection(context, hour.closing!),
-            ),
-
-          // ======================================================
-          // ADDITIONAL SECTIONS
-          // ======================================================
-          if (hour.additionalSections.isNotEmpty)
-            Container(
-              key: _additionalSectionsKey,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: hour.additionalSections
-                    .map((section) => _buildContentSection(context, section))
-                    .toList(),
-              ),
-            ),
-
-          // ======================================================
-          // CHAPTERS (fallback format in some Arabic files)
-          // ======================================================
-          if (hour.chapters.isNotEmpty)
-            Container(
-              key: _chaptersKey,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  for (var i = 0; i < hour.chapters.length; i++)
-                    Container(
-                      key: _getChapterKey(i),
-                      child: _buildChapter(context, hour.chapters[i]),
-                    ),
-                ],
-              ),
-            ),
-        ],
-      ),
         ),
-        const Positioned(
-          right: 16,
-          bottom: 24,
-          child: FloatingTextZoom(),
-        ),
+        const Positioned(right: 16, bottom: 24, child: FloatingTextZoom()),
       ],
     );
   }
@@ -2229,4 +2254,76 @@ class _AgpeyaDrawerSection {
     required this.key,
     this.hasChildren = false,
   });
+}
+
+class _AgpeyaLanguageRow extends StatelessWidget {
+  const _AgpeyaLanguageRow({
+    required this.value,
+    required this.onChanged,
+    this.copticAvailable = false,
+  });
+
+  final String value;
+  final ValueChanged<String> onChanged;
+  final bool copticAvailable;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    return Container(
+      padding: const EdgeInsets.all(4),
+      decoration: BoxDecoration(
+        border: Border.all(color: theme.colorScheme.outlineVariant),
+        borderRadius: BorderRadius.circular(24),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          _button(context, 'ar', 'العربية'),
+          _button(context, 'en', 'English'),
+          _button(
+            context,
+            'co',
+            'ϯⲙⲉⲧⲣⲉⲙⲛ̀ⲭⲏⲙⲓ',
+            enabled: copticAvailable,
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _button(
+    BuildContext context,
+    String language,
+    String label, {
+    bool enabled = true,
+  }) {
+    final selected = value == language;
+    final theme = Theme.of(context);
+    return InkWell(
+      onTap: enabled ? () => onChanged(language) : null,
+      borderRadius: BorderRadius.circular(20),
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 180),
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+        decoration: BoxDecoration(
+            color: selected
+              ? theme.colorScheme.primary
+              : Colors.transparent,
+          borderRadius: BorderRadius.circular(20),
+        ),
+        child: Text(
+          label,
+          style: theme.textTheme.labelLarge?.copyWith(
+            color: !enabled
+              ? theme.colorScheme.onSurface.withValues(alpha: 0.35)
+              : selected
+                ? theme.colorScheme.onPrimary
+                : theme.colorScheme.onSurfaceVariant,
+            fontWeight: selected ? FontWeight.w700 : FontWeight.w500,
+          ),
+        ),
+      ),
+    );
+  }
 }

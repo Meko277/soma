@@ -34,9 +34,7 @@ class ReadingSettingsDrawer extends ConsumerWidget {
           children: [
             _SettingsHeader(title: strings.settings),
 
-            const Expanded(
-              child: ReadingSettingsPanel(),
-            ),
+            const Expanded(child: ReadingSettingsPanel()),
           ],
         ),
       ),
@@ -58,28 +56,21 @@ class ReadingSettingsPanel extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final preferences = ref.watch(preferencesProvider);
 
-    final controller =
-        ref.read(preferencesProvider.notifier);
+    final controller = ref.read(preferencesProvider.notifier);
 
     final theme = Theme.of(context);
 
-    final strings = AppStrings(
-      preferences.interfaceLanguage,
-    );
+    final strings = AppStrings(preferences.interfaceLanguage);
 
-    final isArabic =
-        preferences.interfaceLanguage.isRtl;
+    final isArabic = preferences.interfaceLanguage.isRtl;
 
-    final direction =
-        isArabic ? TextDirection.rtl : TextDirection.ltr;
+    final direction = isArabic ? TextDirection.rtl : TextDirection.ltr;
 
     return Directionality(
       textDirection: direction,
 
       child: ListView(
-        padding: const EdgeInsets.symmetric(
-          vertical: 8,
-        ),
+        padding: const EdgeInsets.symmetric(vertical: 8),
 
         children: [
           // ======================================================
@@ -92,16 +83,11 @@ class ReadingSettingsPanel extends ConsumerWidget {
           ),
 
           Padding(
-            padding: const EdgeInsets.symmetric(
-              horizontal: 20,
-            ),
+            padding: const EdgeInsets.symmetric(horizontal: 20),
 
             child: Row(
               children: [
-                const Text(
-                  'A',
-                  style: TextStyle(fontSize: 14),
-                ),
+                const Text('A', style: TextStyle(fontSize: 14)),
 
                 Expanded(
                   child: Slider(
@@ -109,8 +95,7 @@ class ReadingSettingsPanel extends ConsumerWidget {
                     min: 0.8,
                     max: 1.6,
                     divisions: 8,
-                    label:
-                        '${(preferences.fontScale * 100).round()}%',
+                    label: '${(preferences.fontScale * 100).round()}%',
                     onChanged: (value) {
                       controller.setFontScale(value);
                     },
@@ -119,10 +104,7 @@ class ReadingSettingsPanel extends ConsumerWidget {
 
                 const Text(
                   'A',
-                  style: TextStyle(
-                    fontSize: 22,
-                    fontWeight: FontWeight.bold,
-                  ),
+                  style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
                 ),
               ],
             ),
@@ -130,32 +112,23 @@ class ReadingSettingsPanel extends ConsumerWidget {
 
           // Live preview of the text size
           Padding(
-            padding: const EdgeInsets.fromLTRB(
-              20,
-              0,
-              20,
-              8,
-            ),
+            padding: const EdgeInsets.fromLTRB(20, 0, 20, 8),
 
             child: Container(
               width: double.infinity,
               padding: const EdgeInsets.all(14),
               decoration: BoxDecoration(
-                color: Theme.of(context)
-                    .colorScheme
-                    .surfaceContainerHighest
-                    .withValues(alpha: 0.5),
-                borderRadius:
-                    BorderRadius.circular(14),
+                color: Theme.of(
+                  context,
+                ).colorScheme.surfaceContainerHighest.withValues(alpha: 0.5),
+                borderRadius: BorderRadius.circular(14),
               ),
 
               child: Text(
                 isArabic
                     ? 'في البدء كان الكلمة'
                     : 'In the beginning was the Word',
-                textAlign: isArabic
-                    ? TextAlign.right
-                    : TextAlign.left,
+                textAlign: isArabic ? TextAlign.right : TextAlign.left,
                 style: TextStyle(
                   fontSize: 16 * preferences.fontScale,
                   height: 1.6,
@@ -169,17 +142,13 @@ class ReadingSettingsPanel extends ConsumerWidget {
           // ======================================================
           // CONTENT LANGUAGE
           // ======================================================
-
           _SettingsSectionTitle(
-            title: isArabic
-                ? 'لغة المحتوى'
-                : 'Content Language',
+            title: isArabic ? 'لغة المحتوى' : 'Content Language',
             icon: Icons.language,
           ),
 
           RadioGroup<AppLanguage>(
-            groupValue:
-                preferences.contentLanguage,
+            groupValue: preferences.contentLanguage,
             onChanged: (value) {
               if (value != null) {
                 controller.setContentLanguage(value);
@@ -188,8 +157,7 @@ class ReadingSettingsPanel extends ConsumerWidget {
             child: Column(
               children: [
                 ...AppLanguage.values.map(
-                  (language) =>
-                      RadioListTile<AppLanguage>(
+                  (language) => RadioListTile<AppLanguage>(
                     value: language,
                     title: Text(language.label),
                   ),
@@ -203,28 +171,22 @@ class ReadingSettingsPanel extends ConsumerWidget {
           // ======================================================
           // INTERFACE LANGUAGE
           // ======================================================
-
           _SettingsSectionTitle(
-            title: isArabic
-                ? 'لغة التطبيق'
-                : 'Interface Language',
+            title: isArabic ? 'لغة التطبيق' : 'Interface Language',
             icon: Icons.translate,
           ),
 
           RadioGroup<AppLanguage>(
-            groupValue:
-                preferences.interfaceLanguage,
+            groupValue: preferences.interfaceLanguage,
             onChanged: (value) {
               if (value != null) {
-                controller
-                    .setInterfaceLanguage(value);
+                controller.setInterfaceLanguage(value);
               }
             },
             child: Column(
               children: [
                 ...AppLanguage.values.map(
-                  (language) =>
-                      RadioListTile<AppLanguage>(
+                  (language) => RadioListTile<AppLanguage>(
                     value: language,
                     title: Text(language.label),
                   ),
@@ -238,7 +200,6 @@ class ReadingSettingsPanel extends ConsumerWidget {
           // ======================================================
           // THEME
           // ======================================================
-
           _SettingsSectionTitle(
             title: strings.appearance,
             icon: Icons.palette_outlined,
@@ -255,31 +216,23 @@ class ReadingSettingsPanel extends ConsumerWidget {
               children: [
                 RadioListTile<ThemeMode>(
                   value: ThemeMode.light,
-                  title:
-                      Text(isArabic ? 'بيج' : 'Beige'),
+                  title: Text(isArabic ? 'بيج' : 'Beige'),
                   subtitle: Text(
-                    isArabic
-                        ? 'مظهر دافئ فاتح'
-                        : 'Warm parchment light look',
+                    isArabic ? 'مظهر دافئ فاتح' : 'Warm parchment light look',
                   ),
                 ),
 
                 RadioListTile<ThemeMode>(
                   value: ThemeMode.dark,
-                  title:
-                      Text(isArabic ? 'أزرق' : 'Blue'),
+                  title: Text(isArabic ? 'أزرق' : 'Blue'),
                   subtitle: Text(
-                    isArabic
-                        ? 'مظهر داكن مريح للعين'
-                        : 'Deep navy dark look',
+                    isArabic ? 'مظهر داكن مريح للعين' : 'Deep navy dark look',
                   ),
                 ),
 
                 RadioListTile<ThemeMode>(
                   value: ThemeMode.system,
-                  title: Text(
-                    isArabic ? 'النظام' : 'System',
-                  ),
+                  title: Text(isArabic ? 'النظام' : 'System'),
                   subtitle: Text(
                     isArabic
                         ? 'حسب إعدادات الجهاز'
@@ -297,54 +250,45 @@ class ReadingSettingsPanel extends ConsumerWidget {
           // ======================================================
           // READING DISPLAY (languages shown together)
           // ======================================================
-
           _SettingsSectionTitle(
             title: strings.readingDisplayTitle,
             icon: Icons.translate,
           ),
 
-          RadioGroup<BibleDisplayMode>(
-            groupValue:
-                preferences.bibleDisplayMode,
-            onChanged: (value) {
-              if (value != null) {
-                controller.setBibleDisplayMode(value);
-              }
-            },
-            child: Column(
-              children: [
-                RadioListTile<BibleDisplayMode>(
-                  value: BibleDisplayMode.single,
-                  title: Text(strings.displaySingleLabel),
-                ),
-                RadioListTile<BibleDisplayMode>(
-                  value: BibleDisplayMode.englishArabic,
-                  title: Text(strings.displayEnAr),
-                ),
-                RadioListTile<BibleDisplayMode>(
-                  value: BibleDisplayMode.arabicEnglish,
-                  title: Text(strings.displayArEn),
-                ),
-                RadioListTile<BibleDisplayMode>(
-                  value: BibleDisplayMode.copticArabic,
-                  title: Text(strings.displayCoptAr),
-                ),
-                RadioListTile<BibleDisplayMode>(
-                  value: BibleDisplayMode.copticEnglish,
-                  title: Text(strings.displayCoptEn),
-                ),
-                RadioListTile<BibleDisplayMode>(
-                  value: BibleDisplayMode.all,
-                  title: Text(strings.displayAllLabel),
-                ),
-              ],
-            ),
+          CheckboxListTile(
+            value: preferences.selectedBibleDisplayLanguages.contains('ar'),
+            title: Text(isArabic ? 'العربية' : 'Arabic'),
+            onChanged: (value) => controller.setBibleDisplayLanguages([
+              ...preferences.selectedBibleDisplayLanguages.where(
+                (lang) => lang != 'ar',
+              ),
+              if (value == true) 'ar',
+            ]),
+          ),
+          CheckboxListTile(
+            value: preferences.selectedBibleDisplayLanguages.contains('en'),
+            title: const Text('English'),
+            onChanged: (value) => controller.setBibleDisplayLanguages([
+              ...preferences.selectedBibleDisplayLanguages.where(
+                (lang) => lang != 'en',
+              ),
+              if (value == true) 'en',
+            ]),
+          ),
+          CheckboxListTile(
+            value: preferences.selectedBibleDisplayLanguages.contains('copt'),
+            title: Text(isArabic ? 'قبطي' : 'Coptic'),
+            onChanged: (value) => controller.setBibleDisplayLanguages([
+              ...preferences.selectedBibleDisplayLanguages.where(
+                (lang) => lang != 'copt',
+              ),
+              if (value == true) 'copt',
+            ]),
           ),
 
           SwitchListTile(
             value: preferences.presentationModeEnabled,
-            onChanged: controller
-                .setPresentationModeEnabled,
+            onChanged: controller.setPresentationModeEnabled,
             title: Text(strings.presentationModeTitle),
             subtitle: Text(
               strings.presentationModeSubtitle,
@@ -362,27 +306,16 @@ class ReadingSettingsPanel extends ConsumerWidget {
           ),
 
           Padding(
-            padding: const EdgeInsets.fromLTRB(
-              20,
-              0,
-              20,
-              8,
-            ),
+            padding: const EdgeInsets.fromLTRB(20, 0, 20, 8),
             child: Card(
               elevation: 0,
               margin: EdgeInsets.zero,
               clipBehavior: Clip.antiAlias,
               child: ListTile(
-                leading: Icon(
-                  Icons.schedule,
-                  color:
-                      theme.colorScheme.primary,
-                ),
+                leading: Icon(Icons.schedule, color: theme.colorScheme.primary),
                 title: Text(
                   strings.notificationTimeSubtitle,
-                  style: const TextStyle(
-                    fontSize: 13,
-                  ),
+                  style: const TextStyle(fontSize: 13),
                 ),
                 trailing: Text(
                   _formatNotificationTime(
@@ -393,19 +326,15 @@ class ReadingSettingsPanel extends ConsumerWidget {
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
                     fontSize: 15,
-                    color:
-                        theme.colorScheme.primary,
+                    color: theme.colorScheme.primary,
                   ),
                 ),
                 onTap: () async {
-                  final picked =
-                      await showTimePicker(
+                  final picked = await showTimePicker(
                     context: context,
                     initialTime: TimeOfDay(
-                      hour:
-                          preferences.notificationHour,
-                      minute: preferences
-                          .notificationMinute,
+                      hour: preferences.notificationHour,
+                      minute: preferences.notificationMinute,
                     ),
                   );
 
@@ -421,9 +350,7 @@ class ReadingSettingsPanel extends ConsumerWidget {
                   // Re-schedule immediately so the
                   // change applies without waiting
                   // for the next app start.
-                  await DailyPlanNotificationService
-                      .instance
-                      .scheduleDailyPlan(
+                  await DailyPlanNotificationService.instance.scheduleDailyPlan(
                     hour: picked.hour,
                     minute: picked.minute,
                   );
@@ -440,11 +367,7 @@ class ReadingSettingsPanel extends ConsumerWidget {
 
   /// Formats a 24-hour time as a readable label,
   /// e.g. '11:00 AM' or '١١:٠٠ م' style for Arabic.
-  String _formatNotificationTime(
-    int hour,
-    int minute,
-    bool isArabic,
-  ) {
+  String _formatNotificationTime(int hour, int minute, bool isArabic) {
     final period = isArabic
         ? (hour >= 12 ? 'م' : 'ص')
         : (hour >= 12 ? 'PM' : 'AM');
@@ -466,9 +389,7 @@ class ReadingSettingsPanel extends ConsumerWidget {
 // ================================================================
 
 class _SettingsHeader extends StatelessWidget {
-  const _SettingsHeader({
-    required this.title,
-  });
+  const _SettingsHeader({required this.title});
 
   final String title;
 
@@ -478,35 +399,24 @@ class _SettingsHeader extends StatelessWidget {
 
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.fromLTRB(
-        20,
-        24,
-        20,
-        24,
-      ),
-      decoration: BoxDecoration(
-        color: theme.colorScheme.primaryContainer,
-      ),
+      padding: const EdgeInsets.fromLTRB(20, 24, 20, 24),
+      decoration: BoxDecoration(color: theme.colorScheme.primaryContainer),
       child: Column(
-        crossAxisAlignment:
-            CrossAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Icon(
             Icons.settings_outlined,
             size: 38,
-            color:
-                theme.colorScheme.onPrimaryContainer,
+            color: theme.colorScheme.onPrimaryContainer,
           ),
 
           const SizedBox(height: 14),
 
           Text(
             title,
-            style: theme.textTheme.headlineSmall
-                ?.copyWith(
+            style: theme.textTheme.headlineSmall?.copyWith(
               fontWeight: FontWeight.bold,
-              color: theme
-                  .colorScheme.onPrimaryContainer,
+              color: theme.colorScheme.onPrimaryContainer,
             ),
           ),
         ],
@@ -520,10 +430,7 @@ class _SettingsHeader extends StatelessWidget {
 // ================================================================
 
 class _SettingsSectionTitle extends StatelessWidget {
-  const _SettingsSectionTitle({
-    required this.title,
-    required this.icon,
-  });
+  const _SettingsSectionTitle({required this.title, required this.icon});
 
   final String title;
   final IconData icon;
@@ -533,26 +440,16 @@ class _SettingsSectionTitle extends StatelessWidget {
     final theme = Theme.of(context);
 
     return Padding(
-      padding: const EdgeInsets.fromLTRB(
-        20,
-        8,
-        20,
-        4,
-      ),
+      padding: const EdgeInsets.fromLTRB(20, 8, 20, 4),
       child: Row(
         children: [
-          Icon(
-            icon,
-            size: 20,
-            color: theme.colorScheme.primary,
-          ),
+          Icon(icon, size: 20, color: theme.colorScheme.primary),
 
           const SizedBox(width: 10),
 
           Text(
             title,
-            style: theme.textTheme.titleMedium
-                ?.copyWith(
+            style: theme.textTheme.titleMedium?.copyWith(
               fontWeight: FontWeight.bold,
               color: theme.colorScheme.primary,
             ),

@@ -35,18 +35,35 @@ class LiturgyHomePage extends ConsumerWidget {
         strings.basilName,
         strings.basilSubtitle,
         Icons.church_outlined,
+        '/liturgy/basil',
       ),
       (
         'gregory',
         strings.gregoryName,
         strings.gregorySubtitle,
         Icons.celebration_outlined,
+        '/liturgy/gregory',
       ),
       (
         'cyril',
         strings.cyrilName,
         strings.cyrilSubtitle,
         Icons.self_improvement_outlined,
+        '/liturgy/cyril',
+      ),
+      (
+        'morning',
+        'Morning Liturgy',
+        'قداس باكر',
+        Icons.wb_sunny_outlined,
+        '/agpeya/morning',
+      ),
+      (
+        'vespers',
+        'Vespers Liturgy',
+        'قداس عشية',
+        Icons.wb_twilight,
+        '/agpeya/vespers',
       ),
     ];
 
@@ -81,13 +98,12 @@ class LiturgyHomePage extends ConsumerWidget {
         // ------------------------------------------------------
         // THE THREE ANAPHORAS
         // ------------------------------------------------------
-
         for (final kind in kinds) ...[
           SectionCard(
             title: kind.$2,
             subtitle: kind.$3,
             icon: kind.$4,
-            onTap: () => context.push('/liturgy/${kind.$1}'),
+            onTap: () => context.push(kind.$5),
           ),
 
           const SizedBox(height: 4),

@@ -1,11 +1,11 @@
 {
-    "name": "bible",
-    "short_name": "bible",
+    "name": "Ⲡⲓϫⲱⲙ ⲉⲑⲟⲩⲁⲃ",
+    "short_name": "Ⲡⲓϫⲱⲙ",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",
     "theme_color": "#0175C2",
-    "description": "A new Flutter project.",
+    "description": "Ⲡⲓϫⲱⲙ ⲉⲑⲟⲩⲁⲃ",
     "orientation": "portrait-primary",
     "prefer_related_applications": false,
     "icons": [

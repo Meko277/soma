@@ -1,9 +1,6 @@
 import 'package:flutter/material.dart';
 
-enum AppLanguage {
-  english,
-  arabic,
-}
+enum AppLanguage { english, arabic }
 
 /// Which language version(s) of a Bible chapter to
 /// display, and in what order.
@@ -101,9 +98,9 @@ extension AppLanguageX on AppLanguage {
   bool get isRtl => this == AppLanguage.arabic;
 
   String get label => switch (this) {
-        AppLanguage.english => 'English',
-        AppLanguage.arabic => 'العربية',
-      };
+    AppLanguage.english => 'English',
+    AppLanguage.arabic => 'العربية',
+  };
 }
 
 class AppPreferences {
@@ -117,6 +114,7 @@ class AppPreferences {
     this.notificationHour = 11,
     this.notificationMinute = 0,
     this.bibleDisplayMode = BibleDisplayMode.single,
+    this.bibleDisplayLanguages = const ['en'],
     this.presentationModeEnabled = true,
   });
 
@@ -149,6 +147,11 @@ class AppPreferences {
   /// (single / EN+AR / AR+EN / Coptic combos / all).
   final BibleDisplayMode bibleDisplayMode;
 
+  final List<String>? bibleDisplayLanguages;
+
+  List<String> get selectedBibleDisplayLanguages =>
+      bibleDisplayLanguages ?? const ['en'];
+
   /// When the phone is in LANDSCAPE and a reading is
   /// open, show one verse per screen (presentation).
   /// Defaults to true — can be turned off in settings.
@@ -164,28 +167,23 @@ class AppPreferences {
     int? notificationHour,
     int? notificationMinute,
     BibleDisplayMode? bibleDisplayMode,
+    List<String>? bibleDisplayLanguages,
     bool? presentationModeEnabled,
   }) {
     return AppPreferences(
       themeMode: themeMode ?? this.themeMode,
-      interfaceLanguage:
-          interfaceLanguage ?? this.interfaceLanguage,
-      contentLanguage:
-          contentLanguage ?? this.contentLanguage,
+      interfaceLanguage: interfaceLanguage ?? this.interfaceLanguage,
+      contentLanguage: contentLanguage ?? this.contentLanguage,
       fontScale: fontScale ?? this.fontScale,
-      lastReadingChapterId:
-          lastReadingChapterId ??
-              this.lastReadingChapterId,
-      readingHistory:
-          readingHistory ?? this.readingHistory,
-      notificationHour:
-          notificationHour ?? this.notificationHour,
-      notificationMinute:
-          notificationMinute ?? this.notificationMinute,
-      bibleDisplayMode:
-          bibleDisplayMode ?? this.bibleDisplayMode,
-      presentationModeEnabled: presentationModeEnabled ??
-          this.presentationModeEnabled,
+      lastReadingChapterId: lastReadingChapterId ?? this.lastReadingChapterId,
+      readingHistory: readingHistory ?? this.readingHistory,
+      notificationHour: notificationHour ?? this.notificationHour,
+      notificationMinute: notificationMinute ?? this.notificationMinute,
+      bibleDisplayMode: bibleDisplayMode ?? this.bibleDisplayMode,
+      bibleDisplayLanguages:
+          bibleDisplayLanguages ?? this.bibleDisplayLanguages,
+      presentationModeEnabled:
+          presentationModeEnabled ?? this.presentationModeEnabled,
     );
   }
 }

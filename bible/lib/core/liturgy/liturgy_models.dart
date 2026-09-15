@@ -16,6 +16,9 @@ import 'package:flutter/foundation.dart';
 
 enum LiturgyKind { basil, gregory, cyril }
 
+/// The four visible movements of the Divine Liturgy.
+enum LiturgySectionGroup { offering, word, faithful, distribution }
+
 /// Who reads a liturgy section.
 enum SectionReader { priest, deacons, people, all }
 
@@ -28,6 +31,14 @@ class LiturgyDocument {
   final String englishName;
   final String usedWhen;
   final String introduction;
+
+  /// Optional parallel-language metadata embedded in the
+  /// same JSON file (no extra asset paths needed).
+  final String nameCo;
+  final String usedWhenEn;
+  final String introductionEn;
+  final String introductionCo;
+
   final List<LiturgySection> sections;
 
   const LiturgyDocument({
@@ -36,6 +47,10 @@ class LiturgyDocument {
     required this.englishName,
     required this.usedWhen,
     required this.introduction,
+    this.nameCo = '',
+    this.usedWhenEn = '',
+    this.introductionEn = '',
+    this.introductionCo = '',
     required this.sections,
   });
 
@@ -46,6 +61,10 @@ class LiturgyDocument {
       englishName: json['englishName']?.toString() ?? '',
       usedWhen: json['usedWhen']?.toString() ?? '',
       introduction: json['introduction']?.toString() ?? '',
+      nameCo: json['nameCo']?.toString() ?? '',
+      usedWhenEn: json['usedWhenEn']?.toString() ?? '',
+      introductionEn: json['introductionEn']?.toString() ?? '',
+      introductionCo: json['introductionCo']?.toString() ?? '',
 
       sections: (json['sections'] as List<dynamic>? ?? [])
           .whereType<Map<String, dynamic>>()
@@ -58,28 +77,104 @@ class LiturgyDocument {
 class LiturgySection {
   final String title;
 
+  final LiturgySectionGroup group;
+
   /// Who reads this section (priest / deacons / people /
   /// all). Defaults to priest when missing.
   final SectionReader reader;
 
   final List<String> content;
 
+  /// Parallel-language content embedded in the same file.
+  /// Falls back to [content] when empty.
+  final String titleEn;
+  final String titleCo;
+  final List<String> contentEn;
+  final List<String> contentCo;
+
+  /// Optional reading marker (pauline / catholic / acts /
+  /// synaxar / psalm / gospel) used by the admin panel.
+  final String readingType;
+
   const LiturgySection({
     required this.title,
+    this.group = LiturgySectionGroup.faithful,
     this.reader = SectionReader.priest,
     this.content = const [],
+    this.titleEn = '',
+    this.titleCo = '',
+    this.contentEn = const [],
+    this.contentCo = const [],
+    this.readingType = '',
   });
 
   factory LiturgySection.fromJson(Map<String, dynamic> json) {
+    final title = json['title']?.toString() ?? '';
+    final titleEn = json['titleEn']?.toString() ?? '';
     return LiturgySection(
-      title: json['title']?.toString() ?? '',
+      title: title,
+
+      group: _parseGroup(json['group'], title, titleEn),
 
       reader: _parseReader(json['reader']),
 
       content: (json['content'] as List<dynamic>? ?? [])
           .map((item) => item.toString())
           .toList(),
+
+      titleEn: titleEn,
+      titleCo: json['titleCo']?.toString() ?? '',
+      contentEn: (json['contentEn'] as List<dynamic>? ?? [])
+          .map((item) => item.toString())
+          .toList(),
+      contentCo: (json['contentCo'] as List<dynamic>? ?? [])
+          .map((item) => item.toString())
+          .toList(),
+      readingType: json['readingType']?.toString() ?? '',
     );
+  }
+
+  static LiturgySectionGroup _parseGroup(
+    dynamic raw,
+    String title,
+    String titleEn,
+  ) {
+    switch (raw?.toString()) {
+      case 'offering':
+        return LiturgySectionGroup.offering;
+      case 'word':
+        return LiturgySectionGroup.word;
+      case 'distribution':
+        return LiturgySectionGroup.distribution;
+      case 'faithful':
+        return LiturgySectionGroup.faithful;
+    }
+
+    final value = '$title $titleEn'.toLowerCase();
+    if (value.contains('تقديم الحمل') ||
+        value.contains('offering of the lamb') ||
+        value.contains('offering')) {
+      return LiturgySectionGroup.offering;
+    }
+    if (value.contains('البولس') ||
+        value.contains('الكاثوليكون') ||
+        value.contains('الإبركسيس') ||
+        value.contains('السنكسار') ||
+        value.contains('المزمور') ||
+        value.contains('الإنجيل') ||
+        value.contains('epistle') ||
+        value.contains('acts') ||
+        value.contains('psalm') ||
+        value.contains('gospel') ||
+        value.contains('synax')) {
+      return LiturgySectionGroup.word;
+    }
+    if (value.contains('المناولة') ||
+        value.contains('communion') ||
+        value.contains('distribution')) {
+      return LiturgySectionGroup.distribution;
+    }
+    return LiturgySectionGroup.faithful;
   }
 
   static SectionReader _parseReader(dynamic raw) {

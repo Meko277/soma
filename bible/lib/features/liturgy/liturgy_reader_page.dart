@@ -35,14 +35,11 @@ class LiturgyReaderPage extends ConsumerStatefulWidget {
   final String language;
 
   @override
-  ConsumerState<LiturgyReaderPage> createState() =>
-      _LiturgyReaderPageState();
+  ConsumerState<LiturgyReaderPage> createState() => _LiturgyReaderPageState();
 }
 
-class _LiturgyReaderPageState
-    extends ConsumerState<LiturgyReaderPage> {
-  final LiturgyContentProvider _provider =
-      const LiturgyContentProvider();
+class _LiturgyReaderPageState extends ConsumerState<LiturgyReaderPage> {
+  final LiturgyContentProvider _provider = const LiturgyContentProvider();
 
   /// Loaded document (null until ready).
   LiturgyDocument? _doc;
@@ -69,6 +66,16 @@ class _LiturgyReaderPageState
   /// Last slide index so rotations resume where you were.
   int _lastSlideIndex = 0;
 
+  /// AR / EN / CO display language picked with the radio
+  /// row (defaults to the incoming content language).
+  String get _initialDisplay => switch (widget.language) {
+    'ar' => 'ar',
+    'co' => 'co',
+    _ => 'en',
+  };
+
+  String _displayLang = 'ar';
+
   /// Reload when Firestore sync delivers newer content so the page
   /// reflects admin edits without a restart.
   StreamSubscription<void>? _syncSub;
@@ -76,6 +83,8 @@ class _LiturgyReaderPageState
   @override
   void initState() {
     super.initState();
+
+    _displayLang = _initialDisplay;
 
     _startLoading();
 
@@ -100,27 +109,26 @@ class _LiturgyReaderPageState
     _lastSlideIndex = 0;
     _presentationDismissed = false;
     _manualPresenting = false;
+    _displayLang = _initialDisplay;
 
     _provider
-        .loadDocument(
-      widget.kindId,
-      language: widget.language,
-    )
+        .loadDocument(widget.kindId, language: widget.language)
         .then((doc) {
-      if (!mounted) return;
+          if (!mounted) return;
 
-      setState(() {
-        _doc = doc;
-        _loading = false;
-      });
-    }).catchError((Object error) {
-      if (!mounted) return;
+          setState(() {
+            _doc = doc;
+            _loading = false;
+          });
+        })
+        .catchError((Object error) {
+          if (!mounted) return;
 
-      setState(() {
-        _error = error.toString();
-        _loading = false;
-      });
-    });
+          setState(() {
+            _error = error.toString();
+            _loading = false;
+          });
+        });
   }
 
   @override
@@ -138,8 +146,7 @@ class _LiturgyReaderPageState
     super.didChangeDependencies();
 
     final isLandscape =
-        MediaQuery.of(context).orientation ==
-            Orientation.landscape;
+        MediaQuery.of(context).orientation == Orientation.landscape;
 
     if (_wasLandscape && !isLandscape) {
       // Back to portrait -> re-arm presentation mode.
@@ -157,14 +164,14 @@ class _LiturgyReaderPageState
   Widget build(BuildContext context) {
     final preferences = ref.watch(preferencesProvider);
 
-    final strings =
-        AppStrings(preferences.interfaceLanguage);
+    final strings = AppStrings(preferences.interfaceLanguage);
 
-    final isArabic = widget.language == 'ar';
+    // Arabic rendering follows the ACTIVE display language
+    // (AR is RTL; EN / Coptic are LTR).
+    final isArabic = _displayLang == 'ar';
 
     final isLandscape =
-        MediaQuery.of(context).orientation ==
-            Orientation.landscape;
+        MediaQuery.of(context).orientation == Orientation.landscape;
 
     final doc = _doc;
 
@@ -173,9 +180,9 @@ class _LiturgyReaderPageState
     // is locked on the device).
     final presenting =
         preferences.presentationModeEnabled &&
-            (isLandscape || _manualPresenting) &&
-            !_presentationDismissed &&
-            doc != null;
+        (isLandscape || _manualPresenting) &&
+        !_presentationDismissed &&
+        doc != null;
 
     return Directionality(
       // Scaffold stays LTR; Arabic is applied per-content.
@@ -186,20 +193,17 @@ class _LiturgyReaderPageState
             ? null
             : AppBar(
                 title: Text(
-                  doc?.name ??
-                      (isArabic
-                          ? 'القداس الإلهي'
-                          : 'The Holy Liturgy'),
+                  doc == null
+                      ? (isArabic ? 'القداس الإلهي' : 'The Holy Liturgy')
+                      : _docTitle(doc),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                 ),
                 actions: [
                   if (doc != null)
                     IconButton(
-                      tooltip:
-                          strings.presentationModeTitle,
-                      icon: const Icon(
-                          Icons.slideshow_outlined),
+                      tooltip: strings.presentationModeTitle,
+                      icon: const Icon(Icons.slideshow_outlined),
                       onPressed: () {
                         setState(() {
                           _manualPresenting = true;
@@ -208,10 +212,8 @@ class _LiturgyReaderPageState
                     ),
                   if (doc != null)
                     IconButton(
-                      icon: const Icon(
-                          Icons.info_outline),
-                      onPressed: () =>
-                          _showInfoSheet(context, doc),
+                      icon: const Icon(Icons.info_outline),
+                      onPressed: () => _showInfoSheet(context, doc),
                     ),
                 ],
               ),
@@ -228,11 +230,9 @@ class _LiturgyReaderPageState
 
                 startIndex: _lastSlideIndex,
 
-                onPageChanged: (page) =>
-                    _lastSlideIndex = page,
+                onPageChanged: (page) => _lastSlideIndex = page,
 
-                exitTooltip:
-                    strings.presentationExitLabel,
+                exitTooltip: strings.presentationExitLabel,
 
                 onExit: () {
                   setState(() {
@@ -247,14 +247,9 @@ class _LiturgyReaderPageState
   }
 
   /// Normal (portrait / dismissed) reading view.
-  Widget _buildBody(
-    LiturgyDocument? doc,
-    AppStrings strings,
-    bool isArabic,
-  ) {
+  Widget _buildBody(LiturgyDocument? doc, AppStrings strings, bool isArabic) {
     if (_loading) {
-      return const Center(
-          child: CircularProgressIndicator());
+      return const Center(child: CircularProgressIndicator());
     }
 
     if (_error != null) {
@@ -268,23 +263,134 @@ class _LiturgyReaderPageState
     }
 
     return Directionality(
-      textDirection:
-          isArabic ? TextDirection.rtl : TextDirection.ltr,
+      textDirection: isArabic ? TextDirection.rtl : TextDirection.ltr,
 
-      child: ListView.builder(
-        padding: const EdgeInsets.fromLTRB(16, 12, 16, 32),
+      // Language radio pinned to the top, the sections list
+      // scrolls underneath it.
+      child: Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
+            child: _LanguageRadioRow(
+              value: _displayLang,
+              onChanged: (next) {
+                setState(() => _displayLang = next);
+              },
+            ),
+          ),
 
-        itemCount: loadedDoc.sections.length,
-
-        itemBuilder: (context, index) {
-          return _buildSectionCard(
-            loadedDoc.sections[index],
-            index,
-            strings,
-          );
-        },
+          Expanded(
+            child: ListView.builder(
+              padding: const EdgeInsets.fromLTRB(16, 8, 16, 32),
+              itemCount: loadedDoc.sections.length,
+              itemBuilder: (context, index) {
+                final section = loadedDoc.sections[index];
+                final previous = index == 0
+                    ? null
+                    : loadedDoc.sections[index - 1].group;
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    if (previous != section.group)
+                      _buildGroupHeader(section.group),
+                    _buildSectionCard(section, index, strings),
+                  ],
+                );
+              },
+            ),
+          ),
+        ],
       ),
     );
+  }
+
+  Widget _buildGroupHeader(LiturgySectionGroup group) {
+    final (arabic, english) = switch (group) {
+      LiturgySectionGroup.offering => ('تقديم الحمل', 'Offering of the Lamb'),
+      LiturgySectionGroup.word => ('قداس الكلمة', 'Liturgy of the Word'),
+      LiturgySectionGroup.faithful => (
+        'قداس المؤمنين',
+        'Liturgy of the Faithful',
+      ),
+      LiturgySectionGroup.distribution => ('التوزيع', 'Holy Communion'),
+    };
+    return Padding(
+      padding: const EdgeInsets.only(top: 18, bottom: 4),
+      child: Text(
+        _displayLang == 'ar' ? arabic : english,
+        style: Theme.of(context).textTheme.titleLarge?.copyWith(
+          fontWeight: FontWeight.w800,
+          color: Theme.of(context).colorScheme.primary,
+        ),
+      ),
+    );
+  }
+
+  // ============================================================
+  // LOCALIZED TEXT (AR / EN / CO embedded in the same JSON)
+  //
+  // Every selection falls back to the previous language when
+  // the requested one is missing, and finally to the plain
+  // 'content'/'title' field.
+  // ============================================================
+
+  String _docTitle(LiturgyDocument doc) {
+    switch (_displayLang) {
+      case 'en':
+        return doc.englishName.isNotEmpty ? doc.englishName : doc.name;
+      case 'co':
+        return doc.nameCo.isNotEmpty ? doc.nameCo : doc.name;
+      default:
+        return doc.name;
+    }
+  }
+
+  String _docUsedWhen(LiturgyDocument doc) {
+    if (_displayLang == 'en' && doc.usedWhenEn.isNotEmpty) {
+      return doc.usedWhenEn;
+    }
+    return doc.usedWhen;
+  }
+
+  String _docIntroduction(LiturgyDocument doc) {
+    switch (_displayLang) {
+      case 'en':
+        return doc.introductionEn.isNotEmpty
+            ? doc.introductionEn
+            : doc.introduction;
+      case 'co':
+        return doc.introductionCo.isNotEmpty
+            ? doc.introductionCo
+            : doc.introduction;
+      default:
+        return doc.introduction;
+    }
+  }
+
+  String _sectionTitle(LiturgySection section) {
+    switch (_displayLang) {
+      case 'en':
+        return section.titleEn.isNotEmpty ? section.titleEn : section.title;
+      case 'co':
+        return section.titleCo.isNotEmpty ? section.titleCo : section.title;
+      default:
+        return section.title;
+    }
+  }
+
+  List<String> _sectionContent(LiturgySection section) {
+    switch (_displayLang) {
+      case 'en':
+        return section.contentEn.isNotEmpty
+            ? section.contentEn
+            : section.content;
+      case 'co':
+        return section.contentCo.isNotEmpty
+            ? section.contentCo
+            : section.content;
+      default:
+        return section.content;
+    }
   }
 
   // ============================================================
@@ -298,10 +404,7 @@ class _LiturgyReaderPageState
   ) {
     final theme = Theme.of(context);
 
-    final readerColor = _readerColor(
-      section.reader,
-      theme,
-    );
+    final readerColor = _readerColor(section.reader, theme);
 
     return Card(
       elevation: 0,
@@ -316,18 +419,18 @@ class _LiturgyReaderPageState
 
           children: [
             // ----------------------------------------
-            // WHO READS IT badge
+            // WHO READS IT badge (more visible)
             // ----------------------------------------
             Container(
-              padding:
-                  const EdgeInsets.symmetric(
-                      horizontal: 10, vertical: 4),
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 5),
 
               decoration: BoxDecoration(
-                color:
-                    readerColor.withValues(alpha: 0.10),
-                borderRadius:
-                    BorderRadius.circular(20),
+                color: readerColor.withValues(alpha: 0.12),
+                borderRadius: BorderRadius.circular(22),
+                border: Border.all(
+                  color: readerColor.withValues(alpha: 0.35),
+                  width: 1,
+                ),
               ),
 
               child: Row(
@@ -335,14 +438,15 @@ class _LiturgyReaderPageState
                 children: [
                   Icon(
                     _readerIcon(section.reader),
-                    size: 14,
+                    size: 16,
                     color: readerColor,
                   ),
-                  const SizedBox(width: 5),
+                  const SizedBox(width: 6),
                   Text(
-                    '${strings.readByPrefix} ${_readerShort(section.reader, strings)}',
+                    '${strings.readByPrefix} '
+                    '${_readerShort(section.reader, strings)}',
                     style: TextStyle(
-                      fontSize: 11,
+                      fontSize: 12,
                       fontWeight: FontWeight.w700,
                       color: readerColor,
                     ),
@@ -351,32 +455,31 @@ class _LiturgyReaderPageState
               ),
             ),
 
+            const SizedBox(height: 12),
+
+            // ----------------------------------------
+            // Section title (localized)
+            // ----------------------------------------
+            Text(
+              '${index + 1}. ${_sectionTitle(section)}',
+              style: theme.textTheme.titleMedium?.copyWith(
+                fontWeight: FontWeight.bold,
+                height: 1.4,
+              ),
+            ),
+
             const SizedBox(height: 10),
 
             // ----------------------------------------
-            // Section title
+            // Paragraphs (localized)
             // ----------------------------------------
-            Text(
-              '${index + 1}. ${section.title}',
-              style: theme.textTheme.titleMedium
-                  ?.copyWith(
-                      fontWeight: FontWeight.bold),
-            ),
-
-            const SizedBox(height: 8),
-
-            // ----------------------------------------
-            // Paragraphs
-            // ----------------------------------------
-            for (final paragraph
-                in section.content) ...[
+            for (final paragraph in _sectionContent(section)) ...[
               Text(
                 paragraph,
-                style: theme.textTheme.bodyLarge
-                    ?.copyWith(height: 1.9),
+                style: theme.textTheme.bodyLarge?.copyWith(height: 1.95),
               ),
 
-              const SizedBox(height: 8),
+              const SizedBox(height: 9),
             ],
           ],
         ),
@@ -397,10 +500,7 @@ class _LiturgyReaderPageState
     }
   }
 
-  Color _readerColor(
-    SectionReader reader,
-    ThemeData theme,
-  ) {
+  Color _readerColor(SectionReader reader, ThemeData theme) {
     switch (reader) {
       case SectionReader.priest:
         return theme.colorScheme.primary;
@@ -413,10 +513,7 @@ class _LiturgyReaderPageState
     }
   }
 
-  String _readerShort(
-    SectionReader reader,
-    AppStrings strings,
-  ) {
+  String _readerShort(SectionReader reader, AppStrings strings) {
     switch (reader) {
       case SectionReader.priest:
         return strings.readerPriest;
@@ -429,10 +526,7 @@ class _LiturgyReaderPageState
     }
   }
 
-  String _readerFull(
-    SectionReader reader,
-    AppStrings strings,
-  ) {
+  String _readerFull(SectionReader reader, AppStrings strings) {
     return '${strings.readByPrefix} '
         '${_readerShort(reader, strings)}';
   }
@@ -446,10 +540,7 @@ class _LiturgyReaderPageState
     AppStrings strings,
   ) {
     final slides = <PresentationSlide>[
-      PresentationSlide(
-        text: doc.name,
-        label: doc.usedWhen,
-      ),
+      PresentationSlide(text: _docTitle(doc), label: _docUsedWhen(doc)),
     ];
 
     for (final section in doc.sections) {
@@ -457,12 +548,12 @@ class _LiturgyReaderPageState
       // reads it.
       slides.add(
         PresentationSlide(
-          text: section.title,
+          text: _sectionTitle(section),
           label: '• ${_readerFull(section.reader, strings)} •',
         ),
       );
 
-      for (final paragraph in section.content) {
+      for (final paragraph in _sectionContent(section)) {
         slides.add(PresentationSlide(text: paragraph));
       }
     }
@@ -474,53 +565,41 @@ class _LiturgyReaderPageState
   // INFO SHEET
   // ============================================================
 
-  void _showInfoSheet(
-    BuildContext context,
-    LiturgyDocument doc,
-  ) {
+  void _showInfoSheet(BuildContext context, LiturgyDocument doc) {
     showModalBottomSheet<void>(
       context: context,
       showDragHandle: true,
       builder: (sheetContext) {
         return Padding(
-          padding:
-              const EdgeInsets.fromLTRB(24, 0, 24, 32),
+          padding: const EdgeInsets.fromLTRB(24, 0, 24, 32),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                doc.name,
-                style: Theme.of(sheetContext)
-                    .textTheme
-                    .titleLarge
-                    ?.copyWith(
-                        fontWeight: FontWeight.bold),
+                _docTitle(doc),
+                style: Theme.of(
+                  sheetContext,
+                ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
               ),
 
               const SizedBox(height: 4),
 
               Text(
-                doc.usedWhen,
-                style: Theme.of(sheetContext)
-                    .textTheme
-                    .bodySmall
-                    ?.copyWith(
-                      fontWeight: FontWeight.w600,
-                      color: Theme.of(sheetContext)
-                          .colorScheme
-                          .primary,
-                    ),
+                _docUsedWhen(doc),
+                style: Theme.of(sheetContext).textTheme.bodySmall?.copyWith(
+                  fontWeight: FontWeight.w600,
+                  color: Theme.of(sheetContext).colorScheme.primary,
+                ),
               ),
 
               const SizedBox(height: 12),
 
               Text(
-                doc.introduction,
-                style: Theme.of(sheetContext)
-                    .textTheme
-                    .bodyLarge
-                    ?.copyWith(height: 1.8),
+                _docIntroduction(doc),
+                style: Theme.of(
+                  sheetContext,
+                ).textTheme.bodyLarge?.copyWith(height: 1.8),
               ),
             ],
           ),
@@ -542,10 +621,7 @@ class _LiturgyReaderPageState
           children: [
             const Icon(Icons.error_outline, size: 56),
             const SizedBox(height: 16),
-            Text(
-              message,
-              textAlign: TextAlign.center,
-            ),
+            Text(message, textAlign: TextAlign.center),
           ],
         ),
       ),
@@ -553,4 +629,65 @@ class _LiturgyReaderPageState
   }
 }
 
+// ============================================================
+// LANGUAGE RADIO ROW (AR | EN | CO)
+//
+/// Coptic Reader style switch. 'co' is the Coptic language
+/// marker used across the app; content for it is loaded from
+/// the same embedded contentCo fields.
+// ============================================================
 
+class _LanguageRadioRow extends StatelessWidget {
+  const _LanguageRadioRow({required this.value, required this.onChanged});
+
+  final String value;
+  final ValueChanged<String> onChanged;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 4),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(24),
+        border: Border.all(color: theme.colorScheme.outlineVariant),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          _langButton(context, 'ar', 'العربية'),
+          _langButton(context, 'en', 'English'),
+          _langButton(context, 'co', 'ϯⲙⲉⲧⲣⲉⲙⲛ̀ⲭⲏⲙⲓ'),
+        ],
+      ),
+    );
+  }
+
+  Widget _langButton(BuildContext context, String lang, String label) {
+    final selected = value == lang;
+    final theme = Theme.of(context);
+
+    return InkWell(
+      onTap: () => onChanged(lang),
+      borderRadius: BorderRadius.circular(20),
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 180),
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+        decoration: BoxDecoration(
+          color: selected ? theme.colorScheme.primary : Colors.transparent,
+          borderRadius: BorderRadius.circular(20),
+        ),
+        child: Text(
+          label,
+          style: theme.textTheme.labelLarge?.copyWith(
+            color: selected
+                ? theme.colorScheme.onPrimary
+                : theme.colorScheme.onSurfaceVariant,
+            fontWeight: selected ? FontWeight.w700 : FontWeight.w500,
+          ),
+        ),
+      ),
+    );
+  }
+}

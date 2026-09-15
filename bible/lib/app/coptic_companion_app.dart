@@ -10,18 +10,13 @@ class CopticCompanionApp extends ConsumerWidget {
   const CopticCompanionApp({super.key});
 
   @override
-  Widget build(
-    BuildContext context,
-    WidgetRef ref,
-  ) {
-    final preferences =
-        ref.watch(preferencesProvider);
+  Widget build(BuildContext context, WidgetRef ref) {
+    final preferences = ref.watch(preferencesProvider);
 
-    final router =
-        ref.watch(appRouterProvider);
+    final router = ref.watch(appRouterProvider);
 
     return MaterialApp.router(
-      title: 'Soma',
+      title: 'Ⲡⲓϫⲱⲙ ⲉⲑⲟⲩⲁⲃ',
       debugShowCheckedModeBanner: false,
 
       theme: AppTheme.beige,
@@ -34,18 +29,14 @@ class CopticCompanionApp extends ConsumerWidget {
         return MediaQuery(
           // Apply the user's chosen text size
           // (font scale) to the whole app.
-          data: MediaQuery.of(context).copyWith(
-            textScaler: TextScaler.linear(
-              preferences.fontScale,
-            ),
-          ),
+          data: MediaQuery.of(
+            context,
+          ).copyWith(textScaler: TextScaler.linear(preferences.fontScale)),
           child: Directionality(
-            textDirection:
-                preferences.interfaceLanguage.isRtl
-                    ? TextDirection.rtl
-                    : TextDirection.ltr,
-            child:
-                child ?? const SizedBox.shrink(),
+            textDirection: preferences.interfaceLanguage.isRtl
+                ? TextDirection.rtl
+                : TextDirection.ltr,
+            child: child ?? const SizedBox.shrink(),
           ),
         );
       },
