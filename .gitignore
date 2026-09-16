@@ -16,8 +16,25 @@ tools/
 !bible/**/*.yaml
 *.xml
 !bible/**/*.xml
+
+# Ignore admin companion keys/temp files, but keep the whole admin app online
+admin/api.js
+admin/firebaseConfig.js
 !index.html
 !styles.css
 !app.js
+
+# Do not commit workspace helper/verification files
+*.txt
+!README.md
+!bible/README.md
+!bible/linux/README.md
+!bible/windows/README.md
+!bible/macos/README.md
+!bible/android/README.md
+!admin/README.md
+!bible/lib/features/church/church_search_page.dart
+!bible/lib/features/church/church_search_page.dart
+
 # Allow the Firestore upload tool (admin only)
 !admin/tools/

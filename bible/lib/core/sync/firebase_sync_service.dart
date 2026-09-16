@@ -1,9 +1,11 @@
-// Firebase Sync Service for Coptic Companion
+// Firebase Sync Service for Pijoom Ethouab
 // Real-time data sync with offline caching via SharedPreferences.
 //
 // Firestore collections (traneem, bible, agpeya, liturgy, readings,
-// settings/design) are mirrored into SharedPreferences for instant offline
-// rendering, while online listeners update in real time.
+// content, settings/design) are mirrored into SharedPreferences for
+// instant offline rendering, while online listeners update in real
+// time — so an admin edit is visible in the app at once while it is
+// connected to the internet.
 
 import 'dart:async';
 import 'dart:convert';

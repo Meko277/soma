@@ -1,11 +1,11 @@
 {
-    "name": "Ⲡⲓϫⲱⲙ ⲉⲑⲟⲩⲁⲃ",
-    "short_name": "Ⲡⲓϫⲱⲙ",
+    "name": "Pijoom Ethouab",
+    "short_name": "Pijoom Ethouab",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",
     "theme_color": "#0175C2",
-    "description": "Ⲡⲓϫⲱⲙ ⲉⲑⲟⲩⲁⲃ",
+    "description": "Pijoom Ethouab",
     "orientation": "portrait-primary",
     "prefer_related_applications": false,
     "icons": [

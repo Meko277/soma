@@ -164,6 +164,10 @@ Future<void> initFirestoreContentSync() async {
 
   // The Bible is synced ON DEMAND (one book at a time) so it needs
   // no eager initialization - it only must be installed before the
-  // first chapter is opened.
-  SyncHolder.installBible(BibleContentSync());
+  // first chapter is opened. The callback bridges Firestore edits to
+  // [SyncHolder.bibleUpdates] so an OPEN chapter reloads at once
+  // (exact-time updates while the app is online).
+  SyncHolder.installBible(
+    BibleContentSync(onBookChanged: SyncHolder.notifyBibleChanged),
+  );
 }

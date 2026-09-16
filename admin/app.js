@@ -22,7 +22,7 @@
     content: [],
     churches: [],
     design: {
-      nameEn: 'Coptic Companion', nameAr: 'مرافق القبطي',
+      nameEn: 'Pijoom Ethouab', nameAr: 'بيجوم إثؤواب',
       developer: '', version: '1.0.0', descEn: '', descAr: '',
       colors: {
         primary: '#8B2332', secondary: '#D4AF37',
@@ -34,6 +34,44 @@
       logoUrl: '', iconUrl: '', bgLightUrl: '', bgDarkUrl: ''
     }
   };
+
+  // ============================================================
+  // FULL COPTIC READER TAXONOMY (every reading editable in admin)
+  //
+  // Psalmody (all psalmody readings) / Liturgies (all liturgies) /
+  // Vespers-Matins-Liturgy / Antiphonary / Melodies /
+  // Feasts-Fasts-Saints-Fractions-Doxologies-Psalies-Papal-Clergy /
+  // Special (baptism-crowning-unction-visitation-funeral-
+  // consecrations-prostration-pascha-lakkan).
+  //
+  // Every entry below is a Firestore `content` category id that the
+  // admin can create/edit/delete, so no new reading ever needs an
+  // app update: the app renders any `content` doc by id live.
+  // ============================================================
+  var LIBRARY_CATEGORIES = [
+    { id: 'psalmody', en: 'Psalmody', ar: 'الإبصلمودية' },
+    { id: 'liturgies', en: 'Liturgies', ar: 'القداسات' },
+    { id: 'vespers-matins-liturgy', en: 'Vespers · Matins · Liturgy', ar: 'عشية · باكر · القداس' },
+    { id: 'antiphonary', en: 'Antiphonary', ar: 'الأنتيفوناري (الدفنار)' },
+    { id: 'melodies', en: 'Melodies', ar: 'الألحان' },
+    { id: 'feasts', en: 'Feasts', ar: 'الأعياد' },
+    { id: 'fasts', en: 'Fasts', ar: 'الأصوام' },
+    { id: 'saints', en: 'Saints', ar: 'القديسون' },
+    { id: 'fractions', en: 'Fractions', ar: 'القسمة' },
+    { id: 'doxologies', en: 'Doxologies', ar: 'الذكصولوجيات' },
+    { id: 'psalies', en: 'Psalies', ar: 'الإبصاليات' },
+    { id: 'papal', en: 'Papal', ar: 'الباباوي' },
+    { id: 'clergy', en: 'Clergy', ar: 'الإكليروس' },
+    { id: 'special-baptism', en: 'Special · Baptism', ar: 'المعمودية' },
+    { id: 'special-crowning', en: 'Special · Crowning (Matrimony)', ar: 'الإكليل' },
+    { id: 'special-unction', en: 'Special · Unction of the Sick', ar: 'مسحة المرضى' },
+    { id: 'special-visitation', en: 'Special · Visitation', ar: 'الافتقاد' },
+    { id: 'special-funeral', en: 'Special · Funeral', ar: 'الجناز' },
+    { id: 'special-consecrations', en: 'Special · Consecrations', ar: 'التكريس والتدشين' },
+    { id: 'special-prostration', en: 'Special · Prostration', ar: 'السجدة' },
+    { id: 'special-pascha', en: 'Special · Holy Pascha', ar: 'البصخة المقدسة' },
+    { id: 'special-lakkan', en: 'Special · Lakkan', ar: 'اللقان' }
+  ];
 
   function ensureBundledTraneemCatalog() {
     var catalog = [
@@ -56,7 +94,7 @@
   // ============================================================
   var I18N = {
     en: {
-      appTitle: 'Coptic Companion', appSubtitle: 'Full App Admin',
+      appTitle: 'Pijoom Ethouab', appSubtitle: 'Full App Admin',
       dashboard: 'Dashboard', importExport: 'Import / Export',
       traneem: 'Traneem', bible: 'Bible', agpeya: 'Agpeya',
       liturgy: 'Liturgy', readings: 'Readings', themeDesign: 'Theme & Design',
@@ -85,7 +123,7 @@
       switchLang: 'عربي'
     },
     ar: {
-      appTitle: 'مرافق القبطي', appSubtitle: 'لوحة الإدارة الكاملة',
+      appTitle: 'بيجوم إثؤواب', appSubtitle: 'لوحة الإدارة الكاملة',
       dashboard: 'لوحة القيادة', importExport: 'استيراد / تصدير',
       traneem: 'الترانيم', bible: 'الكتاب المقدس', agpeya: 'الأجبية',
       liturgy: 'القداسات', readings: 'القراءات', themeDesign: 'المظهر والتصميم',
@@ -210,7 +248,9 @@
 
   function translateStaticInterface() {
     var translations = {
-      'Coptic Companion': 'مرافق القبطي',
+      'Coptic Companion': 'بيجوم إثؤواب',
+      'مرافق القبطي': 'بيجوم إثؤواب',
+      'Pijoom Ethouab': 'بيجوم إثؤواب',
       'Full App Admin': 'لوحة إدارة التطبيق',
       'Dashboard': 'لوحة القيادة',
       'Import/Export': 'استيراد/تصدير',
@@ -276,7 +316,7 @@
     if (el('stat-liturgy')) el('stat-liturgy').textContent =
       appData.liturgy.ar.length + appData.liturgy.en.length;
     if (el('stat-readings')) el('stat-readings').textContent =
-      appData.readings.length;
+      appData.readings.length + appData.content.length;
     if (el('stat-content')) el('stat-content').textContent =
       appData.content.length;
     if (el('stat-themes')) el('stat-themes').textContent = 1;
@@ -300,7 +340,8 @@
       appData.bible.ar.length > 0 ||
       appData.agpeya.ar.length > 0 ||
       appData.liturgy.ar.length > 0 ||
-      appData.readings.length > 0;
+      appData.readings.length > 0 ||
+      appData.content.length > 0;
   }
 
   function refreshAll() {
@@ -316,6 +357,14 @@
     renderPreviewContent();
   }  // ============================================================
   // FIREBASE
+  // ============================================================
+  // ============================================================
+  // FIREBASE — exact-time sync: every save/delete writes to
+  // Firestore, and every onSnapshot listener below fires at once
+  // on ALL online devices (app + admin), so an admin edit is
+  // visible in the app immediately when it is connected.
+  // Offline, the same data is cached in localStorage /
+  // SharedPreferences and shown instantly on next launch.
   // ============================================================
   function setupFirebase() {
     if (!window.firebaseDB) {
@@ -1080,29 +1129,72 @@
     saveLocal(); closeModal('modal-reading'); renderReadingsList(); showToast(t('deleted'));
   }
   // ================= APP CONTENT EDITOR =================
-  function renderContentList() {
+  // Every Coptic Reader reading lives here as ONE `content` doc:
+  // psalmody / liturgies / vespers-matins-liturgy / antiphonary /
+  // melodies / feasts / fasts / saints / fractions / doxologies /
+  // psalies / papal / clergy / special-* (baptism, crowning,
+  // unction, visitation, funeral, consecrations, prostration,
+  // pascha, lakkan). The app renders each doc live at /reader/:id.
+  function categoryLabel(id) {
+    for (var i = 0; i < LIBRARY_CATEGORIES.length; i++) {
+      if (LIBRARY_CATEGORIES[i].id === id) {
+        return currentLang === 'ar'
+          ? LIBRARY_CATEGORIES[i].ar + ' (' + id + ')'
+          : LIBRARY_CATEGORIES[i].en + ' (' + id + ')';
+      }
+    }
+    return id;
+  }
+  window.categoryLabel = categoryLabel;
+  function contentSearchText(item) {
+    return [
+      item.id, item.category, item.titleEn, item.titleAr, item.titleCo,
+      item.bodyEn, item.bodyAr, item.bodyCo
+    ].join(' ').toLowerCase();
+  }
+  window.filterContentList = function(value) {
+    var term = (value || '').trim().toLowerCase();
     var c = document.getElementById('content-list');
     if (!c) return;
-    if (!appData.content.length) {
-      c.innerHTML = '<p class="empty-state">' + t('noDataFound') + '</p>';
+    var list = appData.content || [];
+    if (term) {
+      list = list.filter(function(item, idx) {
+        return contentSearchText(item || {}).indexOf(term) >= 0;
+      });
+    }
+    if (!list.length) {
+      c.innerHTML = '<p class="empty-state">' + (term ? 'No matches found' : t('noDataFound')) + '</p>';
       return;
     }
-    c.innerHTML = appData.content.map(function(item, index) {
-      var title = item.titleAr || item.titleEn || item.id || 'Content';
-      var category = item.category || 'library';
+    c.innerHTML = list.map(function(item) {
+      var index = appData.content.indexOf(item);
+      var title = item.titleAr || item.titleEn || item.titleCo || item.id || 'Content';
       return '<div class="item-row" onclick="editContent(' + index + ')">' +
         '<div><span class="item-title">' + esc(title) + '</span><br>' +
-        '<span class="item-meta">' + esc(category) + ' | ' + esc(item.id || '') + '</span></div>' +
+        '<span class="item-meta">' + esc(categoryLabel(item.category || 'library')) + ' | ' + esc(item.id || '') + '</span></div>' +
         '<span>✏️</span></div>';
     }).join('');
+  };
+  function renderContentList() {
+    var input = document.getElementById('content-search');
+    window.filterContentList(input ? input.value : '');
   }
   var editContentData = null;
+  function fillContentCategories(selectEl, current) {
+    if (!selectEl) return;
+    selectEl.innerHTML = LIBRARY_CATEGORIES.map(function(cat) {
+      var label = currentLang === 'ar' ? cat.ar + ' (' + cat.id + ')' : cat.en + ' (' + cat.id + ')';
+      var sel = cat.id === current ? ' selected' : '';
+      return '<option value="' + esc(cat.id) + '"' + sel + '>' + esc(label) + '</option>';
+    }).join('') + '<option value="library"' + (current === 'library' ? ' selected' : '') + '>Library (library)</option>';
+    if (!current) selectEl.value = 'psalmody';
+  }
   window.editContent = function(index) {
     var item = appData.content[index];
     if (!item) return;
     editContentData = item;
     fs('content-id', item.id || '');
-    fs('content-category', item.category || 'library');
+    fillContentCategories(document.getElementById('content-category'), item.category || 'psalmody');
     fs('content-title-en', item.titleEn || '');
     fs('content-title-ar', item.titleAr || '');
     fs('content-title-co', item.titleCo || '');
@@ -1112,11 +1204,11 @@
     document.getElementById('deleteContentBtn').style.display = 'inline-flex';
     openModal('modal-content');
   };
-  window.newContent = function() {
+  window.newContent = function(category) {
     editContentData = null;
-    ['content-id','content-category','content-title-en','content-title-ar','content-title-co','content-body-en','content-body-ar','content-body-co']
+    ['content-id','content-title-en','content-title-ar','content-title-co','content-body-en','content-body-ar','content-body-co']
       .forEach(function(id) { fs(id, ''); });
-    fs('content-category', 'library');
+    fillContentCategories(document.getElementById('content-category'), category || 'psalmody');
     document.getElementById('deleteContentBtn').style.display = 'none';
     openModal('modal-content');
   };
@@ -1125,7 +1217,8 @@
     if (!id) { showToast(t('idRequired')); return; }
     var data = editContentData || {};
     data.id = id;
-    data.category = fv('content-category') || 'library';
+    var catEl = document.getElementById('content-category');
+    data.category = (catEl && catEl.value) || fv('content-category') || 'psalmody';
     data.titleEn = fv('content-title-en') || '';
     data.titleAr = fv('content-title-ar') || '';
     data.titleCo = fv('content-title-co') || '';
@@ -1261,9 +1354,15 @@
     var section = document.createElement('section');
     section.id = 'content';
     section.className = 'content-section';
+    var catButtons = LIBRARY_CATEGORIES.map(function(cat) {
+      var label = currentLang === 'ar' ? cat.ar : cat.en;
+      return '<button class="btn btn-secondary btn-sm" onclick="newContent(\'' + cat.id + '\')">➕ ' + esc(label) + '</button>';
+    }).join(' ');
     section.innerHTML = '<h2>' + t('appContent') + '</h2>' +
-      '<p class="section-desc">Edit library titles and full text in Arabic, English, and Coptic.</p>' +
-      '<div class="section-header"><button class="btn btn-primary" id="addContentBtn">➕ Add App Content</button></div>' +
+      '<p class="section-desc">Every Coptic Reader reading — Psalmody, Liturgies, Vespers·Matins·Liturgy, Antiphonary, Melodies, Feasts, Fasts, Saints, Fractions, Doxologies, Psalies, Papal, Clergy, Special (Baptism, Crowning, Unction, Visitation, Funeral, Consecrations, Prostration, Pascha, Lakkan) — editable in Arabic, English, and Coptic. Saving here updates the app at once while it is online.</p>' +
+      '<div class="card"><h3>Categories (tap to add)</h3><div style="display:flex;flex-wrap:wrap;gap:8px">' + catButtons + '</div></div>' +
+      '<div class="section-header"><button class="btn btn-primary" id="addContentBtn">➕ Add App Content</button>' +
+      '<input type="text" id="content-search" class="form-control" placeholder="Search readings..." oninput="filterContentList(this.value)" style="max-width:260px"></div>' +
       '<div id="content-list" class="items-list"></div>';
     main.appendChild(section);
 
@@ -1274,16 +1373,17 @@
     modal.innerHTML = '<div class="modal-content modal-large">' +
       '<div class="modal-header"><h3>App Content</h3><button class="btn-close" onclick="closeModal(\'modal-content\')">X</button></div>' +
       '<div class="modal-body">' +
-      '<div class="form-row"><div class="form-group"><label>ID</label><input id="content-id" class="form-control"></div><div class="form-group"><label>Category</label><input id="content-category" class="form-control" placeholder="library, readings, rites..."></div></div>' +
+      '<div class="form-row"><div class="form-group"><label>ID</label><input id="content-id" class="form-control"></div><div class="form-group"><label>Category</label><select id="content-category" class="form-control"></select></div></div>' +
       '<h4>Titles</h4><div class="form-row"><div class="form-group"><label>English</label><input id="content-title-en" class="form-control"></div><div class="form-group"><label>Arabic</label><input id="content-title-ar" class="form-control" dir="rtl"></div><div class="form-group"><label>Coptic</label><input id="content-title-co" class="form-control"></div></div>' +
       '<h4>Full Text</h4><div class="form-group"><label>English</label><textarea id="content-body-en" class="form-control" rows="7"></textarea></div>' +
       '<div class="form-group"><label>Arabic</label><textarea id="content-body-ar" class="form-control" rows="7" dir="rtl"></textarea></div>' +
       '<div class="form-group"><label>Coptic</label><textarea id="content-body-co" class="form-control" rows="7"></textarea></div>' +
       '</div><div class="modal-footer"><button class="btn btn-secondary" onclick="closeModal(\'modal-content\')">Cancel</button><button class="btn btn-danger" id="deleteContentBtn">Delete</button><button class="btn btn-primary" id="saveContentBtn">Save</button></div></div>';
     document.body.appendChild(modal);
-    document.getElementById('addContentBtn').addEventListener('click', window.newContent);
+    document.getElementById('addContentBtn').addEventListener('click', function() { window.newContent('psalmody'); });
     document.getElementById('saveContentBtn').addEventListener('click', saveContent);
     document.getElementById('deleteContentBtn').addEventListener('click', deleteContent);
+    fillContentCategories(document.getElementById('content-category'), 'psalmody');
     renderContentList();
   }
   // ============================================================

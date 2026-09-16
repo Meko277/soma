@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -9,6 +11,7 @@ import '../../core/preferences/app_preferences.dart';
 import '../../core/preferences/preferences_provider.dart';
 import '../../core/saved/saved_item.dart';
 import '../../core/saved/saved_items_provider.dart';
+import '../../core/sync/sync_holder.dart';
 import '../../widgets/bilingual_text.dart';
 import '../../widgets/floating_text_zoom.dart';
 import '../../widgets/presentation_reader.dart';
@@ -72,6 +75,10 @@ class _BibleChapterReaderPageState
   late String _language;
   late Future<BibleChapter?> _chapterFuture;
 
+  /// Live Bible sync: reloads the open chapter the moment an admin
+  /// edit for this book arrives from Firestore (exact-time updates).
+  StreamSubscription<void>? _bibleSub;
+
   // Settings view shown inside the drawer (Agpeya pattern)
   bool _showSettingsInDrawer = false;
 
@@ -126,6 +133,19 @@ class _BibleChapterReaderPageState
     );
 
     _startLoading();
+
+    // Exact-time updates: when the admin edits this book in Firestore
+    // while the app is online, reload the open chapter at once.
+    _bibleSub = SyncHolder.bibleUpdates.listen((_) {
+      if (!mounted) return;
+      setState(_startLoading);
+    });
+  }
+
+  @override
+  void dispose() {
+    _bibleSub?.cancel();
+    super.dispose();
   }
 
   @override

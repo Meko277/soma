@@ -130,8 +130,36 @@ class LiturgySection {
       contentCo: (json['contentCo'] as List<dynamic>? ?? [])
           .map((item) => item.toString())
           .toList(),
-      readingType: json['readingType']?.toString() ?? '',
+      readingType: _parseReadingType(json['readingType'], title, titleEn),
     );
+  }
+
+  static String _parseReadingType(dynamic raw, String title, String titleEn) {
+    final explicit = raw?.toString().trim() ?? '';
+    if (explicit.isNotEmpty) return explicit;
+    final value = '$title $titleEn'.toLowerCase();
+    if (value.contains('بولس') || value.contains('pauline')) {
+      return 'pauline';
+    }
+    if (value.contains('كاثوليكون') || value.contains('catholic')) {
+      return 'catholic';
+    }
+    if (value.contains('إبركسيس') || value.contains('acts')) {
+      return 'acts';
+    }
+    if (value.contains('سنكسار') || value.contains('synax')) {
+      return 'synaxar';
+    }
+    if (value.contains('مزمور') || value.contains('psalm')) {
+      return 'psalm';
+    }
+    if (value.contains('إنجيل') || value.contains('gospel')) {
+      return 'gospel';
+    }
+    if (value.contains('قراءات') || value.contains('readings')) {
+      return 'readings';
+    }
+    return '';
   }
 
   static LiturgySectionGroup _parseGroup(

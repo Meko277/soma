@@ -43,7 +43,7 @@ class HomePage extends ConsumerWidget {
             ClipRRect(
               borderRadius: BorderRadius.circular(14),
               child: Image.asset(
-                'assets/soma.png',
+                'assets/app logo.jpg.png',
                 width: 54,
                 height: 54,
                 fit: BoxFit.cover,

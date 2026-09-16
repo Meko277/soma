@@ -16,7 +16,7 @@ class CopticCompanionApp extends ConsumerWidget {
     final router = ref.watch(appRouterProvider);
 
     return MaterialApp.router(
-      title: 'Ⲡⲓϫⲱⲙ ⲉⲑⲟⲩⲁⲃ',
+      title: 'Pijoom Ethouab',
       debugShowCheckedModeBanner: false,
 
       theme: AppTheme.beige,

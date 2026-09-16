@@ -66,6 +66,9 @@ class _LiturgyReaderPageState extends ConsumerState<LiturgyReaderPage> {
   /// Last slide index so rotations resume where you were.
   int _lastSlideIndex = 0;
 
+  final ScrollController _scrollController = ScrollController();
+  final Map<int, GlobalKey> _sectionKeys = {};
+
   /// AR / EN / CO display language picked with the radio
   /// row (defaults to the incoming content language).
   String get _initialDisplay => switch (widget.language) {
@@ -99,7 +102,26 @@ class _LiturgyReaderPageState extends ConsumerState<LiturgyReaderPage> {
   @override
   void dispose() {
     _syncSub?.cancel();
+    _scrollController.dispose();
     super.dispose();
+  }
+
+  GlobalKey _sectionKey(int index) =>
+      _sectionKeys.putIfAbsent(index, GlobalKey.new);
+
+  void _goToSection(int index) {
+    Navigator.of(context).pop();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final target = _sectionKey(index).currentContext;
+      if (target != null) {
+        Scrollable.ensureVisible(
+          target,
+          duration: const Duration(milliseconds: 500),
+          curve: Curves.easeInOutCubic,
+          alignment: 0.08,
+        );
+      }
+    });
   }
 
   void _startLoading() {
@@ -201,6 +223,14 @@ class _LiturgyReaderPageState extends ConsumerState<LiturgyReaderPage> {
                 ),
                 actions: [
                   if (doc != null)
+                    Builder(
+                      builder: (context) => IconButton(
+                        tooltip: isArabic ? 'أقسام القداس' : 'Liturgy sections',
+                        icon: const Icon(Icons.menu_book_outlined),
+                        onPressed: () => Scaffold.of(context).openEndDrawer(),
+                      ),
+                    ),
+                  if (doc != null)
                     IconButton(
                       tooltip: strings.presentationModeTitle,
                       icon: const Icon(Icons.slideshow_outlined),
@@ -217,6 +247,10 @@ class _LiturgyReaderPageState extends ConsumerState<LiturgyReaderPage> {
                     ),
                 ],
               ),
+
+        endDrawer: presenting || doc == null
+            ? null
+            : _buildSectionsDrawer(context, doc, isArabic),
 
         // Note: 'presenting' already implies doc != null,
         // which promotes 'doc' for everything below.
@@ -281,6 +315,7 @@ class _LiturgyReaderPageState extends ConsumerState<LiturgyReaderPage> {
 
           Expanded(
             child: ListView.builder(
+              controller: _scrollController,
               padding: const EdgeInsets.fromLTRB(16, 8, 16, 32),
               itemCount: loadedDoc.sections.length,
               itemBuilder: (context, index) {
@@ -288,18 +323,73 @@ class _LiturgyReaderPageState extends ConsumerState<LiturgyReaderPage> {
                 final previous = index == 0
                     ? null
                     : loadedDoc.sections[index - 1].group;
-                return Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    if (previous != section.group)
-                      _buildGroupHeader(section.group),
-                    _buildSectionCard(section, index, strings),
-                  ],
+                return Container(
+                  key: _sectionKey(index),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      if (previous != section.group)
+                        _buildGroupHeader(section.group),
+                      _buildSectionCard(section, index, strings),
+                    ],
+                  ),
                 );
               },
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildSectionsDrawer(
+    BuildContext context,
+    LiturgyDocument doc,
+    bool isArabic,
+  ) {
+    return Drawer(
+      width: 350,
+      child: SafeArea(
+        child: Directionality(
+          textDirection: isArabic ? TextDirection.rtl : TextDirection.ltr,
+          child: Column(
+            children: [
+              ListTile(
+                leading: const Icon(Icons.church_outlined),
+                title: Text(
+                  isArabic ? 'أقسام القداس' : 'Liturgy sections',
+                  style: const TextStyle(fontWeight: FontWeight.bold),
+                ),
+                subtitle: Text(_docTitle(doc)),
+              ),
+              const Divider(height: 1),
+              Expanded(
+                child: ListView.builder(
+                  itemCount: doc.sections.length,
+                  itemBuilder: (context, index) {
+                    final section = doc.sections[index];
+                    final title = _sectionTitle(section);
+                    return ListTile(
+                      leading: CircleAvatar(
+                        radius: 15,
+                        child: Text('${index + 1}'),
+                      ),
+                      title: Text(title),
+                      subtitle: section.readingType.isNotEmpty
+                          ? Text(
+                              isArabic
+                                  ? 'قراءة: ${section.readingType}'
+                                  : 'Reading: ${section.readingType}',
+                            )
+                          : null,
+                      onTap: () => _goToSection(index),
+                    );
+                  },
+                ),
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }
@@ -457,6 +547,27 @@ class _LiturgyReaderPageState extends ConsumerState<LiturgyReaderPage> {
 
             const SizedBox(height: 12),
 
+            if (section.readingType.isNotEmpty)
+              Container(
+                margin: const EdgeInsets.only(bottom: 10),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 10,
+                  vertical: 5,
+                ),
+                decoration: BoxDecoration(
+                  color: theme.colorScheme.secondaryContainer,
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Text(
+                  _readingLabel(section.readingType),
+                  style: TextStyle(
+                    color: theme.colorScheme.onSecondaryContainer,
+                    fontWeight: FontWeight.w700,
+                    fontSize: 12,
+                  ),
+                ),
+              ),
+
             // ----------------------------------------
             // Section title (localized)
             // ----------------------------------------
@@ -485,6 +596,20 @@ class _LiturgyReaderPageState extends ConsumerState<LiturgyReaderPage> {
         ),
       ),
     );
+  }
+
+  String _readingLabel(String type) {
+    final labels = <String, (String, String)>{
+      'pauline': ('البولس', 'Pauline Epistle'),
+      'catholic': ('الكاثوليكون', 'Catholic Epistle'),
+      'acts': ('الإبركسيس', 'Acts'),
+      'synaxar': ('السنكسار', 'Synaxarium'),
+      'psalm': ('المزمور', 'Psalm'),
+      'gospel': ('الإنجيل', 'Gospel'),
+      'readings': ('القراءات', 'Readings'),
+    };
+    final label = labels[type] ?? (type, type);
+    return _displayLang == 'ar' ? label.$1 : label.$2;
   }
 
   IconData _readerIcon(SectionReader reader) {

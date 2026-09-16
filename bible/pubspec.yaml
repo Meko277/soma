@@ -47,6 +47,11 @@ dependencies:
   # online Coptic translator gateway. The rest of the app
   # (Bible, Agpeya, readings, Traneem) stays fully offline.
   http: ^1.2.2
+  url_launcher: ^6.3.1
+  # In-app church map: OSM tiles + GPS for nearest church search.
+  geolocator: ^13.0.2
+  flutter_map: ^7.0.2
+  latlong2: ^0.9.1
 
 dev_dependencies:
   flutter_test:
@@ -64,7 +69,7 @@ dev_dependencies:
   flutter_launcher_icons: ^0.14.4
 
 # ================================================================
-# APP ICON (SOMA LOGO)
+# APP ICON
 #
 # Run:  dart run flutter_launcher_icons
 # ================================================================
@@ -73,9 +78,9 @@ flutter_launcher_icons:
   android: true
   ios: true
   remove_alpha_ios: true
-  image_path: "assets/soma.png"
+  image_path: "assets/app logo.jpg.png"
   adaptive_icon_background: "#ffffff"
-  adaptive_icon_foreground: "assets/soma.png"
+  adaptive_icon_foreground: "assets/app logo.jpg.png"
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
@@ -92,6 +97,7 @@ flutter:
     - assets/images/
     - assets/fonts/
     - assets/soma.png
+    - assets/app logo.jpg.png
     - assets/bible/en/
     - assets/bible/ar/
     - assets/agpeya/en/

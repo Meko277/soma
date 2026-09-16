@@ -141,6 +141,20 @@ class MorePage extends ConsumerWidget {
           subtitle: strings.moreSearchSubtitle,
           icon: Icons.search,
         ),
+
+        // --------------------------------------------------------
+        // NEAREST CHURCH
+        //
+        // Opens the IN-APP map (OpenStreetMap) and immediately
+        // searches for the nearest churches around the user.
+        // No Google Maps involved.
+        // --------------------------------------------------------
+        SectionCard(
+          title: strings.moreChurchTitle,
+          subtitle: strings.moreChurchSubtitle,
+          icon: Icons.church_outlined,
+          onTap: () => context.push('/church/search?nearby=1'),
+        ),
       ],
     );
   }

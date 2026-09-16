@@ -36,12 +36,17 @@ import 'bible_models.dart';
 
 /// Lazily syncs admin-edited Bible books from Firestore.
 class BibleContentSync {
-  BibleContentSync({FirebaseFirestore? firestore})
-      : _firestore = firestore ?? FirebaseFirestore.instance;
+  BibleContentSync({FirebaseFirestore? firestore, void Function()? onBookChanged})
+      : _firestore = firestore ?? FirebaseFirestore.instance,
+        _onBookChanged = onBookChanged;
 
   final FirebaseFirestore _firestore;
 
-  /// In-memory cache: "<bookId>_<lang>" -> Firestore doc data.
+  /// Fired whenever an open book's Firestore doc changes, so the UI can
+  /// reload the open chapter at once (exact-time updates while online).
+  final void Function()? _onBookChanged;
+
+  /// In-memory cache: `"<bookId>_<lang>"` -> Firestore doc data.
   final Map<String, Map<String, dynamic>> _books = {};
 
   /// Doc ids that already have a live snapshot listener attached.
@@ -127,7 +132,8 @@ class BibleContentSync {
 
   /// Keeps the in-memory + persisted cache of one book fresh while
   /// the app is online, so a chapter opened later (or after a
-  /// restart) already shows admin edits.
+  /// restart) already shows admin edits. Also fires [onBookChanged]
+  /// so an OPEN chapter reloads at once (exact-time updates online).
   void _subscribeLive(String docId) {
     if (_subscribed.contains(docId)) return;
     _subscribed.add(docId);
@@ -144,6 +150,7 @@ class BibleContentSync {
             final book = Map<String, dynamic>.from(data);
             _books[docId] = book;
             unawaited(_writeCache(docId, book));
+            _onBookChanged?.call();
           },
           onError: (_) {},
         );

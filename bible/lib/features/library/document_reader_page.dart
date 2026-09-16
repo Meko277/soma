@@ -73,7 +73,10 @@ class _DocumentReaderPageState extends ConsumerState<DocumentReaderPage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(managed?['titleEn']?.toString() ?? item!.title),
+        title: Text(
+          _managedTitle(managed, preferences.interfaceLanguage == AppLanguage.arabic) ??
+              item!.title,
+        ),
         actions: const [
           IconButton(onPressed: null, icon: Icon(Icons.bookmark_border)),
           IconButton(onPressed: null, icon: Icon(Icons.share_outlined)),
@@ -86,7 +89,10 @@ class _DocumentReaderPageState extends ConsumerState<DocumentReaderPage> {
 
           children: [
             Text(
-              managed?['category']?.toString() ?? item!.subtitle,
+              _categoryLabel(
+                managed?['category']?.toString() ?? item!.subtitle,
+                preferences.interfaceLanguage == AppLanguage.arabic,
+              ),
               style: TextStyle(color: Theme.of(context).colorScheme.primary),
             ),
 
@@ -118,6 +124,48 @@ class _DocumentReaderPageState extends ConsumerState<DocumentReaderPage> {
         ),
       ),
     );
+  }
+
+  String? _managedTitle(Map<String, dynamic>? content, bool arabic) {
+    if (content == null) return null;
+    String pick(String key) => (content[key] ?? '').toString().trim();
+    final primary = arabic ? pick('titleAr') : pick('titleEn');
+    if (primary.isNotEmpty) return primary;
+    for (final fallback in ['titleEn', 'titleAr', 'titleCo']) {
+      final candidate = pick(fallback);
+      if (candidate.isNotEmpty) return candidate;
+    }
+    return null;
+  }
+
+  String _categoryLabel(String raw, bool arabic) {
+    const labels = <String, List<String>>{
+      'psalmody': ['Psalmody', 'الإبصلمودية'],
+      'liturgies': ['Liturgies', 'القداسات'],
+      'vespers-matins-liturgy': ['Vespers · Matins · Liturgy', 'عشية · باكر · القداس'],
+      'antiphonary': ['Antiphonary', 'الدفنار'],
+      'melodies': ['Melodies', 'الألحان'],
+      'feasts': ['Feasts', 'الأعياد'],
+      'fasts': ['Fasts', 'الأصوام'],
+      'saints': ['Saints', 'القديسون'],
+      'fractions': ['Fractions', 'القسمة'],
+      'doxologies': ['Doxologies', 'الذكصولوجيات'],
+      'psalies': ['Psalies', 'الإبصاليات'],
+      'papal': ['Papal', 'الباباوي'],
+      'clergy': ['Clergy', 'الإكليروس'],
+      'special-baptism': ['Baptism', 'المعمودية'],
+      'special-crowning': ['Crowning', 'الإكليل'],
+      'special-unction': ['Unction of the Sick', 'مسحة المرضى'],
+      'special-visitation': ['Visitation', 'الافتقاد'],
+      'special-funeral': ['Funeral', 'الجناز'],
+      'special-consecrations': ['Consecrations', 'التكريس والتدشين'],
+      'special-prostration': ['Prostration', 'السجدة'],
+      'special-pascha': ['Holy Pascha', 'البصخة المقدسة'],
+      'special-lakkan': ['Lakkan', 'اللقان'],
+    };
+    final hit = labels[raw];
+    if (hit == null) return raw;
+    return arabic ? hit[1] : hit[0];
   }
 
   String? _managedBody(Map<String, dynamic>? content, bool arabic) {
