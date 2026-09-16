@@ -1,0 +1,38 @@
+rules_version = '2';
+
+// ================================================================
+// Pijoom Ethouab / Soma - Firestore content rules
+//
+// The admin panel (GitHub Pages) and the Flutter app both use the
+// public Web API key with NO user sign-in, so every content
+// collection below must allow anonymous read AND write. They hold
+// only editorial/app content (bible text, hymns, prayers, readings,
+// churches, design settings) - no private user data.
+//
+// If you later add Firebase Authentication to the admin, tighten
+// the write rule to:  allow write: if request.auth != null;
+//
+// HOW TO APPLY (one-time, ~30 seconds):
+//   Firebase console -> https://console.firebase.google.com
+//   -> project "bible-62ac2" -> Firestore Database -> Rules tab
+//   -> replace everything with THIS file's content -> Publish.
+//   (Or with the CLI:  firebase deploy --only firestore:rules
+//    from the admin/ folder after `npm i -g firebase-tools` and
+//    `firebase login`.)
+// ================================================================
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    match /bible/{doc}    { allow read, write: if true; }
+    match /traneem/{doc}  { allow read, write: if true; }
+    match /agpeya/{doc}   { allow read, write: if true; }
+    match /liturgy/{doc}  { allow read, write: if true; }
+    match /readings/{doc} { allow read, write: if true; }
+    match /content/{doc}  { allow read, write: if true; }
+    match /churches/{doc} { allow read, write: if true; }
+    match /settings/{doc} { allow read, write: if true; }
+
+    // Every other path stays locked (default deny).
+  }
+}

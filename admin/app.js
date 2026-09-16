@@ -172,7 +172,20 @@
 
   function saveLocal() {
     try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(appData));
+      var snapshot = appData;
+      if (appData.bible && (appData.bible.ar.length || appData.bible.en.length)) {
+        // The full Bible is tens of MB and would blow the ~5MB
+        // localStorage quota on EVERY save (silently losing the whole
+        // offline cache). Cache book metadata only - the live Firestore
+        // listeners (plus its IndexedDB persistence) restore the rest.
+        snapshot = Object.assign({}, appData, {
+          bible: {
+            ar: appData.bible.ar.map(function(b) { return { bookId: b.bookId, bookName: b.bookName, lang: b.lang }; }),
+            en: appData.bible.en.map(function(b) { return { bookId: b.bookId, bookName: b.bookName, lang: b.lang }; })
+          }
+        });
+      }
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(snapshot));
     } catch (e) {}
   }
 
@@ -366,6 +379,25 @@
   // Offline, the same data is cached in localStorage /
   // SharedPreferences and shown instantly on next launch.
   // ============================================================
+  // ------------------------------------------------------------
+  // FIRESTORE ERROR SURFACING
+  // Listener errors (e.g. security-rules permission-denied) used to
+  // be swallowed, which made every section silently show 0. Any
+  // error now shows a red banner and the dashboard status line.
+  // ------------------------------------------------------------
+  var firebaseErrMsg = '';
+  function firebaseError(err) {
+    var code = (err && err.code) ? String(err.code) : '';
+    var msg = (err && err.message) ? String(err.message) : String(err || 'unknown error');
+    firebaseErrMsg = code ? (code + ': ' + msg) : msg;
+    displayFirebase(false);
+  }
+  // Called by every successful snapshot: clears any error state.
+  function onFirebaseData() {
+    firebaseErrMsg = '';
+    displayFirebase(true);
+  }
+
   function setupFirebase() {
     if (!window.firebaseDB) {
       displayFirebase(false);
@@ -375,6 +407,7 @@
     try {
       // Real-time listeners for each collection (Firebase compat / v8 API)
       db.collection('traneem').onSnapshot(function(snap) {
+        onFirebaseData();
         if (snap.empty) {
           ensureBundledTraneemCatalog();
           renderTraneemList(); updateStats();
@@ -388,8 +421,9 @@
         });
         syncLocalFromState('traneem');
         renderTraneemList(); updateStats();
-      });
+      }, firebaseError);
       db.collection('bible').onSnapshot(function(snap) {
+        onFirebaseData();
         appData.bible.ar = []; appData.bible.en = [];
         snap.forEach(function(d) {
           var data = d.data();
@@ -397,8 +431,9 @@
           else appData.bible.en.push(data);
         });
         renderBibleList(); updateStats();
-      });
+      }, firebaseError);
       db.collection('agpeya').onSnapshot(function(snap) {
+        onFirebaseData();
         appData.agpeya.ar = []; appData.agpeya.en = [];
         snap.forEach(function(d) {
           var data = d.data();
@@ -406,8 +441,9 @@
           else appData.agpeya.en.push(data);
         });
         renderAgpeyaList(); updateStats();
-      });
+      }, firebaseError);
       db.collection('liturgy').onSnapshot(function(snap) {
+        onFirebaseData();
         appData.liturgy.ar = []; appData.liturgy.en = [];
         snap.forEach(function(d) {
           var data = d.data();
@@ -415,22 +451,25 @@
           else appData.liturgy.en.push(data);
         });
         renderLiturgyList(); updateStats();
-      });
+      }, firebaseError);
       db.collection('readings').onSnapshot(function(snap) {
+        onFirebaseData();
         appData.readings = [];
         snap.forEach(function(d) { appData.readings.push(d.data()); });
         renderReadingsList(); updateStats();
-      });
+      }, firebaseError);
       db.collection('content').onSnapshot(function(snap) {
+        onFirebaseData();
         appData.content = [];
         snap.forEach(function(d) { appData.content.push(d.data()); });
         syncLocalFromState('content');
         renderContentList(); updateStats();
-      });
+      }, firebaseError);
       db.doc('settings/design').onSnapshot(function(snap) {
+        onFirebaseData();
         if (snap.exists()) appData.design = snap.data();
         renderDesignForm();
-      });
+      }, firebaseError);
       displayFirebase(true);
       return true;
     } catch (e) {
@@ -441,14 +480,25 @@
 
   function displayFirebase(ok) {
     var el = document.getElementById('data-source-status');
-    if (!el) return;
-    if (ok) {
-      el.textContent = '\uD83D\uDFE2 Firebase connected - real-time sync active';
-      el.className = 'status-ok';
-    } else {
-      el.textContent = '\u26A0\uFE0F Using offline cache (Firebase unavailable)';
-      el.className = 'status-warning';
+    if (el) {
+      if (ok) {
+        el.textContent = '\uD83D\uDFE2 Firebase connected - real-time sync active';
+        el.className = 'status-ok';
+      } else {
+        el.textContent = '\u26A0\uFE0F Firebase problem - see the red banner at the top';
+        el.className = 'status-warning';
+      }
     }
+    var banner = document.getElementById('firebaseErrorBanner');
+    if (!banner) return;
+    if (ok) { banner.style.display = 'none'; return; }
+    var m = firebaseErrMsg || 'Unknown Firestore error.';
+    var hint = '';
+    if (m.indexOf('permission-denied') >= 0 || m.indexOf('Missing or insufficient permissions') >= 0) {
+      hint = ' Firestore security RULES are blocking access. Fix: Firebase console -> Firestore Database -> Rules -> replace the rules with admin/firestore.rules from this repo -> Publish.';
+    }
+    banner.textContent = '\u26A0\uFE0F Firebase is blocking this admin page. ' + m + hint;
+    banner.style.display = 'block';
   }
 
   async function saveToFirebase(collectionName, docId, data) {
@@ -457,7 +507,7 @@
       await db.collection(collectionName).doc(docId).set(data);
     } catch (e) {
       saveLocal();
-      showToast('Offline save');
+      showToast('Save FAILED: ' + ((e && (e.code || e.message)) ? (e.code || e.message) : 'Firebase error'));
     }
   }
 
@@ -465,7 +515,9 @@
     if (!db) return;
     try {
       await db.collection(collectionName).doc(docId).delete();
-    } catch (e) {}
+    } catch (e) {
+      showToast('Delete FAILED: ' + ((e && (e.code || e.message)) ? (e.code || e.message) : 'Firebase error'));
+    }
   }
 
   // Keep local cache in sync for offline use
